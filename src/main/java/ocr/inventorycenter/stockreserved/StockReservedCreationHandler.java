@@ -37,6 +37,10 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 	}
 
 	// 处理器
+	// 步骤1、根据传入参数{商品SKU+仓库编码}获取对应现存量
+	// 步骤2、校验传入参数{拣货单.拣货数量} <= {步骤1.现存量- SUM{预留表{相同 商品SKU+仓库编码}}}。
+	// 步骤3、如果步骤2 ok 则成功预留。否则预留拣货失败（目前整单预留，不进行部分预留）
+	// -------------------
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 		JsonObject so = msg.body();
@@ -44,10 +48,6 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 		if (stockOnHandNullVal(so) != null && !stockOnHandNullVal(so).equals("")) {
 			msg.fail(100, stockOnHandNullVal(so));
 		}
-		// 步骤1、根据传入参数{商品SKU+仓库编码}获取对应现存量
-		// 步骤2、校验传入参数{拣货单.拣货数量} <= {步骤1.现存量- SUM{预留表{相同 商品SKU+仓库编码}}}。
-		// 步骤3、如果步骤2 ok 则成功预留。否则预留拣货失败（目前整单预留，不进行部分预留）
-		// -------------------
 		// 步骤1
 		String authSrvName = componentImpl.getDependencies().getJsonObject("ocr-inventorycenter")
 				.getString("service_name", "");

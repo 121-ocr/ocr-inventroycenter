@@ -36,10 +36,6 @@ public class InvOrgQueryHandler extends ActionHandlerImpl<JsonObject> {
 	//处理器
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
-
-		
-		//String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "ocr-inventorycenter-phaseinvQ.json";		
-		
 		
 		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "replenishment.json";		
 				
