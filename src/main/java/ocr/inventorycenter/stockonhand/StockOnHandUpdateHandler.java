@@ -3,6 +3,7 @@ package ocr.inventorycenter.stockonhand;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.MongoClient;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
@@ -36,11 +37,21 @@ public class StockOnHandUpdateHandler extends ActionHandlerImpl<JsonObject> {
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 
-		String acctId = this.appActivity.getAppInstContext().getAccount();
 		JsonObject settingInfo = msg.body();
-		settingInfo.put("account", acctId);
+		JsonObject so = msg.body();
+		settingInfo.put(StockOnHandConstant.bo_id, "");
+		settingInfo.put(StockOnHandConstant.account, this.appActivity.getAppInstContext().getAccount());
+		settingInfo.put(StockOnHandConstant.locations, so.getString("locations"));
+		settingInfo.put(StockOnHandConstant.warehouses, so.getString("warehouses"));
+		settingInfo.put(StockOnHandConstant.goods, so.getString("goods"));
+		settingInfo.put(StockOnHandConstant.sku, so.getString("sku"));
+		settingInfo.put(StockOnHandConstant.invbatchcode, so.getString("invbatchcode"));
+		settingInfo.put(StockOnHandConstant.locationcode, so.getString("locationcode"));
+		settingInfo.put(StockOnHandConstant.warehousecode, so.getString("warehousecode"));
+		settingInfo.put(StockOnHandConstant.onhandnum, so.getString("num"));
 		
-		appActivity.getAppDatasource().getMongoClient().save(
+		MongoClient mongoClient = appActivity.getAppDatasource().getMongoClient();
+		mongoClient.save(
 				appActivity.getDBTableName(appActivity.getName()), settingInfo,
 				result -> {
 					if (result.succeeded()) {

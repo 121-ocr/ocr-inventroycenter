@@ -25,7 +25,7 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 	//业务活动组件要处理的核心业务对象
 	@Override
 	public String getBizObjectType() {
-		return "stocknohand";
+		return "bc_stocknohand";
 	}
 
 	//发布此业务活动关联的业务角色
