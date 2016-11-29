@@ -37,22 +37,11 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 		JsonObject so = msg.body();
 
 		if (stockOnHandNullVal(so) != null && !stockOnHandNullVal(so).equals("")) {
-			msg.fail(100, stockOnHandNullVal(so));
+			msg.fail(100, "如下数据不能为空值："+stockOnHandNullVal(so));
 		}
 
-		// 现存量： 主键+租户id+货位集合+仓库集合+商品集合+商品SKU+批次号+货位编码+仓库编码+存量
-		JsonObject settingInfo = msg.body();
-		settingInfo.put(StockOnHandConstant.bo_id, "");
-		settingInfo.put(StockOnHandConstant.account, this.appActivity.getAppInstContext().getAccount());
-		settingInfo.put(StockOnHandConstant.locations, so.getString("locations"));
-		settingInfo.put(StockOnHandConstant.warehouses, so.getString("warehouses"));
-		settingInfo.put(StockOnHandConstant.goods, so.getString("goods"));
-		settingInfo.put(StockOnHandConstant.sku, so.getString("sku"));
-		settingInfo.put(StockOnHandConstant.invbatchcode, so.getString("invbatchcode"));
-		settingInfo.put(StockOnHandConstant.locationcode, so.getString("locationcode"));
-		settingInfo.put(StockOnHandConstant.warehousecode, so.getString("warehousecode"));
-		settingInfo.put(StockOnHandConstant.onhandnum, so.getString("num"));
-
+		// 现存量维度=商品SKU+商品租户id+批次号+货位编码+仓库编码+存量+冗余字段 {主键+租户id+货位集合+仓库集合+商品集合}
+		JsonObject settingInfo = getParams(msg, so);
 		appActivity.getAppDatasource().getMongoClient().save(appActivity.getDBTableName(appActivity.getName()),
 				settingInfo, result -> {
 					if (result.succeeded()) {
@@ -68,30 +57,51 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 
 	}
 
+	private JsonObject getParams(OtoCloudBusMessage<JsonObject> msg, JsonObject so) {
+		JsonObject settingInfo = msg.body();
+		settingInfo.put(StockOnHandConstant.bo_id, "");
+		settingInfo.put(StockOnHandConstant.account, this.appActivity.getAppInstContext().getAccount());
+		settingInfo.put(StockOnHandConstant.locations, so.getString("locations"));
+		settingInfo.put(StockOnHandConstant.warehouses, so.getString("warehouses"));
+		settingInfo.put(StockOnHandConstant.goods, so.getString("goods"));
+		settingInfo.put(StockOnHandConstant.sku, so.getString("sku"));
+		settingInfo.put(StockOnHandConstant.goodaccount, so.getString("goodaccount"));
+		settingInfo.put(StockOnHandConstant.invbatchcode, so.getString("invbatchcode"));
+		settingInfo.put(StockOnHandConstant.locationcode, so.getString("locationcode"));
+		settingInfo.put(StockOnHandConstant.warehousecode, so.getString("warehousecode"));
+		settingInfo.put(StockOnHandConstant.onhandnum, so.getString("onhandnum"));
+		return settingInfo;
+	}
+
 	private String stockOnHandNullVal(JsonObject so) {
 		StringBuffer errors = new StringBuffer();
-
-		String locations = so.getString("locations");
+	
+		String locations = so.getString(StockOnHandConstant.locations);
 		if (null == locations || locations.equals("")) {
 			errors.append("货位");
 		}
 
-		String warehouses = so.getString("warehouses");
+		String warehouses = so.getString(StockOnHandConstant.warehouses);
 		if (null == warehouses || warehouses.equals("")) {
 			errors.append("仓库");
 		}
 
-		String sku = so.getString("sku");
+		String sku = so.getString(StockOnHandConstant.sku);
 		if (null == sku || sku.equals("")) {
 			errors.append("sku");
 		}
-
-		String goods = so.getString("goods");
+		
+		String goodaccount = so.getString(StockOnHandConstant.goodaccount); 
+		if (null == goodaccount || goodaccount.equals("")) {
+			errors.append("商品所属货主");
+		}
+		
+		String goods = so.getString(StockOnHandConstant.goods); 
 		if (null == goods || goods.equals("")) {
-			errors.append("商品");
+			errors.append("商品信息");
 		}
 
-		String num = so.getString("num");
+		String num = so.getString(StockOnHandConstant.onhandnum);
 		if (null == num || num.equals("")) {
 			errors.append("现存量");
 		}

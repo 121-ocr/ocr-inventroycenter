@@ -38,10 +38,7 @@ public class InvFacilityQueryHandler extends ActionHandlerImpl<JsonObject> {
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 
 		
-		//String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "ocr-inventorycenter-phaseinvQ.json";		
-		
-		
-		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "replenishment.json";		
+		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "invfacility.json";		
 				
 		this.getAppActivity().getVertx().fileSystem().readFile(menusFilePath, result -> {
     	    if (result.succeeded()) {

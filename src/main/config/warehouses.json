@@ -1,28 +1,31 @@
 [
-{
-   "code": "WH001",
-   "name": "北京总仓",   
-   "type": "1",
-   "character": "2",
-   "owner_org": {
-   		"code": "ORG001",
-   		"name": "卡洛公司"
-   },
-   "vmi_org": {},
-   "address": "北京市大兴区38号"
-   "mailing_address":"北京市大兴区38号,1层1012室"
-},
-{
-    "code": "WH002",
-   "name": "河北总仓",
-   "type": "1",
-   "character": "2",
-   "owner_org": {
-   		"code": "ORG001",
-   		"name": "卡洛公司"
-   },
-   "vmi_org": {},
-   "address": "河北省保定市"
-   "mailing_address":"河北省保定市93号,6层1712室"
-}
+    {
+        "code":"WH001",
+        "name":"北京总仓",
+        "type":"1",
+        "character":"2",
+        "account":"3",
+        "vmi_org":"北京门店",
+        "address":{
+            "region":{
+                "code":"110115",
+                "full_name":"北京市大兴区"
+            },
+            "address_detail":"XXX街道38号,1层1012室"
+        }
+    },
+    {
+        "code":"WH002",
+        "name":"河北总仓",
+        "type":"1",
+        "account":"3",
+        "vmi_org":"河北门店",
+        "address":{
+            "region":{
+                "code":"130600",
+                "full_name":"河北省保定市"
+            },
+            "address_detail":"XXX街道93号,6层1712室"
+        }
+    }
 ]

@@ -4,6 +4,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
@@ -48,51 +49,62 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 		if (stockOnHandNullVal(so) != null && !stockOnHandNullVal(so).equals("")) {
 			msg.fail(100, stockOnHandNullVal(so));
 		}
-		// 步骤1
-		String authSrvName = componentImpl.getDependencies().getJsonObject("ocr-inventorycenter")
-				.getString("service_name", "");
-		String address = authSrvName + "." + ONHAND_REGISTER;
-		Future<Integer> ret = Future.future();
-		JsonObject params = new JsonObject();
-		params.put("sku", so.getString("sku"));
-		params.put("warehousecode", so.getString("warehousecode"));
-		this.appActivity.getEventBus().send(address, params, onhandservice -> {
+		// 步骤1, 获取现存量
+		this.appActivity.getEventBus().send(getOnHandAddress(), getOnHandParam(so), onhandservice -> {
 			if (onhandservice.succeeded()) {
 				JsonObject onhands = (JsonObject) onhandservice.result().body();
 				Double onhandnum = onhands.getDouble("onhandnum");
 				// 步骤2、校验数量是否可以预留
-				if (!isCanReserved(onhandnum, so)) {
-					String errMsg = "该产品,已别其他门店预留，预留失败";
-					componentImpl.getLogger().error(errMsg);
-					ret.fail(errMsg);
-				}
-				// 步骤3、预留此拣货单id+sku+数量
-				executeReserved(so, AsyncResult->{
-					if(AsyncResult.succeeded()){
-   						ret.complete();								
-					}else{		
-						Throwable err = AsyncResult.cause();						
-						err.printStackTrace();		
-						ret.fail(err);
-					}	
-				});	
-			
-				ret.complete();
+				isCanReserved(onhandnum, so, AsyncResult -> {
+					if (AsyncResult.succeeded()) {
+						// 步骤3、预留此拣货单id+sku+数量
+						executeReserved(so, AsyncResultsub -> {
+							if (AsyncResultsub.succeeded()) {
+								JsonArray srvCfg = new JsonArray("预留成功");
+								msg.reply(srvCfg);
+							} else {
+								Throwable errThrowable = AsyncResultsub.cause();
+								String errMsgString = errThrowable.getMessage();
+								appActivity.getLogger().error(errMsgString, errThrowable);
+								msg.fail(100, errMsgString);
+							}
+						});
+						msg.reply("ok");
+					} else {
+						Throwable err = AsyncResult.cause();
+						err.printStackTrace();
+						msg.fail(100, err.getCause().getMessage());
+					}
+				});
+
+				msg.reply("ok");
 			} else {
 				Throwable err = onhandservice.cause();
 				String errMsg = err.getMessage();
-				componentImpl.getLogger().error(errMsg, err);	
-				ret.fail(errMsg);
+				componentImpl.getLogger().error(errMsg, err);
+				msg.fail(100, errMsg);
 			}
 
 		});
 
 	}
 
+	private JsonObject getOnHandParam(JsonObject so) {
+		JsonObject params = new JsonObject();
+		params.put("sku", so.getString("sku"));
+		params.put("warehousecode", so.getString("warehousecode"));
+		return params;
+	}
 
+	private String getOnHandAddress() {
+		String authSrvName = componentImpl.getDependencies().getJsonObject("ocr-inventorycenter")
+				.getString("service_name", "");
+		String address = authSrvName + "." + ONHAND_REGISTER;
+		return address;
+	}
 
 	private void executeReserved(JsonObject so, Handler<AsyncResult<Void>> next) {
-		
+
 		JsonObject settingInfo = so;
 		settingInfo.put(StockReservedConstant.bo_id, "");
 		settingInfo.put(StockReservedConstant.account, this.appActivity.getAppInstContext().getAccount());
@@ -103,26 +115,25 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 
 		Future<Void> ret = Future.future();
 		ret.setHandler(next);
-		
+
 		appActivity.getAppDatasource().getMongoClient().save(appActivity.getDBTableName(appActivity.getName()),
 				settingInfo, result -> {
 					if (result.succeeded()) {
-						ret.complete();	
+						ret.complete();
 					} else {
 						Throwable errThrowable = result.cause();
 						String errMsgString = errThrowable.getMessage();
 						appActivity.getLogger().error(errMsgString, errThrowable);
-						ret.fail(errMsgString);		
+						ret.fail(errMsgString);
 					}
 				});
 
 	}
 
-	private boolean isCanReserved(Double onhandnum, JsonObject so) {
+	private void isCanReserved(Double onhandnum, JsonObject so, Handler<AsyncResult<Void>> next) {
+		// TODO 根据条件sum mongodb中数量
+
 		
-		//TODO 根据条件sum mongodb中数量
-		
-		return false;
 	}
 
 	private String stockOnHandNullVal(JsonObject so) {

@@ -37,7 +37,7 @@ public class InvOrgQueryHandler extends ActionHandlerImpl<JsonObject> {
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 		
-		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "replenishment.json";		
+		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "warehouses.json";		
 				
 		this.getAppActivity().getVertx().fileSystem().readFile(menusFilePath, result -> {
     	    if (result.succeeded()) {

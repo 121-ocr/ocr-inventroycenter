@@ -1,0 +1,39 @@
+
+[
+    {
+        "code":"1-6-2-10",  
+        "containertype":"1", //容器类型：1：楼层，2：库房：3货区   4：货架
+        "type":"1",  //类型：1 拣货区 2 存货区 3 退货区
+        "ABC_type":"A", //ABC分类
+        "isplane":true,  // 是否平面，立体
+        "ismatrix":true,  // 是否矩阵分区
+         "locations":{ //仓位信息
+            "standfullnum":"6",
+            "currentnum":"3",
+            "packunit":"箱",
+            "ismixedLot":0,
+            "warehouses":{
+            },
+            "goods":{
+            }
+        }, 
+        "parentshelfs":{  //父项设施
+            "code":"1-6-2",
+            "containertype":"1",
+            "type":"1",
+            "ABC_type":"A",
+            "isplane":true,
+            "ismatrix":true,
+            "parentshelfs":{
+            },
+            "colrow":{
+                "colnum":5,
+                "rownum":8
+            }
+        },
+        "colrow":{
+            "colnum":5,
+            "rownum":8
+        }
+    }
+]
