@@ -39,9 +39,8 @@ public class PharseInvQueryHandler extends ActionHandlerImpl<JsonObject> {
 
 		
 		//String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "ocr-inventorycenter-phaseinvQ.json";		
-		
-		
-		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "replenishment.json";		
+			
+		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "ocr-inventorycenter-phaseinvQ.json";		
 				
 		this.getAppActivity().getVertx().fileSystem().readFile(menusFilePath, result -> {
     	    if (result.succeeded()) {

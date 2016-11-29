@@ -1,6 +1,0 @@
-一、现存量json
-
-message api：ocr-sales-center.channel-restocking.create
-rest api: ocr-sales-center/channel-restocking/create, http: POST
-input: vo
-output: vo

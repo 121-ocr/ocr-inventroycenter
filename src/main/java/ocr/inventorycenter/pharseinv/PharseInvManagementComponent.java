@@ -25,7 +25,7 @@ public class PharseInvManagementComponent extends AppActivityImpl {
 	//业务活动组件要处理的核心业务对象
 	@Override
 	public String getBizObjectType() {
-		return "pharseinv";
+		return "bp_pharseinv";
 	}
 
 	//发布此业务活动关联的业务角色

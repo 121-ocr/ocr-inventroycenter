@@ -41,8 +41,7 @@ public class InvOrgQueryHandler extends ActionHandlerImpl<JsonObject> {
 				
 		this.getAppActivity().getVertx().fileSystem().readFile(menusFilePath, result -> {
     	    if (result.succeeded()) {
-    	    	String fileContent = result.result().toString(); 
-    	        
+    	    	String fileContent = result.result().toString();    	        
     	    	JsonArray srvCfg = new JsonArray(fileContent);
     	        msg.reply(srvCfg);     	        
     	        
