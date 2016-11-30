@@ -41,7 +41,7 @@ public class StockReservedQueryHandler extends ActionHandlerImpl<JsonObject> {
 		//String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "ocr-inventorycenter-phaseinvQ.json";		
 		
 		
-		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "replenishment.json";		
+		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "stockreserved.json";		
 				
 		this.getAppActivity().getVertx().fileSystem().readFile(menusFilePath, result -> {
     	    if (result.succeeded()) {
