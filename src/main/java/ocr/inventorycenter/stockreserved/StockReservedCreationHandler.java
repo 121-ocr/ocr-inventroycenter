@@ -24,7 +24,7 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 
 	public static final String ADDRESS = "reserved";
 
-	public static final String ONHAND_REGISTER = "ocr-inventorycenter.stocknohand-mgr.query";
+	public static final String ONHAND_REGISTER = "ocr-inventorycenter.stocknohand.query";
 
 	public StockReservedCreationHandler(AppActivityImpl appActivity) {
 		super(appActivity);
@@ -139,12 +139,7 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 	private String stockOnHandNullVal(JsonObject so) {
 		StringBuffer errors = new StringBuffer();
 
-		String locations = so.getString("locations");
-		if (null == locations || locations.equals("")) {
-			errors.append("货位");
-		}
-
-		String warehouses = so.getString("warehouses");
+		String warehouses = so.getString("warehousecode");
 		if (null == warehouses || warehouses.equals("")) {
 			errors.append("仓库");
 		}
@@ -154,14 +149,14 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 			errors.append("sku");
 		}
 
-		String goods = so.getString("goods");
+		String goods = so.getString("goodaccount");
 		if (null == goods || goods.equals("")) {
 			errors.append("商品");
 		}
 
-		String num = so.getString("num");
-		if (null == num || num.equals("")) {
-			errors.append("现存量");
+		String reservednum = so.getString("reservednum");
+		if (null == reservednum || reservednum.equals("")) {
+			errors.append("预留量");
 		}
 
 		return errors.toString();
