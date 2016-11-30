@@ -9,7 +9,7 @@ import otocloud.framework.app.function.BizRoleDescriptor;
 import otocloud.framework.core.OtoCloudEventDescriptor;
 import otocloud.framework.core.OtoCloudEventHandlerRegistry;
 /**
- * 库存中心：现存量-管理
+ * 库存中心：现存量-管理@
  * 
  * @date 2016年11月20日
  * @author LCL
