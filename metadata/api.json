@@ -1,0 +1,6 @@
+http://localhost:8084/ocr-inventorycenter/stockonhand-mgr/insert?context=3|3|lj|aaa
+
+http://localhost:8084/ocr-inventorycenter/stockonhand-mgr/update?context=3|3|lj|aaa
+
+http://localhost:8084/ocr-inventorycenter/stockonhand-mgr/create?context=3|3|lj|aaa
+

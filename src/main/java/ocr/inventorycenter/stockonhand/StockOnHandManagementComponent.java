@@ -1,7 +1,6 @@
 package ocr.inventorycenter.stockonhand;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 import otocloud.framework.app.function.AppActivityImpl;
@@ -47,15 +46,17 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 		
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
 
-		StockOnHandCreationHandler initHandler = new StockOnHandCreationHandler(this);
-		ret.add(initHandler);
-		
+		StockOnHandCreationHandler createHandler = new StockOnHandCreationHandler(this);
+		ret.add(createHandler);
 		
 		StockOnHandQueryHandler queryHandler = new StockOnHandQueryHandler(this);
 		ret.add(queryHandler);
 
 		StockOnHandRemoveHandler removeHandler = new StockOnHandRemoveHandler(this);
 		ret.add(removeHandler);
+		
+		StockOnHandUpdateHandler updateHandler = new StockOnHandUpdateHandler(this);
+		ret.add(updateHandler);
 		
 		return ret;
 	}

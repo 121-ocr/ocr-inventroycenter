@@ -27,7 +27,6 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 	// 此action的入口地址
 	@Override
 	public String getEventAddress() {
-		// TODO Auto-generated method stub
 		return ADDRESS;
 	}
 
@@ -61,9 +60,9 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 		JsonObject settingInfo = msg.body();
 		settingInfo.put(StockOnHandConstant.bo_id, "");
 		settingInfo.put(StockOnHandConstant.account, this.appActivity.getAppInstContext().getAccount());
-		settingInfo.put(StockOnHandConstant.locations, so.getString("locations"));
-		settingInfo.put(StockOnHandConstant.warehouses, so.getString("warehouses"));
-		settingInfo.put(StockOnHandConstant.goods, so.getString("goods"));
+		settingInfo.put(StockOnHandConstant.locations, so.getValue("locations"));
+		settingInfo.put(StockOnHandConstant.warehouses, so.getValue("warehouses"));
+		settingInfo.put(StockOnHandConstant.goods, so.getValue("goods"));
 		settingInfo.put(StockOnHandConstant.sku, so.getString("sku"));
 		settingInfo.put(StockOnHandConstant.goodaccount, so.getString("goodaccount"));
 		settingInfo.put(StockOnHandConstant.invbatchcode, so.getString("invbatchcode"));
@@ -75,13 +74,15 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 
 	private String stockOnHandNullVal(JsonObject so) {
 		StringBuffer errors = new StringBuffer();
-	
-		String locations = so.getString(StockOnHandConstant.locations);
+		
+		Object locations = so.getValue(StockOnHandConstant.locations);
+
 		if (null == locations || locations.equals("")) {
 			errors.append("货位");
 		}
 
-		String warehouses = so.getString(StockOnHandConstant.warehouses);
+		Object warehouses = so.getValue(StockOnHandConstant.warehouses);
+
 		if (null == warehouses || warehouses.equals("")) {
 			errors.append("仓库");
 		}
@@ -96,7 +97,8 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 			errors.append("商品所属货主");
 		}
 		
-		String goods = so.getString(StockOnHandConstant.goods); 
+		Object goods = so.getValue(StockOnHandConstant.goods); 
+
 		if (null == goods || goods.equals("")) {
 			errors.append("商品信息");
 		}

@@ -5,6 +5,8 @@ import java.util.List;
 
 import ocr.inventorycenter.invorg.InvOrgManagementComponent;
 import ocr.inventorycenter.pharseinv.PharseInvManagementComponent;
+import ocr.inventorycenter.stockonhand.StockOnHandManagementComponent;
+import ocr.inventorycenter.stockreserved.StockReservedManagementComponent;
 import otocloud.framework.app.engine.AppServiceImpl;
 import otocloud.framework.app.engine.WebServer;
 import otocloud.framework.app.function.AppActivity;
@@ -27,7 +29,7 @@ public class InventoryCenterService extends AppServiceImpl {
 	// 创建租户级web server
 	@Override
 	public WebServer createWebServer() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -38,9 +40,15 @@ public class InventoryCenterService extends AppServiceImpl {
 
 		PharseInvManagementComponent pharseInvCom = new PharseInvManagementComponent();
 		retActivities.add(pharseInvCom);
-		
+
 		InvOrgManagementComponent invOrgManagementComponent = new InvOrgManagementComponent();
 		retActivities.add(invOrgManagementComponent);
+
+		StockOnHandManagementComponent stockOnHand = new StockOnHandManagementComponent();
+		retActivities.add(stockOnHand);
+
+		StockReservedManagementComponent stockReserved = new StockReservedManagementComponent();
+		retActivities.add(stockReserved);
 
 		return retActivities;
 	}

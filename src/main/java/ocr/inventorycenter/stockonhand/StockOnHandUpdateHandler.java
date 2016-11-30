@@ -1,5 +1,8 @@
 package ocr.inventorycenter.stockonhand;
 
+import com.hazelcast.nio.Address;
+import com.mongodb.client.model.Filters;
+
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
@@ -46,11 +49,13 @@ public class StockOnHandUpdateHandler extends ActionHandlerImpl<JsonObject> {
 
 		// 设置存在更新，不存在添加
 		MongoClient mongoClient = getCurrentDataSource().getMongoClient();
-		mongoClient.updateCollectionWithOptions(getBoFactTableName(this.appActivity.getBizObjectType()),
-				getQueryConditon4Update(so), getSetConditon4Update(so), new UpdateOptions(), res -> {
+		mongoClient.updateCollectionWithOptions(appActivity.getDBTableName(appActivity.getName()),
+				getQueryConditon4Update(so), getSetConditon4Update(so),new UpdateOptions().setMulti(true),  res -> {
 					if (res.succeeded()) {
-						JsonObject settingInfo = msg.body();
-						settingInfo.put("_id", res.result());
+						JsonObject settingInfo = new JsonObject();
+						String queryCount = " matched doc: "+res.result().getDocMatched() +"    ";
+						String modifyCount = " modified doc: "+res.result().getDocModified();
+						settingInfo.put("result ", queryCount + modifyCount);
 						msg.reply(settingInfo);
 					} else {
 						Throwable errThrowable = res.cause();
@@ -66,12 +71,14 @@ public class StockOnHandUpdateHandler extends ActionHandlerImpl<JsonObject> {
 		JsonObject boData = new JsonObject();
 		boData.put("onhandnum", so.getString("onhandnum"));
 		JsonObject update = new JsonObject();
-		update.put("$set", boData);
+        update.put("$set", boData);
+		//update.put("$set", so);
 		return update;
 	}
 
 	private JsonObject getQueryConditon4Update(JsonObject so) {
 		JsonObject query = new JsonObject();
+		
 		query.put(StockOnHandConstant.sku, so.getString("sku"));
 		query.put(StockOnHandConstant.goodaccount, so.getString("goodaccount"));
 		query.put(StockOnHandConstant.invbatchcode, so.getString("invbatchcode"));

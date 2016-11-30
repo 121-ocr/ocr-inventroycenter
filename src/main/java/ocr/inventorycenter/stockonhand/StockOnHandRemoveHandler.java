@@ -3,6 +3,7 @@ package ocr.inventorycenter.stockonhand;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.WriteOption;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
@@ -43,13 +44,15 @@ public class StockOnHandRemoveHandler extends ActionHandlerImpl<JsonObject> {
 		String acctId = this.appActivity.getAppInstContext().getAccount();
 		JsonObject settingInfo = msg.body();
 		settingInfo.put("account", acctId);
-		
-		appActivity.getAppDatasource().getMongoClient().save(
-				appActivity.getDBTableName(appActivity.getName()), settingInfo,
+		appActivity.getAppDatasource().getMongoClient().removeDocumentsWithOptions(
+				appActivity.getDBTableName(appActivity.getName()),
+				getQueryConditon4Del(settingInfo), 
+				WriteOption.ACKNOWLEDGED, 
 				result -> {
 					if (result.succeeded()) {
-						settingInfo.put("_id", result.result());
-						msg.reply(settingInfo);						
+						JsonObject jo = new JsonObject();
+						jo.put("RemovedCount : ", result.result().getRemovedCount());
+						msg.reply(jo);						
 					} else {
 						Throwable errThrowable = result.cause();
 						String errMsgString = errThrowable.getMessage();
@@ -60,6 +63,16 @@ public class StockOnHandRemoveHandler extends ActionHandlerImpl<JsonObject> {
 			});
 
 	}
+	
+	private JsonObject getQueryConditon4Del(JsonObject so) {
+		JsonObject query = new JsonObject();		
+		query.put(StockOnHandConstant.sku, so.getString("sku"));
+		query.put(StockOnHandConstant.goodaccount, so.getString("goodaccount"));
+		query.put(StockOnHandConstant.invbatchcode, so.getString("invbatchcode"));
+		query.put(StockOnHandConstant.locationcode, so.getString("locationcode"));
+		query.put(StockOnHandConstant.warehousecode, so.getString("warehousecode"));
+		return query;
+	}
 
 	/**
 	 * {@inheritDoc} 此action的自描述元数据
@@ -69,16 +82,8 @@ public class StockOnHandRemoveHandler extends ActionHandlerImpl<JsonObject> {
 		
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
-		//handlerDescriptor.setMessageFormat("command");
-		
-		//参数
-/*		List<ApiParameterDescriptor> paramsDesc = new ArrayList<ApiParameterDescriptor>();
-		paramsDesc.add(new ApiParameterDescriptor("targetacc",""));		
-		paramsDesc.add(new ApiParameterDescriptor("soid",""));		
-		
-		actionDescriptor.getHandlerDescriptor().setParamsDesc(paramsDesc);	*/
 				
-		ActionURI uri = new ActionURI("remove", HttpMethod.DELETE);
+		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
 		
 		return actionDescriptor;
