@@ -59,7 +59,7 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 		findOptions.setSort(sortFields);
 		
 		appActivity.getAppDatasource().getMongoClient().findWithOptions(
-				appActivity.getDBTableName(appActivity.getName()), 
+				appActivity.getDBTableName(appActivity.getBizObjectType()), 
 				getQueryConditon(msg.body()), 
 				findOptions,
 				result -> {

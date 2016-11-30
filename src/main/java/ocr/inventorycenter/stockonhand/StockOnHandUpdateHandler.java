@@ -49,7 +49,7 @@ public class StockOnHandUpdateHandler extends ActionHandlerImpl<JsonObject> {
 
 		// 设置存在更新，不存在添加
 		MongoClient mongoClient = getCurrentDataSource().getMongoClient();
-		mongoClient.updateCollectionWithOptions(appActivity.getDBTableName(appActivity.getName()),
+		mongoClient.updateCollectionWithOptions(appActivity.getDBTableName(appActivity.getBizObjectType()),
 				getQueryConditon4Update(so), getSetConditon4Update(so),new UpdateOptions().setMulti(true),  res -> {
 					if (res.succeeded()) {
 						JsonObject settingInfo = new JsonObject();

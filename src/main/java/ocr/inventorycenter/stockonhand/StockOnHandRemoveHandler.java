@@ -45,7 +45,7 @@ public class StockOnHandRemoveHandler extends ActionHandlerImpl<JsonObject> {
 		JsonObject settingInfo = msg.body();
 		settingInfo.put("account", acctId);
 		appActivity.getAppDatasource().getMongoClient().removeDocumentsWithOptions(
-				appActivity.getDBTableName(appActivity.getName()),
+				appActivity.getDBTableName(appActivity.getBizObjectType()),
 				getQueryConditon4Del(settingInfo), 
 				WriteOption.ACKNOWLEDGED, 
 				result -> {
