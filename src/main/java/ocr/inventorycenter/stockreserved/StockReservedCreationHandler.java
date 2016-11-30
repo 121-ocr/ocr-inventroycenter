@@ -24,7 +24,7 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 
 	public static final String ADDRESS = "reserved";
 
-	public static final String ONHAND_REGISTER = "ocr-inventorycenter.stocknohand-mgr.query";
+	public static final String ONHAND_REGISTER = "ocr-inventorycenter.stocknohand.query";
 
 	public StockReservedCreationHandler(AppActivityImpl appActivity) {
 		super(appActivity);

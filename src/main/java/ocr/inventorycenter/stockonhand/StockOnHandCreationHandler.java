@@ -41,7 +41,7 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 
 		// 现存量维度=商品SKU+商品租户id+批次号+货位编码+仓库编码+存量+冗余字段 {主键+租户id+货位集合+仓库集合+商品集合}
 		JsonObject settingInfo = getParams(msg, so);
-		appActivity.getAppDatasource().getMongoClient().save(appActivity.getDBTableName(appActivity.getName()),
+		appActivity.getAppDatasource().getMongoClient().save(appActivity.getDBTableName(appActivity.getBizObjectType()),
 				settingInfo, result -> {
 					if (result.succeeded()) {
 						settingInfo.put("_id", result.result());

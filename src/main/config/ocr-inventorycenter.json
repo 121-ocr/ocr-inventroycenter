@@ -46,6 +46,17 @@
 				"component_deployment": []
 			},
 			"component_config": {
+			  "stockreserverd": {
+				      		"options": {
+		        				"config" :  {
+		        				    "dependencies":{
+			        					"stockonhand_service": {
+			        						"service_name": "ocr-inventorycenter"
+			        					}
+		        					}
+								}
+							 }
+					   }
 			},
 			"component_deployment": [
 			],

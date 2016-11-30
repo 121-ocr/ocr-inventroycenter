@@ -19,7 +19,7 @@ public class StockReservedManagementComponent extends AppActivityImpl {
 	//业务活动组件名
 	@Override
 	public String getName() {
-		return "stockreserverd-mgr";
+		return "stockreserverd";
 	}
 	
 	//业务活动组件要处理的核心业务对象
