@@ -2,10 +2,8 @@ package ocr.inventorycenter.invorg;
 
 
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import otocloud.common.ActionURI;
-import otocloud.common.OtoCloudDirectoryHelper;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
@@ -37,22 +35,22 @@ public class InvOrgQueryHandler extends ActionHandlerImpl<JsonObject> {
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 		
-		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "warehouses.json";		
-				
-		this.getAppActivity().getVertx().fileSystem().readFile(menusFilePath, result -> {
-    	    if (result.succeeded()) {
-    	    	String fileContent = result.result().toString();    	        
-    	    	JsonArray srvCfg = new JsonArray(fileContent);
-    	        msg.reply(srvCfg);     	        
-    	        
-    	    } else {
-				Throwable errThrowable = result.cause();
-				String errMsgString = errThrowable.getMessage();
-				appActivity.getLogger().error(errMsgString, errThrowable);
-				msg.fail(100, errMsgString);		
-   
-    	    }	
-		});
+		JsonObject query = msg.body();
+		
+		appActivity.getAppDatasource().getMongoClient().find(appActivity.getDBTableName(this.appActivity.getBizObjectType()), 
+				query, findRet->{
+					if (findRet.succeeded()) {
+						msg.reply(findRet.result());
+					} else {
+						Throwable err = findRet.cause();
+						String errMsg = err.getMessage();
+						appActivity.getLogger().error(errMsg, err);
+						msg.fail(500, errMsg);
+					}
+					
+				});			
+	
+
 
 
 	}
@@ -67,7 +65,7 @@ public class InvOrgQueryHandler extends ActionHandlerImpl<JsonObject> {
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
 				
-		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.GET);
+		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
 		
 		
