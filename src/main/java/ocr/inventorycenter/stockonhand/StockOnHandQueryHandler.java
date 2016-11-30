@@ -58,17 +58,17 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 		
 		findOptions.setSort(sortFields);
 		
-		appActivity.getAppDatasource().getMongoClient().findWithOptions(
+		appActivity.getAppDatasource().getMongoClient().find(
 				appActivity.getDBTableName(appActivity.getBizObjectType()), 
 				getQueryConditon(msg.body()), 
-				findOptions,
+				//null,
 				result -> {
 //		this.getAppActivity().getVertx().fileSystem().readFile(menusFilePath, result -> {
     	    if (result.succeeded()) {
-    	    	String fileContent = result.result().toString(); 
+    	    	//String fileContent = result.result().toString(); 
     	        
-    	    	JsonArray srvCfg = new JsonArray(fileContent);
-    	        msg.reply(srvCfg);     	        
+    	    	//JsonArray srvCfg = new JsonArray(fileContent);
+    	        msg.reply(result.result());     	        
     	        
     	    } else {
 				Throwable errThrowable = result.cause();
@@ -84,14 +84,18 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 	
 	private JsonObject getQueryConditon(JsonObject so) {
 		JsonObject query = new JsonObject();
-		if(!so.getString(StockOnHandConstant.sku).isEmpty()){
+		if(so.containsKey(StockOnHandConstant.sku)
+				&& !so.getString(StockOnHandConstant.sku).isEmpty()){
 			query.put(StockOnHandConstant.sku, so.getString(StockOnHandConstant.sku));
 		}
+		if(so.containsKey(StockOnHandConstant.goodaccount)
+				&& !so.getString(StockOnHandConstant.goodaccount).isEmpty()){
+			query.put(StockOnHandConstant.goodaccount, so.getString("goodaccount"));
+		}
 //		query.put(StockOnHandConstant.sku, so.getString("sku"));
-//		query.put(StockOnHandConstant.goodaccount, so.getString("goodaccount"));
 //		query.put(StockOnHandConstant.invbatchcode, so.getString("invbatchcode"));
 //		query.put(StockOnHandConstant.locationcode, so.getString("locationcode"));
-//		query.put(StockOnHandConstant.warehousecode, so.getString("warehousecode"));
+		query.put(StockOnHandConstant.warehousecode, so.getString("warehousecode"));
 		return query;
 	}
 	

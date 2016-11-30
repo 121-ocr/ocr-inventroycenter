@@ -1,64 +1,81 @@
-[
-    {
-        "sku":"SKU001",
-        "pickoutid":"JH001",//拣货单id
-         "pickoutnum":"100",//拣货单num
-        "goodaccount":"所属北京总仓",  
-        "warehousecode":"WH001",
-        "reservednum":"500",
-        "warehouses":{
-            "code":"WH001",
-            "name":"北京总仓",
-            "type":"1",
-            "character":"2",
-            "account":"3",
-            "vmi_org":"北京门店",
-            "address":{
-                "region":{
-                    "code":"110115",
-                    "full_name":"北京市大兴区"
-                },
-                "address_detail":"XXX街道38号,1层1012室"
+{
+    "account" : "3",
+    "sku" : "JUICE001SP0003SP0001",
+    "goodaccount" : "3",
+    "warehousecode" : "WH002",
+    "locationcode" : "1-6-2-10",
+    "invbatchcode" : "1",
+    "onhandnum" : 98,
+    "warehouses" : {
+	    "code" : "WH002",
+	    "name" : "河北总仓",
+	    "type" : {
+	        "code" : "1",
+	        "name" : "仓库"
+	    },
+	    "character" : {
+	        "code" : "2",
+	        "name" : "供货仓"
+	    },
+	    "address" : {
+	        "region" : {
+	            "code" : "130102 ",
+	            "full_name" : "石家庄市长安区"
+	        },
+	        "address_detail" : "XXX街道"
+	    },
+	    "account" : "3"
+    },
+    "locations" : {
+        "currentnum" : "3",
+        "code" : "1-6-2-10",
+        "standfullnum" : "6",
+        "packunit" : "箱",
+        "ismixedLot" : 0
+    },
+    "goods" : {
+        "account" : "3",
+        "product_sku_code" : "JUICE001SP0003SP0001",
+        "title" : "普瑞达野生浆果550ml",
+        "sales_catelogs" : [ 
+            {
+                "code" : "GC0302",
+                "name" : "果汁",
+                "inner_code" : "GC0302"
+            }, 
+            {
+                "code" : "GC0301",
+                "name" : "红酒",
+                "inner_code" : "GC0301"
             }
-        },
-        "goods":{
-            "account_id":"Kano",
-            "product_sku_code":"WINE001SP0001SP0002",
-            "title":"拉菲尚品波尔多干红葡萄酒750ml",
-            "sales_catelogs":[
+        ],
+        "product_sku" : {
+            "bar_code" : "",
+            "product_specifications" : [ 
                 {
-                    "code":"WINE",
-                    "name":"酒水"
+                    "specification_code" : "SP0003",
+                    "specification_name" : "口味",
+                    "specification_value" : "草莓"
+                }, 
+                {
+                    "specification_code" : "SP0002",
+                    "specification_name" : "容量",
+                    "specification_value" : "750ml"
                 }
             ],
-            "product_sku":{
-                "bar_code":"",
-                "product_specifications":[
-                    {
-                        "specification_code":"SP0001",
-                        "specification_name":"颜色",
-                        "specification_value":"洋红"
-                    },
-                    {
-                        "specification_code":"SP0002",
-                        "specification_name":"容量",
-                        "specification_value":"750ml"
+            "product_spu" : {
+                "spu_code" : "JUICE003",
+                "base_unit" : "箱",
+                "brand" : {
+                    "code" : "BR0005",
+                    "name" : "PRIMA",
+                    "manufacturer" : {
+                        "code" : "MF0005",
+                        "name" : "塞浦路斯"
                     }
-                ],
-                "product_spu":{
-                    "spu_code":"WINE001",
-                    "base_unit":"瓶",
-                    "brand":{
-                        "code":"BR0001",
-                        "name":"科特勒",
-                        "manufacturer":{
-                            "code":"BR0001",
-                            "name":"法国科特勒酒庄"
-                        }
-                    },
-                    "desc":""
-                }
+                },
+                "desc" : ""
             }
         }
     }
-]
+}

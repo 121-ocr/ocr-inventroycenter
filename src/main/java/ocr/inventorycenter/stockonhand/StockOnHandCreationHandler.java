@@ -58,7 +58,7 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 
 	private JsonObject getParams(OtoCloudBusMessage<JsonObject> msg, JsonObject so) {
 		JsonObject settingInfo = msg.body();
-		settingInfo.put(StockOnHandConstant.bo_id, "");
+		//settingInfo.put(StockOnHandConstant.bo_id, "");
 		settingInfo.put(StockOnHandConstant.account, this.appActivity.getAppInstContext().getAccount());
 		settingInfo.put(StockOnHandConstant.locations, so.getValue("locations"));
 		settingInfo.put(StockOnHandConstant.warehouses, so.getValue("warehouses"));
@@ -68,7 +68,7 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 		settingInfo.put(StockOnHandConstant.invbatchcode, so.getString("invbatchcode"));
 		settingInfo.put(StockOnHandConstant.locationcode, so.getString("locationcode"));
 		settingInfo.put(StockOnHandConstant.warehousecode, so.getString("warehousecode"));
-		settingInfo.put(StockOnHandConstant.onhandnum, so.getString("onhandnum"));
+		settingInfo.put(StockOnHandConstant.onhandnum, so.getInteger("onhandnum"));
 		return settingInfo;
 	}
 
@@ -102,11 +102,15 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 		if (null == goods || goods.equals("")) {
 			errors.append("商品信息");
 		}
-
-		String num = so.getString(StockOnHandConstant.onhandnum);
-		if (null == num || num.equals("")) {
+		
+		if(!so.containsKey(StockOnHandConstant.onhandnum)){
 			errors.append("现存量");
 		}
+
+/*		String num = so.getString(StockOnHandConstant.onhandnum);
+		if (null == num || num.equals("")) {
+			errors.append("现存量");
+		}*/
 
 		return errors.toString();
 	}
