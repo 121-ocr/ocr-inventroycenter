@@ -1,13 +1,14 @@
 
 [
     {
-        "code":"1-6-2-10",  
+        "code":"1-6-3",  
         "containertype":"1", //容器类型：1：楼层，2：库房：3货区   4：货架
         "type":"1",  //类型：1 拣货区 2 存货区 3 退货区
         "ABC_type":"A", //ABC分类
         "isplane":true,  // 是否平面，立体
         "ismatrix":true,  // 是否矩阵分区
          "locations":{ //仓位信息
+            "code":"1-6-2-10",  
             "standfullnum":"6",
             "currentnum":"3",
             "packunit":"箱",

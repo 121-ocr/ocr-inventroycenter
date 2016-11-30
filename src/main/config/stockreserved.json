@@ -1,11 +1,10 @@
 [
     {
         "sku":"SKU001",
-        "goodaccount":"所属北京总仓",
-        "invbatchcode":"1",
-        "locationcode":"1-6-2-10",
+        "pickoutid":"JH001",//拣货单id
+        "goodaccount":"所属北京总仓",  
         "warehousecode":"WH001",
-        "onhandnum":"500",
+        "reservednum":"500",
         "warehouses":{
             "code":"WH001",
             "name":"北京总仓",
@@ -59,13 +58,6 @@
                     "desc":""
                 }
             }
-        },
-        "locations":{
-            "code":"1-6-2-10",  
-   			"standfullnum":"6",
-            "currentnum":"3",
-            "packunit":"箱",
-            "ismixedLot":0
         }
     }
 ]
