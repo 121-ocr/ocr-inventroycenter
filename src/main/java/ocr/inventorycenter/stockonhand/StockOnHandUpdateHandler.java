@@ -116,7 +116,7 @@ public class StockOnHandUpdateHandler extends ActionHandlerImpl<JsonObject> {
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
 
-		ActionURI uri = new ActionURI("create", HttpMethod.POST);
+		ActionURI uri = new ActionURI("update", HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
 
 		return actionDescriptor;
