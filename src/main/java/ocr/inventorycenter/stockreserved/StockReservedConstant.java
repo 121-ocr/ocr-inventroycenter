@@ -21,5 +21,5 @@ public class StockReservedConstant {
 	public static String reserverdnum = "reserverdnum";
 	
 	public static String pickoutid = "pickoutid";
-
+	public static String pickoutnum ="pickoutnum";
 }

@@ -1,11 +1,9 @@
 package ocr.inventorycenter.stockreserved;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import ocr.inventorycenter.stockonhand.StockOnHandConstant;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
@@ -24,7 +22,7 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 
 	public static final String ADDRESS = "reserved";
 
-	public static final String ONHAND_REGISTER = "ocr-inventorycenter.stocknohand.query";
+	public static final String ONHAND_REGISTER = "stockonhand-mgr.query";
 
 	public StockReservedCreationHandler(AppActivityImpl appActivity) {
 		super(appActivity);
@@ -45,39 +43,78 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 		JsonObject so = msg.body();
-
+		
+		
 		if (stockOnHandNullVal(so) != null && !stockOnHandNullVal(so).equals("")) {
 			msg.fail(100, stockOnHandNullVal(so));
 		}
+		
 		// 步骤1, 获取现存量
 		this.appActivity.getEventBus().send(getOnHandAddress(), getOnHandParam(so), onhandservice -> {
 			if (onhandservice.succeeded()) {
-				JsonObject onhands = (JsonObject) onhandservice.result().body();
-				Double onhandnum = onhands.getDouble("onhandnum");
-				// 步骤2、校验数量是否可以预留
-				isCanReserved(onhandnum, so, AsyncResult -> {
-					if (AsyncResult.succeeded()) {
-						// 步骤3、预留此拣货单id+sku+数量
-						executeReserved(so, AsyncResultsub -> {
-							if (AsyncResultsub.succeeded()) {
-								JsonArray srvCfg = new JsonArray("预留成功");
-								msg.reply(srvCfg);
-							} else {
-								Throwable errThrowable = AsyncResultsub.cause();
-								String errMsgString = errThrowable.getMessage();
-								appActivity.getLogger().error(errMsgString, errThrowable);
-								msg.fail(100, errMsgString);
-							}
-						});
-						msg.reply("ok");
-					} else {
-						Throwable err = AsyncResult.cause();
-						err.printStackTrace();
-						msg.fail(100, err.getCause().getMessage());
+				JsonArray onhands = (JsonArray) onhandservice.result().body();
+				if(onhands.isEmpty()){
+					String errMsg = "未找到   " + so.getString(StockOnHandConstant.sku) + " 的现存量";
+					msg.fail(100, errMsg);
+				}
+				JsonObject onhand = onhands.getJsonObject(0);
+				
+				Double onhandnum = onhand.getDouble("onhandnum");
+				
+				Double pickoutnum = so.getDouble(StockReservedConstant.pickoutnum);
+				
+				// 步骤2、校验数量是否可以预留 根据 sku + warehousecode 查询预留量
+				String sku = so.getString(StockReservedConstant.sku);
+				String whcode = so.getString(StockReservedConstant.warehousecode);
+				JsonObject queryObj = new JsonObject();
+				queryObj.put(StockReservedConstant.sku, sku);
+				queryObj.put(StockReservedConstant.warehousecode, whcode);
+				
+				
+				JsonObject fields = new JsonObject();
+				fields.put("_id", false);
+				fields.put(StockReservedConstant.pickoutnum, true);
+				
+				JsonObject queryMsg = new JsonObject();
+				queryMsg.put("queryObj", queryObj);
+				queryMsg.put("resFields", fields);
+				
+				
+				this.appActivity.getEventBus().send(this.appActivity.getAppInstContext().getAccount() +"."+ "ocr-inventorycenter.stockreserverd.querySRNum", queryMsg,onQueryServerdNum -> {
+					if(onQueryServerdNum.succeeded()){
+						
+						JsonArray jArray = (JsonArray) onQueryServerdNum.result().body();
+						Double count = 0.0;
+						for(int i=0;i<jArray.size();i++){
+							count+=jArray.getJsonObject(i).getDouble(StockReservedConstant.pickoutnum);
+						}
+						if(pickoutnum > (onhandnum - count)){
+							msg.fail(100, "预留拣货失败,库存不足");
+						}else{
+							//步骤3、如果步骤2 ok 则成功预留。否则预留拣货失败（目前整单预留，不进行部分预留）
+							this.appActivity.getEventBus().send(this.appActivity.getAppInstContext().getAccount() +"."+ "ocr-inventorycenter.stockreserverd.saveStockReserved", so,onSaveStockReserved -> {
+								if(onSaveStockReserved.succeeded()){
+									msg.reply(onSaveStockReserved.result().body());
+								}
+								else{
+									Throwable err = onhandservice.cause();
+									String errMsg = err.getMessage();
+									componentImpl.getLogger().error(errMsg, err);
+									msg.fail(100, errMsg);
+								}
+							});
+						}
+						
+					}
+					else{
+						Throwable err = onhandservice.cause();
+						String errMsg = err.getMessage();
+						componentImpl.getLogger().error(errMsg, err);
+						msg.fail(100, errMsg);
 					}
 				});
-
-				msg.reply("ok");
+				
+				
 			} else {
 				Throwable err = onhandservice.cause();
 				String errMsg = err.getMessage();
@@ -89,52 +126,24 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 
 	}
 
+
 	private JsonObject getOnHandParam(JsonObject so) {
 		JsonObject params = new JsonObject();
 		params.put("sku", so.getString("sku"));
 		params.put("warehousecode", so.getString("warehousecode"));
+		params.put("goodaccount", so.getString("goodaccount"));
 		return params;
 	}
 
 	private String getOnHandAddress() {
-		String authSrvName = componentImpl.getDependencies().getJsonObject("ocr-inventorycenter")
+		String accountID = this.appActivity.getAppInstContext().getAccount();
+		String authSrvName = this.appActivity.getDependencies().getJsonObject("stockonhand_service")
 				.getString("service_name", "");
-		String address = authSrvName + "." + ONHAND_REGISTER;
+		String address =accountID + "."+ authSrvName + "." + ONHAND_REGISTER;
 		return address;
 	}
 
-	private void executeReserved(JsonObject so, Handler<AsyncResult<Void>> next) {
-
-		JsonObject settingInfo = so;
-		settingInfo.put(StockReservedConstant.bo_id, "");
-		settingInfo.put(StockReservedConstant.account, this.appActivity.getAppInstContext().getAccount());
-		settingInfo.put(StockReservedConstant.sku, so.getString("sku"));
-		settingInfo.put(StockReservedConstant.warehousecode, so.getString("warehousecode"));
-		settingInfo.put(StockReservedConstant.pickoutid, so.getString("pickoutid"));// 拣货出货单ID（状态=拣货）
-		settingInfo.put(StockReservedConstant.reserverdnum, so.getString("reservednum"));
-
-		Future<Void> ret = Future.future();
-		ret.setHandler(next);
-
-		appActivity.getAppDatasource().getMongoClient().save(appActivity.getDBTableName(appActivity.getName()),
-				settingInfo, result -> {
-					if (result.succeeded()) {
-						ret.complete();
-					} else {
-						Throwable errThrowable = result.cause();
-						String errMsgString = errThrowable.getMessage();
-						appActivity.getLogger().error(errMsgString, errThrowable);
-						ret.fail(errMsgString);
-					}
-				});
-
-	}
-
-	private void isCanReserved(Double onhandnum, JsonObject so, Handler<AsyncResult<Void>> next) {
-		// TODO 根据条件sum mongodb中数量
-
-		
-	}
+	
 
 	private String stockOnHandNullVal(JsonObject so) {
 		StringBuffer errors = new StringBuffer();
@@ -154,13 +163,14 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 			errors.append("商品");
 		}
 
-		String reservednum = so.getString("reservednum");
-		if (null == reservednum || reservednum.equals("")) {
+		Double reservednum = so.getDouble("reservednum");
+		if (null == reservednum || reservednum.equals(0.0)) {
 			errors.append("预留量");
 		}
 
 		return errors.toString();
 	}
+
 
 	/**
 	 * 此action的自描述元数据
@@ -176,5 +186,6 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 
 		return actionDescriptor;
 	}
+	
 
 }

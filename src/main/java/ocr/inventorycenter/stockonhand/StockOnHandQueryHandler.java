@@ -63,11 +63,9 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 				getQueryConditon(msg.body()), 
 				//null,
 				result -> {
-//		this.getAppActivity().getVertx().fileSystem().readFile(menusFilePath, result -> {
+
     	    if (result.succeeded()) {
-    	    	//String fileContent = result.result().toString(); 
-    	        
-    	    	//JsonArray srvCfg = new JsonArray(fileContent);
+    	  
     	        msg.reply(result.result());     	        
     	        
     	    } else {

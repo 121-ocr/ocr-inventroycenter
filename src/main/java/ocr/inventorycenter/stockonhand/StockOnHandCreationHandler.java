@@ -107,11 +107,6 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 			errors.append("现存量");
 		}
 
-/*		String num = so.getString(StockOnHandConstant.onhandnum);
-		if (null == num || num.equals("")) {
-			errors.append("现存量");
-		}*/
-
 		return errors.toString();
 	}
 

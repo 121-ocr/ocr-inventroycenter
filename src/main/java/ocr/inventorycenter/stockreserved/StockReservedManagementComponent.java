@@ -1,7 +1,6 @@
 package ocr.inventorycenter.stockreserved;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 import otocloud.framework.app.function.AppActivityImpl;
@@ -44,7 +43,6 @@ public class StockReservedManagementComponent extends AppActivityImpl {
 	//业务活动组件中的业务功能
 	@Override
 	public List<OtoCloudEventHandlerRegistry> registerEventHandlers() {
-		
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
 
 		StockReservedCreationHandler initHandler = new StockReservedCreationHandler(this);
@@ -56,6 +54,12 @@ public class StockReservedManagementComponent extends AppActivityImpl {
 
 		StockReservedRemoveHandler removeHandler = new StockReservedRemoveHandler(this);
 		ret.add(removeHandler);
+		
+		StockReservedNumQueryHandler srNumHandler = new StockReservedNumQueryHandler(this);
+		ret.add(srNumHandler);
+		
+		StockReservedSaveHandler saveHandler = new StockReservedSaveHandler(this);
+		ret.add(saveHandler);
 		
 		return ret;
 	}
