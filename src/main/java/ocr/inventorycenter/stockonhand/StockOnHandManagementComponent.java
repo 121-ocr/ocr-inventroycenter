@@ -18,7 +18,7 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 	//业务活动组件名
 	@Override
 	public String getName() {
-		return "stockonhand_mgr";
+		return "stockonhand-mgr";
 	}
 	
 	//业务活动组件要处理的核心业务对象
