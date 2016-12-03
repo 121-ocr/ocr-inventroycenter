@@ -23,4 +23,14 @@ public class StockOnHandConstant {
 	public static String warehousecode = "warehousecode";
 	public static String onhandnum = "onhandnum";
 
+	// -----------------组件信息
+	public static String ComponentNameConstant = "stockonhand-mgr";
+	public static String ComponentBizObjectTypeConstant = "bc_stockonhand";
+
+	// -----------------handler address
+	public static String CreateAddressConstant = "create";
+	public static String ModifyAddressConstant = "modify";
+	public static String QueryAddressConstant = "query";
+	public static String RemoveAddressConstant = "remove";
+
 }

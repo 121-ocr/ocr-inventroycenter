@@ -33,4 +33,9 @@ public class StockReservedConstant {
 	public static String ModifyAddressConstant = "modify";
 	public static String QueryAddressConstant = "query";
 	public static String RemoveAddressConstant = "remove";
+	
+	// -----------------状态变化
+	public static String CreatedStatus = "created"; //创建完毕
+	public static String RemoveStatus = "removed"; //remove完毕
+
 }

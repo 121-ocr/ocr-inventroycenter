@@ -18,7 +18,7 @@ import otocloud.framework.core.OtoCloudBusMessage;
 // 业务活动功能处理器
 public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 
-	public static final String ADDRESS = "create";
+	public static final String ADDRESS = StockOnHandConstant.CreateAddressConstant;
 
 	public StockOnHandCreationHandler(AppActivityImpl appActivity) {
 		super(appActivity);
