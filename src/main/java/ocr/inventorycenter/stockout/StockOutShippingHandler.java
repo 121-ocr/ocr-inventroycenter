@@ -1,6 +1,7 @@
 package ocr.inventorycenter.stockout;
 
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonObject;
 import ocr.common.handler.SampleBillBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
@@ -15,7 +16,7 @@ import otocloud.framework.core.HandlerDescriptor;
  * @author LCL
  *
  */
-public class StockOutShippingHandler extends SampleBillBaseHandler{
+public class StockOutShippingHandler extends SampleBillBaseHandler {
 
 	public static final String ADDRESS = StockOutConstant.ShippingOutAddressConstant;
 
@@ -31,7 +32,6 @@ public class StockOutShippingHandler extends SampleBillBaseHandler{
 	public String getEventAddress() {
 		return ADDRESS;
 	}
-	
 
 	/**
 	 * {@inheritDoc}
@@ -47,11 +47,16 @@ public class StockOutShippingHandler extends SampleBillBaseHandler{
 		handlerDescriptor.setRestApiURI(uri);
 
 		// 状态变化定义
-		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, StockOutConstant.CreatedStatus, StockOutConstant.PickOutedStatus);
+		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT,
+				StockOutConstant.CreatedStatus, StockOutConstant.PickOutedStatus);
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
 
 		return actionDescriptor;
 	}
 
+	// 删除预留，删除现存量
+	protected void afterProcess(JsonObject bo) {
+
+	}
 }

@@ -8,6 +8,7 @@ package ocr.inventorycenter.stockreserved;
  */
 public class StockReservedConstant {
 
+	// 字段常量
 	public static String bo_id = "bo_id";
 	public static String account = "account";
 	public static String locations = "locations";
@@ -19,7 +20,17 @@ public class StockReservedConstant {
 	public static String locationcode = "locationcode";
 	public static String warehousecode = "warehousecode";
 	public static String reserverdnum = "reserverdnum";
-	
+
 	public static String pickoutid = "pickoutid";
-	public static String pickoutnum ="pickoutnum";
+	public static String pickoutnum = "pickoutnum";
+
+	// -----------------组件信息
+	public static String ComponentNameConstant = "stockreserved";
+	public static String ComponentBizObjectTypeConstant = "bc_stockreserved";
+
+	// -----------------handler address
+	public static String ReservedAddressConstant = "reserved";
+	public static String ModifyAddressConstant = "modify";
+	public static String QueryAddressConstant = "query";
+	public static String RemoveAddressConstant = "remove";
 }

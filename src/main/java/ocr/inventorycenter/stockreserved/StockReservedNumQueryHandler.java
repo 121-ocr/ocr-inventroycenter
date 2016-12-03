@@ -44,7 +44,7 @@ public class StockReservedNumQueryHandler extends ActionHandlerImpl<JsonObject>{
     	    		event.reply(reserverdnumArray); 
     	    	}else{
     	    		JsonObject obj = new JsonObject();
-    	    		obj.put(StockReservedConstant.pickoutnum, 0.0);
+    	    		obj.put(StockReservedConstant.reserverdnum, 0.0);
     	    		JsonArray array = new JsonArray();
     	    		array.add(obj);
     	    		event.reply(array);
