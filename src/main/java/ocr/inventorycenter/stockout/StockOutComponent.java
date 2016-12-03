@@ -3,6 +3,9 @@ package ocr.inventorycenter.stockout;
 import java.util.ArrayList;
 import java.util.List;
 
+import ocr.inventorycenter.stockreserved.StockReservedNumQueryHandler;
+import ocr.inventorycenter.stockreserved.StockReservedRemoveHandler;
+import ocr.inventorycenter.stockreserved.StockReservedSaveHandler;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRoleDescriptor;
 import otocloud.framework.core.OtoCloudEventDescriptor;
@@ -50,11 +53,23 @@ public class StockOutComponent extends AppActivityImpl {
 	// 业务活动组件中的业务功能
 	@Override
 	public List<OtoCloudEventHandlerRegistry> registerEventHandlers() {
-	
+
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
 
-		StockOutCreateHandler saleOrderCreateHandler = new StockOutCreateHandler(this);
-		ret.add(saleOrderCreateHandler);
+		StockOutCreateHandler createHandler = new StockOutCreateHandler(this);
+		ret.add(createHandler);
+
+		StockOutQueryHandler queryHandler = new StockOutQueryHandler(this);
+		ret.add(queryHandler);
+
+		StockOutRemoveHandler removeHandler = new StockOutRemoveHandler(this);
+		ret.add(removeHandler);
+
+		StockOutPickOutHandler pickoutHandler = new StockOutPickOutHandler(this);
+		ret.add(pickoutHandler);
+
+		StockOutShippingHandler shippingHandler = new StockOutShippingHandler(this);
+		ret.add(shippingHandler);
 
 		return ret;
 	}
