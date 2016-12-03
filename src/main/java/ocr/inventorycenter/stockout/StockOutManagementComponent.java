@@ -17,7 +17,7 @@ import otocloud.framework.core.OtoCloudEventHandlerRegistry;
  * @author LCL
  *
  */
-public class StockOutComponent extends AppActivityImpl {
+public class StockOutManagementComponent extends AppActivityImpl {
 
 	// 业务活动组件名
 	@Override
