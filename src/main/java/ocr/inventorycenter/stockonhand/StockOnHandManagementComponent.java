@@ -3,6 +3,7 @@ package ocr.inventorycenter.stockonhand;
 import java.util.ArrayList;
 import java.util.List;
 
+import ocr.inventorycenter.stockonhand.sales.StockOnHandQuery4SalesHandler;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRoleDescriptor;
 import otocloud.framework.core.OtoCloudEventDescriptor;
@@ -57,6 +58,11 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 		
 		StockOnHandUpdateHandler updateHandler = new StockOnHandUpdateHandler(this);
 		ret.add(updateHandler);
+		
+		StockOnHandQuery4SalesHandler query4SalesHandler = new StockOnHandQuery4SalesHandler(this);
+		ret.add(query4SalesHandler);
+		
+		
 		
 		return ret;
 	}
