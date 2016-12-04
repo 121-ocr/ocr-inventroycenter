@@ -23,7 +23,8 @@ public class StockReservedConstant {
 
 	public static String pickoutid = "pickoutid";
 	public static String pickoutnum = "pickoutnum";
-
+	public static String goodaccount = "goodaccount";
+	
 	// -----------------组件信息
 	public static String ComponentNameConstant = "stockreserved";
 	public static String ComponentBizObjectTypeConstant = "bc_stockreserved";

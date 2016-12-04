@@ -1,12 +1,54 @@
+删除supply_date 字段
+删除is_completed 字段
+增加customer客户 
+删除restocking_warehouse 改成删除warehouse
+删除request_code 
+
+表体增加仓位
+
+ 
+    
+
 {
 	"bo_id": "ALLOT201611190001",
-	"supply_date": "2016/11/15",
 	"send_date": "2016/11/21",
 	"confirm_date": "2016/11/25",
-	"customer": "北京门店",
+	"channel": {
+	    "code": "N0003",
+    	"name": "昌平分店",
+    	"channel_type": {
+    		"code": "ch001",
+    		"name": "加盟店"
+    	},
+    	"customer": {
+    		"code": "cus0001",
+    		"name": "昌平北环商贸有限公司"
+    	},
+    	"account": "4"
+	},
 	"note": "",
 	"operator": "001",
 	"replenishment_code": "002",
+	"warehouse": 
+			{
+				"code": "WH002",
+				"name": "海淀门店",
+				"type": "1",
+				"character": "2",
+				"owner_org": 
+				{
+					"code": "ORG001",
+					"name": "卡洛公司"
+				},
+
+				"vmi_org": 
+				{
+					"code": "ORG002",
+					"name": "海淀分店"
+				},
+
+				"address": "北京市大兴区38号"
+			},
 	"detail": 
 	[
 		{
@@ -243,26 +285,7 @@
 			},
 
 			"note": "",
-			"warehouse": 
-			{
-				"code": "WH002",
-				"name": "海淀门店",
-				"type": "1",
-				"character": "2",
-				"owner_org": 
-				{
-					"code": "ORG001",
-					"name": "卡洛公司"
-				},
-
-				"vmi_org": 
-				{
-					"code": "ORG002",
-					"name": "海淀分店"
-				},
-
-				"address": "北京市大兴区38号"
-			},
+			
 
 			"locations": 
 			{

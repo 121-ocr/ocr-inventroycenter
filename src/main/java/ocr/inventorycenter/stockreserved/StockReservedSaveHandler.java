@@ -1,5 +1,8 @@
 package ocr.inventorycenter.stockreserved;
 
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import otocloud.common.ActionURI;
@@ -25,18 +28,37 @@ public class StockReservedSaveHandler extends ActionHandlerImpl<JsonObject>{
 
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> event) {			
+		JsonObject bo = event.body();
+		saveStockReserved(bo, ret->{
+			if (ret.succeeded()) {
+				event.reply(event.body());
+			} else {
+				Throwable errThrowable = ret.cause();
+				String errMsgString = errThrowable.getMessage();
+				event.fail(100,errMsgString);
+			}	
+			
+		});
+
+	}
+	
+	public void saveStockReserved(JsonObject bo,  Handler<AsyncResult<JsonObject>> next){
+		Future<JsonObject> future = Future.future();
+		future.setHandler(next);
 		appActivity.getAppDatasource().getMongoClient().save(appActivity.getDBTableName(appActivity.getBizObjectType()),
-				event.body(), result -> {
+				bo, result -> {
 					if (result.succeeded()) {
-						event.reply(event.body());
+						//event.reply(event.body());
+						future.complete(bo);
 					} else {
 						Throwable errThrowable = result.cause();
 						String errMsgString = errThrowable.getMessage();
 						appActivity.getLogger().error(errMsgString, errThrowable);
-						event.fail(100,errMsgString);
+						//event.fail(100,errMsgString);
+						future.fail(errThrowable);
 					}
 				});
-		
+	
 	}
 	
 	@Override

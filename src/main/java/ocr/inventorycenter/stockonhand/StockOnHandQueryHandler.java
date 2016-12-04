@@ -2,7 +2,6 @@ package ocr.inventorycenter.stockonhand;
 
 
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.FindOptions;
 import otocloud.common.ActionURI;
@@ -86,14 +85,24 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 				&& !so.getString(StockOnHandConstant.sku).isEmpty()){
 			query.put(StockOnHandConstant.sku, so.getString(StockOnHandConstant.sku));
 		}
-		if(so.containsKey(StockOnHandConstant.goodaccount)
-				&& !so.getString(StockOnHandConstant.goodaccount).isEmpty()){
-			query.put(StockOnHandConstant.goodaccount, so.getString("goodaccount"));
+		if(so.containsKey(StockOnHandConstant.goodaccount)){
+			String goodaccount = so.getString(StockOnHandConstant.goodaccount);		
+			if(goodaccount != null && !goodaccount.isEmpty()){
+				query.put(StockOnHandConstant.goodaccount, goodaccount);
+			}
 		}
+		
+		if(so.containsKey("invbatchcode")){
+			String batchCode = so.getString("invbatchcode");
+			if(batchCode != null && !batchCode.isEmpty())
+				query.put("invbatchcode", batchCode);	
+		}
+		
 //		query.put(StockOnHandConstant.sku, so.getString("sku"));
 //		query.put(StockOnHandConstant.invbatchcode, so.getString("invbatchcode"));
 //		query.put(StockOnHandConstant.locationcode, so.getString("locationcode"));
 		query.put(StockOnHandConstant.warehousecode, so.getString("warehousecode"));
+		
 		return query;
 	}
 	

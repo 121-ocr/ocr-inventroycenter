@@ -18,6 +18,7 @@ public class StockOutConstant {
 	public static String QueryAddressConstant = "query";
 	public static String RemoveAddressConstant = "remove";
 	public static String PickOutAddressConstant = "pickout";// 拣货
+	public static String BatchPickOutAddressConstant = "batch_pickout";// 批量拣货
 	public static String ShippingOutAddressConstant = "shippingout";// 出库
 	
 	

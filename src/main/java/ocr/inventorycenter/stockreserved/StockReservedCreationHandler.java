@@ -44,9 +44,9 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 		JsonObject so = msg.body();
 		
-		
-		if (stockOnHandNullVal(so) != null && !stockOnHandNullVal(so).equals("")) {
-			msg.fail(100, "如下字段不能空："+stockOnHandNullVal(so));
+		String errString = stockOnHandNullVal(so);
+		if (errString != null && !errString.equals("")) {
+			msg.fail(100, "如下字段不能空："+ errString);
 		}
 		
 		// 步骤1, 获取现存量
@@ -71,8 +71,7 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 				String whcode = so.getString(StockReservedConstant.warehousecode);
 				JsonObject queryObj = new JsonObject();
 				queryObj.put(StockReservedConstant.sku, sku);
-				queryObj.put(StockReservedConstant.warehousecode, whcode);
-				
+				queryObj.put(StockReservedConstant.warehousecode, whcode);				
 				
 				JsonObject fields = new JsonObject();
 				fields.put("_id", false);
@@ -82,35 +81,40 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 				queryMsg.put("queryObj", queryObj);
 				queryMsg.put("resFields", fields);
 				
-				
-				this.appActivity.getEventBus().send(this.appActivity.getAppInstContext().getAccount() +"."+ "ocr-inventorycenter.stockreserved.querySRNum", queryMsg,onQueryServerdNum -> {
+				//this.appActivity.getEventBus().send(this.appActivity.getAppInstContext().getAccount() +"."+ "ocr-inventorycenter.stockreserved.querySRNum", queryMsg,
+				StockReservedNumQueryHandler srmQueryHandler = new StockReservedNumQueryHandler(this.appActivity);				
+				srmQueryHandler.querySRNum(queryMsg, onQueryServerdNum -> {
 					if(onQueryServerdNum.succeeded()){
 						
-						JsonArray jArray = (JsonArray) onQueryServerdNum.result().body();
-						Double count = 0.0;
-						for(int i=0;i<jArray.size();i++){
-							count+=jArray.getJsonObject(i).getDouble(StockReservedConstant.pickoutnum);
+						JsonArray jArray = onQueryServerdNum.result();
+						if(jArray != null && jArray.size() > 0){
+							Double count = 0.0;
+							for(Object item : jArray){
+								count += ((JsonObject)item).getDouble(StockReservedConstant.pickoutnum);					
+							}	
+							if(pickoutnum > (onhandnum - count)){
+								msg.fail(100, "预留拣货失败,库存不足");
+							}
 						}
-						if(pickoutnum > (onhandnum - count)){
-							msg.fail(100, "预留拣货失败,库存不足");
-						}else{
-							//步骤3、如果步骤2 ok 则成功预留。否则预留拣货失败（目前整单预留，不进行部分预留）
-							this.appActivity.getEventBus().send(this.appActivity.getAppInstContext().getAccount() +"."+ "ocr-inventorycenter.stockreserved.saveStockReserved", so,onSaveStockReserved -> {
-								if(onSaveStockReserved.succeeded()){
-									msg.reply(onSaveStockReserved.result().body());
-								}
-								else{
-									Throwable err = onhandservice.cause();
-									String errMsg = err.getMessage();
-									componentImpl.getLogger().error(errMsg, err);
-									msg.fail(100, errMsg);
-								}
-							});
-						}
+						
+						//步骤3、如果步骤2 ok 则成功预留。否则预留拣货失败（目前整单预留，不进行部分预留）
+						StockReservedSaveHandler stockReservedSaveHandler = new StockReservedSaveHandler(this.appActivity);
+						//this.appActivity.getEventBus().send(this.appActivity.getAppInstContext().getAccount() +"."+ "ocr-inventorycenter.stockreserved.saveStockReserved", so,onSaveStockReserved -> {
+						stockReservedSaveHandler.saveStockReserved(so, onSaveStockReserved -> {								
+							if(onSaveStockReserved.succeeded()){
+								msg.reply(onSaveStockReserved.result());
+							}
+							else{
+								Throwable err = onhandservice.cause();
+								String errMsg = err.getMessage();
+								componentImpl.getLogger().error(errMsg, err);
+								msg.fail(100, errMsg);
+							}
+						});						
 						
 					}
 					else{
-						Throwable err = onhandservice.cause();
+						Throwable err = onQueryServerdNum.cause();
 						String errMsg = err.getMessage();
 						componentImpl.getLogger().error(errMsg, err);
 						msg.fail(100, errMsg);
@@ -134,6 +138,13 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 		JsonObject params = new JsonObject();
 		params.put("sku", so.getString("sku"));
 		params.put("warehousecode", so.getString("warehousecode"));
+		
+		if(so.containsKey("batch_code")){
+			String batchCode = so.getString("batch_code");
+			if(batchCode != null && !batchCode.isEmpty())
+				params.put("invbatchcode", batchCode);	
+		}
+		
 		params.put("goodaccount", so.getString("goodaccount"));
 		return params;
 	}
@@ -161,9 +172,14 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 			errors.append("sku");
 		}
 
-		String goods = so.getString("goodaccount");
+/*		String goods = so.getString("goodaccount");
 		if (null == goods || goods.equals("")) {
-			errors.append("商品");
+			errors.append("货主");
+		}*/
+		
+		String pickoutid = so.getString("pickoutid");
+		if (null == pickoutid || pickoutid.isEmpty()) {
+			errors.append("拣货单号"); 
 		}
 
 		Double pickoutnum = so.getDouble("pickoutnum");

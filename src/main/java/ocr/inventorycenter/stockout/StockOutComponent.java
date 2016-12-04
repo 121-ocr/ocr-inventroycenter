@@ -3,9 +3,6 @@ package ocr.inventorycenter.stockout;
 import java.util.ArrayList;
 import java.util.List;
 
-import ocr.inventorycenter.stockreserved.StockReservedNumQueryHandler;
-import ocr.inventorycenter.stockreserved.StockReservedRemoveHandler;
-import ocr.inventorycenter.stockreserved.StockReservedSaveHandler;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRoleDescriptor;
 import otocloud.framework.core.OtoCloudEventDescriptor;
@@ -67,6 +64,9 @@ public class StockOutComponent extends AppActivityImpl {
 
 		StockOutPickOutHandler pickoutHandler = new StockOutPickOutHandler(this);
 		ret.add(pickoutHandler);
+		
+		StockOutBatchPickOutHandler stockOutBatchPickOutHandler = new StockOutBatchPickOutHandler(this);
+		ret.add(stockOutBatchPickOutHandler);
 
 		StockOutShippingHandler shippingHandler = new StockOutShippingHandler(this);
 		ret.add(shippingHandler);
