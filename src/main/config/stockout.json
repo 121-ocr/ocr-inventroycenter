@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 删除supply_date 字段
 删除is_completed 字段
 增加customer客户 
@@ -10,6 +11,7 @@
     
 
 {
+﻿{
 	"bo_id": "ALLOT201611190001",
 	"send_date": "2016/11/21",
 	"confirm_date": "2016/11/25",
@@ -26,6 +28,7 @@
     	},
     	"account": "4"
 	},
+	"pickout_date": "2016/11/25",
 	"note": "",
 	"operator": "001",
 	"replenishment_code": "002",

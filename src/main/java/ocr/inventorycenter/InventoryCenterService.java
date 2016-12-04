@@ -7,6 +7,7 @@ import ocr.inventorycenter.invorg.InvOrgManagementComponent;
 import ocr.inventorycenter.pharseinv.PharseInvManagementComponent;
 import ocr.inventorycenter.stockonhand.StockOnHandManagementComponent;
 import ocr.inventorycenter.stockout.StockOutComponent;
+import ocr.inventorycenter.stockout.StockOutManagementComponent;
 import ocr.inventorycenter.stockreserved.StockReservedManagementComponent;
 import otocloud.framework.app.engine.AppServiceImpl;
 import otocloud.framework.app.engine.WebServer;
@@ -53,6 +54,9 @@ public class InventoryCenterService extends AppServiceImpl {
 		
 		StockOutComponent stockOutComponent = new StockOutComponent();
 		retActivities.add(stockOutComponent);
+
+		StockOutManagementComponent stockOut = new StockOutManagementComponent();
+		retActivities.add(stockOut);
 
 		return retActivities;
 	}
