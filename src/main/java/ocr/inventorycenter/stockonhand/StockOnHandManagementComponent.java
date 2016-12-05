@@ -62,6 +62,8 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 		StockOnHandQuery4SalesHandler query4SalesHandler = new StockOnHandQuery4SalesHandler(this);
 		ret.add(query4SalesHandler);
 		
+		StockOnHandBatchCreationHandler stockOnHandBatchCreationHandler = new StockOnHandBatchCreationHandler(this);
+		ret.add(stockOnHandBatchCreationHandler);
 		
 		
 		return ret;
