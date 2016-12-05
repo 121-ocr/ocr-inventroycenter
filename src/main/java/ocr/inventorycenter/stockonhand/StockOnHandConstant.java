@@ -32,5 +32,6 @@ public class StockOnHandConstant {
 	public static String ModifyAddressConstant = "modify";
 	public static String QueryAddressConstant = "query";
 	public static String RemoveAddressConstant = "remove";
+	public static String BatchCreateAddressConstant = "batchcreate";
 
 }
