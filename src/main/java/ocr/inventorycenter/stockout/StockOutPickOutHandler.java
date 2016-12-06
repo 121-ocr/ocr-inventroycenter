@@ -49,7 +49,7 @@ public class StockOutPickOutHandler extends SampleBillBaseHandler {
 
 		// 状态变化定义
 		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT,
-				StockOutConstant.CreatedStatus, StockOutConstant.PickOutedStatus);
+				StockOutConstant.ONShippingStatus, StockOutConstant.PickOutedStatus);
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
 

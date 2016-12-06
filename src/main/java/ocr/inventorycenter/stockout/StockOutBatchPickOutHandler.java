@@ -79,6 +79,7 @@ public class StockOutBatchPickOutHandler extends ActionHandlerImpl<JsonArray> {
 		JsonArray resultObjects = new JsonArray();
 		
 		documents.forEach(document->{
+			
 			Future<JsonObject> returnFuture = Future.future();
 			futures.add(returnFuture);
 			
@@ -129,8 +130,8 @@ public class StockOutBatchPickOutHandler extends ActionHandlerImpl<JsonArray> {
 								
 								//错误记录
 								JsonObject reservedError = new JsonObject();
-								reservedError.put("sku", boDetail.getJsonObject("goods").getString("product_sku_code"));
-								reservedError.put("batch_code", boDetail.getString("batch_code"));
+								reservedError.put(StockReservedConstant.sku, boDetail.getJsonObject("goods").getString("product_sku_code"));
+								reservedError.put(StockReservedConstant.batch_code, boDetail.getString("batch_code"));
 								reservedError.put("error", errMsg);
 								reservedErrors.add(reservedError);							
 								
