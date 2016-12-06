@@ -33,7 +33,7 @@ public class StockOutQueryHandler extends SampleBillBaseQueryHandler {
 	@Override
 	public String getStatus() {
 		// TODO Auto-generated method stub
-		return StockOutConstant.CreatedStatus;
+		return StockOutConstant.PickOutedStatus;
 	}
 
 }
