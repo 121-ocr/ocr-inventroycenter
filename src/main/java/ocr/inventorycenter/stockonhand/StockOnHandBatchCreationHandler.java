@@ -39,6 +39,7 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 		for (Object so : sos) {
 			if (stockOnHandNullVal((JsonObject)so) != null && !stockOnHandNullVal((JsonObject)so).equals("")) {
 				msg.fail(100, "如下数据不能为空值："+stockOnHandNullVal((JsonObject)so));
+				return;
 			}
 		}		
 
