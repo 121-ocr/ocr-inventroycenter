@@ -1,17 +1,13 @@
 package ocr.inventorycenter.stockout;
 
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonObject;
 import ocr.common.handler.SampleBillBaseHandler;
-import ocr.inventorycenter.stockonhand.StockOnHandConstant;
-import ocr.inventorycenter.stockreserved.StockReservedConstant;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
 
 /**
  * 拣货出库单--（拣货态-->发货状）
@@ -51,7 +47,7 @@ public class StockOutShippingHandler extends SampleBillBaseHandler {
 
 		// 状态变化定义
 		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT,
-				StockOutConstant.PickOutedStatus, StockOutConstant.ShippingStatus);
+				StockOutConstant.PickOutedStatus, StockOutConstant.ShippingStatus, true, true);
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
 

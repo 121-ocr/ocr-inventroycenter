@@ -80,7 +80,8 @@ public class StockOutPickOutHandler extends SampleBillBaseHandler {
 
 	private String getReservedAdd() {
 		return this.appActivity.getAppInstContext().getAccount() + "."
-				+ this.appActivity.getAppService().getRealServiceName() + StockReservedConstant.ComponentNameConstant
+				+ this.appActivity.getAppService().getRealServiceName() + "."
+				+ StockReservedConstant.ComponentNameConstant + "."
 				+ StockReservedConstant.ReservedAddressConstant;
 
 	}
