@@ -25,7 +25,7 @@ public class StockOnHandConstant {
 
 	// -----------------组件信息
 	public static String ComponentNameConstant = "stockonhand-mgr";
-	public static String ComponentBizObjectTypeConstant = "bc_stockonhand";
+	public static String ComponentBizObjectTypeConstant = "bs_stockonhand";
 
 	// -----------------handler address
 	public static String CreateAddressConstant = "create";
