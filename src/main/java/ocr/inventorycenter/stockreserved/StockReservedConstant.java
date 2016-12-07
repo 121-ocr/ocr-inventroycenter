@@ -15,6 +15,10 @@ public class StockReservedConstant {
 	public static String warehouses = "warehouses";
 	public static String goods = "goods";
 	public static String sku = "sku";
+	
+	
+	
+	
 	public static String invbatchcode = "invbatchcode";
 
 	public static String locationcode = "locationcode";
@@ -25,9 +29,13 @@ public class StockReservedConstant {
 	public static String pickoutnum = "pickoutnum";
 	public static String goodaccount = "goodaccount";
 	
+	public static String quantity_should = "quantity_should";
+	public static String batch_code = "batch_code";
+	
+	
 	// -----------------组件信息
 	public static String ComponentNameConstant = "stockreserved";
-	public static String ComponentBizObjectTypeConstant = "bc_stockreserved";
+	public static String ComponentBizObjectTypeConstant = "bs_stockreserved";
 
 	// -----------------handler address
 	public static String ReservedAddressConstant = "reserved";

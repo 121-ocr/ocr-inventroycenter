@@ -58,11 +58,19 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 					msg.fail(100, errMsg);
 				}
 				
-			    JsonArray results=	onhands.getJsonArray("result");
-			    			    
-				JsonObject onhand = results.getJsonObject(0);//TODO 汇总一下？
 				
-				Double onhandnum = onhand.getDouble("onhandnum");
+				
+			    JsonArray results=	onhands.getJsonArray("result");
+			    
+			     Double onhandnum = 0.0;
+			     
+			    if(results!=null&&!results.isEmpty()){
+			    	JsonObject onhand = results.getJsonObject(0);//TODO 汇总一下？
+					
+					 onhandnum = onhand.getDouble("onhandnum");
+			    }
+			  
+			    final Double onhandnum2=onhandnum;
 				
 				Double pickoutnum = so.getDouble(StockReservedConstant.pickoutnum);
 				
@@ -92,7 +100,7 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 							for(Object item : jArray){
 								count += ((JsonObject)item).getDouble(StockReservedConstant.pickoutnum);					
 							}	
-							if(pickoutnum > (onhandnum - count)){
+							if(pickoutnum > (onhandnum2 - count)){
 								msg.fail(100, "预留拣货失败,库存不足");
 							}
 						}
