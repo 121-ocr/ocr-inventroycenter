@@ -29,14 +29,14 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  *
  */
-public class StockOutBatchPickOutAddLocationHandler extends ActionHandlerImpl<JsonArray> {
+public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray> {
 
 	public static final String ADDRESS = StockOutConstant.BatchPickOutAddressTestConstant;
 
 	public static final String ONHAND_REGISTER = "stockonhand-mgr.querylocations";
 	
 	
-	public StockOutBatchPickOutAddLocationHandler(AppActivityImpl appActivity) {
+	public StockOutBatchPickOutTESTHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 	}
 
