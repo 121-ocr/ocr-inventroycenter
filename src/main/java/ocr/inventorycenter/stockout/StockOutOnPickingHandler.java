@@ -119,14 +119,16 @@ public class StockOutOnPickingHandler extends SampleBillBaseHandler {
 
 	private String getReservedModifyAddress() {
 		return this.appActivity.getAppInstContext().getAccount() + "."
-				+ this.appActivity.getAppService().getRealServiceName() + StockReservedConstant.ComponentNameConstant
+				+ this.appActivity.getAppService().getRealServiceName() + "."
+				+ StockReservedConstant.ComponentNameConstant + "."
 				+ StockReservedConstant.ModifyAddressConstant;
 
 	}
 
 	private String getOnhandRemoveAddress() {
 		return this.appActivity.getAppInstContext().getAccount() + "."
-				+ this.appActivity.getAppService().getRealServiceName() + StockOnHandConstant.ComponentNameConstant
+				+ this.appActivity.getAppService().getRealServiceName() + "."
+				+ StockOnHandConstant.ComponentNameConstant + "."
 				+ StockOnHandConstant.CreateAddressConstant;
 
 	}
