@@ -74,9 +74,8 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 			settingInfo.put(StockOnHandConstant.invbatchcode, settingInfo.getString("invbatchcode"));
 			settingInfo.put(StockOnHandConstant.locationcode, settingInfo.getString("locationcode"));
 			settingInfo.put(StockOnHandConstant.warehousecode, settingInfo.getString("warehousecode"));
-			settingInfo.put(StockOnHandConstant.onhandnum, settingInfo.getInteger("onhandnum"));
+			settingInfo.put(StockOnHandConstant.onhandnum, settingInfo.getString("onhandnum"));
 			
-			settingInfos.add(settingInfo);
 		}
 		
 		return settingInfos;
