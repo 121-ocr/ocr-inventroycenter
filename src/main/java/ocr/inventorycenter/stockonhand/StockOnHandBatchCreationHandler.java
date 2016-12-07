@@ -85,12 +85,6 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 	private String stockOnHandNullVal(JsonObject so) {
 		StringBuffer errors = new StringBuffer();
 		
-		Object locations = so.getValue(StockOnHandConstant.locations);
-
-		if (null == locations || locations.equals("")) {
-			errors.append("货位");
-		}
-
 		Object warehouses = so.getValue(StockOnHandConstant.warehouses);
 
 		if (null == warehouses || warehouses.equals("")) {
