@@ -33,7 +33,6 @@ public class StockOutQueryHandler extends SampleBillBaseQueryHandler {
 	 */
 	@Override
 	public String getStatus(JsonObject msgBody) {
-		// TODO Auto-generated method stub
 		//return StockOutConstant.PickOutedStatus;
 		return msgBody.getString("status");
 	}
