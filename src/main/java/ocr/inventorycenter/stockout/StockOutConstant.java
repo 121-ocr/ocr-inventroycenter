@@ -8,10 +8,19 @@ package ocr.inventorycenter.stockout;
  */
 public class StockOutConstant {
 
+	
 	// -----------------组件信息
 	public static String ComponentNameConstant = "stockout-mgr";
 	public static String ComponentBizObjectTypeConstant = "bp_stockout";
-
+	
+	
+	// -------------类变量
+	public static final String batch_code = "batch_code";
+	public static final String goods = "goods";
+	public static final String product_sku_code = "product_sku_code";;
+	public static final String quantity_should = "quantity_should";;
+	public static final String warehouse = "warehouse";;
+	
 	// -----------------handler address
 	public static String CreateAddressConstant = "create";
 	public static String ModifyAddressConstant = "modify";
@@ -30,6 +39,7 @@ public class StockOutConstant {
 	public static String ONShippingStatus = "onshipping";//拣货中
 	public static String PickOutedStatus = "pickouted";//拣货完毕
 	public static String ShippingStatus = "shippingouted";//出库完毕
+	
 	
 
 }
