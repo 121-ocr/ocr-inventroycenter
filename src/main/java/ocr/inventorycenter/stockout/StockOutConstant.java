@@ -35,8 +35,7 @@ public class StockOutConstant {
 	
 	// -----------------状态变化
 	public static String CreatedStatus = "created"; //创建完毕
-	public static String RemoveStatus = "removed"; //remove完毕
-	public static String ONShippingStatus = "onshipping";//拣货中
+	public static String ONPickingStatus = "onpicking";//拣货中
 	public static String PickOutedStatus = "pickouted";//拣货完毕
 	public static String ShippingStatus = "shippingouted";//出库完毕
 	

@@ -19,11 +19,11 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  *
  */
-public class StockOutOnShippingHandler extends SampleBillBaseHandler {
+public class StockOutOnPickingHandler extends SampleBillBaseHandler {
 
 	public static final String ADDRESS = StockOutConstant.ONShippingOutAddressConstant;
 
-	public StockOutOnShippingHandler(AppActivityImpl appActivity) {
+	public StockOutOnPickingHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 		// TODO Auto-generated constructor stub
 	}
@@ -51,7 +51,7 @@ public class StockOutOnShippingHandler extends SampleBillBaseHandler {
 
 		// 状态变化定义
 		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT,
-				StockOutConstant.CreatedStatus, StockOutConstant.PickOutedStatus);
+				StockOutConstant.CreatedStatus, StockOutConstant.ONPickingStatus);
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
 
