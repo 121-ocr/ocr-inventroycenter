@@ -4,6 +4,8 @@ package ocr.inventorycenter.pharseinv;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import ocr.common.handler.SampleBillBaseQueryHandler;
+import ocr.inventorycenter.stockout.StockOutConstant;
 import otocloud.common.ActionURI;
 import otocloud.common.OtoCloudDirectoryHelper;
 import otocloud.framework.app.function.ActionDescriptor;
@@ -18,65 +20,31 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  */
 //业务活动功能处理器
-public class PharseInvQueryHandler extends ActionHandlerImpl<JsonObject> {
-	
-	public static final String ADDRESS = "query";
+public class PharseInvQueryHandler  extends SampleBillBaseQueryHandler {
+
+	public static final String ADDRESS = PharseInvConstant.QueryAddressConstant;
 
 	public PharseInvQueryHandler(AppActivityImpl appActivity) {
 		super(appActivity);
-		
+		// TODO Auto-generated constructor stub
 	}
 
-	//此action的入口地址
+	// 此action的入口地址
 	@Override
 	public String getEventAddress() {
+		// TODO Auto-generated method stub
 		return ADDRESS;
 	}
 
-	//处理器
-	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
-
-		
-		//String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "ocr-inventorycenter-phaseinvQ.json";		
-			
-		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "ocr-inventorycenter-phaseinvQ.json";		
-				
-		this.getAppActivity().getVertx().fileSystem().readFile(menusFilePath, result -> {
-    	    if (result.succeeded()) {
-    	    	String fileContent = result.result().toString(); 
-    	        
-    	    	JsonArray srvCfg = new JsonArray(fileContent);
-    	        msg.reply(srvCfg);     	        
-    	        
-    	    } else {
-				Throwable errThrowable = result.cause();
-				String errMsgString = errThrowable.getMessage();
-				appActivity.getLogger().error(errMsgString, errThrowable);
-				msg.fail(100, errMsgString);		
-   
-    	    }	
-		});
-
-
-	}
-	
-
 	/**
-	 * 此action的自描述元数据
+	 * 要查询的单据状态
+	 * 
+	 * @return
 	 */
 	@Override
-	public ActionDescriptor getActionDesc() {		
-		
-		ActionDescriptor actionDescriptor = super.getActionDesc();
-		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
-				
-		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.GET);
-		handlerDescriptor.setRestApiURI(uri);
-		
-		
-		return actionDescriptor;
+	public String getStatus() {
+		// TODO Auto-generated method stub
+		return PharseInvConstant.CreatedStatus;
 	}
-	
-	
+
 }

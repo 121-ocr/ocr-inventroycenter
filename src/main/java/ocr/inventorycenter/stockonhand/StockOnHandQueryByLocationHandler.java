@@ -57,32 +57,39 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 
 	public void getLocationsByRule(JsonObject params, Handler<AsyncResult<JsonArray>> next) {
 		FindOptions findOptions = new FindOptions();
-		findOptions.setFields(params.getJsonObject("resFields"));
-		findOptions.setLimit(1);
-		// sort 1 asc -1 desc
+
 		JsonObject sortFields = new JsonObject();
 		sortFields.put(StockOnHandConstant.onhandnum, 1);//从小到大排序
 		findOptions.setSort(sortFields);
 
 		Future<JsonArray> future = Future.future();
 		future.setHandler(next);
-
+		JsonArray los= new JsonArray();
+		
 		appActivity.getAppDatasource().getMongoClient().findWithOptions(
 				appActivity.getDBTableName(appActivity.getBizObjectType()), params.getJsonObject("queryObj"),
 				findOptions, result -> {
 					if (result.succeeded()) {
-						List<String> los= new ArrayList<String>();
-						// 根据传入依次匹配多个货位
-						JsonObject jsonObject = params.getJsonObject("queryObj");
-						Double pickoutnum = jsonObject.getDouble("pickoutnum");
 						
+						// 根据传入依次匹配多个货位
+						
+						Double pickoutnum = params.getJsonObject("params").getDouble("quantity_should");
+						Double allmatchnum= 0.0;
 						result.result().forEach( re ->{
+							
 							Double onhandnum = re.getDouble("onhandnum");
 							if(onhandnum>=pickoutnum){//完全匹配
-								//los.add()
+								
+								los.add(re);
+								future.complete(new JsonArray(result.result()));
 							}
 							else{
 								
+								los.add(re);
+							    Double newnum=	allmatchnum+onhandnum;
+							    allmatchnum=   newnum;
+							   
+							   
 							}
 							
 							

@@ -65,6 +65,11 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 		StockOnHandBatchCreationHandler stockOnHandBatchCreationHandler = new StockOnHandBatchCreationHandler(this);
 		ret.add(stockOnHandBatchCreationHandler);
 		
+		StockOnHandQueryByLocationHandler stockOnHandQueryByLocationHandler = new StockOnHandQueryByLocationHandler(this);
+		ret.add(stockOnHandQueryByLocationHandler);
+		
+		
+		
 		
 		return ret;
 	}

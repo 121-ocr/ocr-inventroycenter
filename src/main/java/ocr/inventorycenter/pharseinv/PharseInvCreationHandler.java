@@ -1,15 +1,15 @@
 package ocr.inventorycenter.pharseinv;
 
 
-import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonObject;
+import ocr.common.handler.SampleBillBaseHandler;
+import ocr.inventorycenter.stockout.StockOutConstant;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
-import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
+import otocloud.framework.app.function.BizRootType;
+import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
 /**
  * 库存中心：采购入库-创建
  * 
@@ -17,73 +17,42 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  */
 //业务活动功能处理器
-public class PharseInvCreationHandler extends ActionHandlerImpl<JsonObject> {
-	
-	public static final String ADDRESS = "create";
+public class PharseInvCreationHandler extends SampleBillBaseHandler {
+
+	public static final String ADDRESS = PharseInvConstant.CreateAddressConstant;
 
 	public PharseInvCreationHandler(AppActivityImpl appActivity) {
 		super(appActivity);
-		// TODO Auto-generated constructor stub
+	
 	}
 
-	//此action的入口地址
+	/**
+	 * corecorp_setting.setting
+	 */
 	@Override
 	public String getEventAddress() {
-		// TODO Auto-generated method stub
 		return ADDRESS;
 	}
 
-	//处理器
-	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
-
-		
-		MultiMap headerMap = msg.headers();
-		
-		JsonObject so = msg.body();
-		
-    	String namecode = so.getString("namecode");
-    	String partnerAcct = so.getString("customer"); //交易单据一般要记录协作方
-    	
-    	
-		String acctId = this.appActivity.getAppInstContext().getAccount();
-		JsonObject settingInfo = msg.body();
-		settingInfo.put("account", acctId);
-		
-		appActivity.getAppDatasource().getMongoClient().save(
-				appActivity.getDBTableName(appActivity.getName()), settingInfo,
-				result -> {
-					if (result.succeeded()) {
-						settingInfo.put("_id", result.result());
-						msg.reply(settingInfo);						
-					} else {
-						Throwable errThrowable = result.cause();
-						String errMsgString = errThrowable.getMessage();
-						appActivity.getLogger().error(errMsgString, errThrowable);
-						msg.fail(100, errMsgString);		
-					}
-	
-			});
-
-
-	}
-	
-
 	/**
-	 * 此action的自描述元数据
+	 * {@inheritDoc}
 	 */
 	@Override
-	public ActionDescriptor getActionDesc() {		
-		
+	public ActionDescriptor getActionDesc() {
+
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
 
-				
+		// 外部访问url定义
 		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
-		
+
+		// 状态变化定义
+		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, null, StockOutConstant.CreatedStatus);
+		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
+		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
+
 		return actionDescriptor;
 	}
-	
-	
+
 }

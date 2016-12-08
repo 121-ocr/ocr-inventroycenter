@@ -10,8 +10,8 @@ import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import ocr.inventorycenter.stockonhand.StockOnHandConstant;
 import ocr.inventorycenter.stockonhand.StockOnHandQueryByBatchCodeHandler;
-import ocr.inventorycenter.stockonhand.StockOnHandQueryByLocationHandler;
 import ocr.inventorycenter.stockreserved.StockReservedConstant;
 import otocloud.common.ActionContextTransfomer;
 import otocloud.common.ActionURI;
@@ -150,18 +150,17 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 				//先匹配未满仓，在出满仓的，按仓位现存量做由小到大排序后，再进行数量匹配
 							
 				JsonObject queryObj = new JsonObject();
-				queryObj.put(StockReservedConstant.sku, product_sku_code);
-				queryObj.put(StockReservedConstant.warehousecode, warehousecode);
-				queryObj.put(StockReservedConstant.pickoutnum, quantity_should);
+				queryObj.put(StockOnHandConstant.sku, product_sku_code);
+				queryObj.put(StockOnHandConstant.warehousecode, warehousecode);
+				
 				
 
-				JsonObject fields = new JsonObject();
-				fields.put("_id", false);
-				fields.put(StockReservedConstant.pickoutnum, true);
+				JsonObject fields = new JsonObject();	
+				fields.put(StockOutConstant.quantity_should, quantity_should);
 
 				JsonObject queryMsg = new JsonObject();
 				queryMsg.put("queryObj", queryObj);
-				queryMsg.put("resFields", fields);
+				queryMsg.put("params", fields);
 				
 				this.appActivity.getEventBus().send(getOnHandAddress(), queryMsg, onhandservice -> {
 					

@@ -3,10 +3,13 @@ package ocr.inventorycenter.pharseinv;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import ocr.common.handler.SampleBillBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
+import otocloud.framework.app.function.BizRootType;
+import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
 import otocloud.framework.core.OtoCloudBusMessage;
 /**
@@ -16,71 +19,43 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  */
 //业务活动功能处理器
-public class PharseInvUpdateHandler extends ActionHandlerImpl<JsonObject> {
-	
-	public static final String ADDRESS = "update";
+public class PharseInvUpdateHandler extends SampleBillBaseHandler{
+
+	public static final String ADDRESS = PharseInvConstant.ModifyAddressConstant;
 
 	public PharseInvUpdateHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 		// TODO Auto-generated constructor stub
 	}
 
-	//此action的入口地址
+	/**
+	 * corecorp_setting.setting
+	 */
 	@Override
 	public String getEventAddress() {
-		// TODO Auto-generated method stub
 		return ADDRESS;
-	}
-
-	//处理器
-	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
-
-		String acctId = this.appActivity.getAppInstContext().getAccount();
-		JsonObject settingInfo = msg.body();
-		settingInfo.put("account", acctId);
-		
-		appActivity.getAppDatasource().getMongoClient().save(
-				appActivity.getDBTableName(appActivity.getName()), settingInfo,
-				result -> {
-					if (result.succeeded()) {
-						settingInfo.put("_id", result.result());
-						msg.reply(settingInfo);						
-					} else {
-						Throwable errThrowable = result.cause();
-						String errMsgString = errThrowable.getMessage();
-						appActivity.getLogger().error(errMsgString, errThrowable);
-						msg.fail(100, errMsgString);		
-					}
-	
-			});
-
-
 	}
 	
 
 	/**
-	 * 此action的自描述元数据
+	 * {@inheritDoc}
 	 */
 	@Override
-	public ActionDescriptor getActionDesc() {		
-		
+	public ActionDescriptor getActionDesc() {
+
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
-		//handlerDescriptor.setMessageFormat("command");
-		
-		//参数
-/*		List<ApiParameterDescriptor> paramsDesc = new ArrayList<ApiParameterDescriptor>();
-		paramsDesc.add(new ApiParameterDescriptor("targetacc",""));		
-		paramsDesc.add(new ApiParameterDescriptor("soid",""));		
-		
-		actionDescriptor.getHandlerDescriptor().setParamsDesc(paramsDesc);	*/
-				
-		ActionURI uri = new ActionURI("create", HttpMethod.POST);
+
+		// 外部访问url定义
+		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
-		
+
+		// 状态变化定义
+		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, "created", "created");
+		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
+		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
+
 		return actionDescriptor;
 	}
-	
-	
+
 }
