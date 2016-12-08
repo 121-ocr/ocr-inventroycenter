@@ -42,9 +42,10 @@ public class PharseInvQueryHandler  extends SampleBillBaseQueryHandler {
 	 * @return
 	 */
 	@Override
-	public String getStatus() {
+	public String getStatus(JsonObject msgBody) {
 		// TODO Auto-generated method stub
-		return PharseInvConstant.CreatedStatus;
+//		return PharseInvConstant.CreatedStatus;
+		return msgBody.getString("status");
 	}
 
 }
