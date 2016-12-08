@@ -27,11 +27,11 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  *
  */
-public class StockOutBatchPickOutHandler extends ActionHandlerImpl<JsonArray> {
+public class StockOutBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
 
-	public static final String ADDRESS = StockOutConstant.BatchPickOutAddressConstant;
+	public static final String ADDRESS = StockOutConstant.BatchCreateAddressConstant;
 
-	public StockOutBatchPickOutHandler(AppActivityImpl appActivity) {
+	public StockOutBatchCreateHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 	}
 
@@ -58,7 +58,7 @@ public class StockOutBatchPickOutHandler extends ActionHandlerImpl<JsonArray> {
 
 		// 状态变化定义
 		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT,
-				StockOutConstant.ONPickingStatus, StockOutConstant.PickOutedStatus);
+				null, StockOutConstant.CreatedStatus);
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
 

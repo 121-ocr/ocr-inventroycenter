@@ -74,9 +74,8 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 			settingInfo.put(StockOnHandConstant.invbatchcode, settingInfo.getString("invbatchcode"));
 			settingInfo.put(StockOnHandConstant.locationcode, settingInfo.getString("locationcode"));
 			settingInfo.put(StockOnHandConstant.warehousecode, settingInfo.getString("warehousecode"));
-			settingInfo.put(StockOnHandConstant.onhandnum, settingInfo.getInteger("onhandnum"));
+			settingInfo.put(StockOnHandConstant.onhandnum, settingInfo.getString("onhandnum"));
 			
-			settingInfos.add(settingInfo);
 		}
 		
 		return settingInfos;
@@ -85,12 +84,6 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 	private String stockOnHandNullVal(JsonObject so) {
 		StringBuffer errors = new StringBuffer();
 		
-		Object locations = so.getValue(StockOnHandConstant.locations);
-
-		if (null == locations || locations.equals("")) {
-			errors.append("货位");
-		}
-
 		Object warehouses = so.getValue(StockOnHandConstant.warehouses);
 
 		if (null == warehouses || warehouses.equals("")) {

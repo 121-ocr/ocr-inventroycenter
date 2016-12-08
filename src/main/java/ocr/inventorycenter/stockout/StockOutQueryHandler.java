@@ -1,5 +1,6 @@
 package ocr.inventorycenter.stockout;
 
+import io.vertx.core.json.JsonObject;
 import ocr.common.handler.SampleBillBaseQueryHandler;
 import otocloud.framework.app.function.AppActivityImpl;
 
@@ -31,9 +32,9 @@ public class StockOutQueryHandler extends SampleBillBaseQueryHandler {
 	 * @return
 	 */
 	@Override
-	public String getStatus() {
-		// TODO Auto-generated method stub
-		return StockOutConstant.CreatedStatus;
+	public String getStatus(JsonObject msgBody) {
+		//return StockOutConstant.PickOutedStatus;
+		return msgBody.getString("status");
 	}
 
 }
