@@ -155,12 +155,15 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 				
 				Object detail = details.getValue(i);
 				JsonObject detailob = (JsonObject) detail;
-				if (!detailob.containsKey(StockOutConstant.batch_code)) {
-					continue;
-				}
-	
+				
 				Future<JsonObject> returnBatchFuture = Future.future();
 				futures.add(returnBatchFuture);
+				
+				if (!detailob.containsKey(StockOutConstant.batch_code)) {
+					returnBatchFuture.complete();
+					continue;
+				}
+
 				
 				Future<Void> nextFuture = Future.future();
 				nextFuture.setHandler(nextHandler->{
