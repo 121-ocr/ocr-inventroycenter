@@ -164,78 +164,84 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 					continue;
 				}
 
+				String batchCode = detailob.getString(StockOutConstant.batch_code);
 				
 				Future<Void> nextFuture = Future.future();
 				nextFuture.setHandler(nextHandler->{
-					// 寻找自动匹配批次号,按照现存量批次号现进先出：根据批次号，入库日期先进先出
-					// 1 根据仓库+ sku 获取所有批次信息。并且排序，并且入库日期最早的那一条（先进先出）。
-					// 2 从匹配后结果，得到对应批次号。
-					StockOnHandQueryByBatchCodeHandler srmQueryHandler = new StockOnHandQueryByBatchCodeHandler(this.appActivity);
-					srmQueryHandler.queryAllBatchs(getParam4QueryBatch(detailob), batchcodeinfos -> {
-						if (batchcodeinfos.succeeded()) {
-							JsonArray batchcodes = batchcodeinfos.result();
-							if (batchcodes == null || batchcodes.size() == 0) {
-								returnBatchFuture.complete();
-							}else{
-								if(batchcodes.size() <= 0){
+					
+					if (batchCode != null && !batchCode.isEmpty()) {
+						returnBatchFuture.complete();
+					}else{
+						
+						// 寻找自动匹配批次号,按照现存量批次号现进先出：根据批次号，入库日期先进先出
+						// 1 根据仓库+ sku 获取所有批次信息。并且排序，并且入库日期最早的那一条（先进先出）。
+						// 2 从匹配后结果，得到对应批次号。
+						StockOnHandQueryByBatchCodeHandler srmQueryHandler = new StockOnHandQueryByBatchCodeHandler(this.appActivity);
+						srmQueryHandler.queryAllBatchs(getParam4QueryBatch(detailob), batchcodeinfos -> {
+							if (batchcodeinfos.succeeded()) {
+								JsonArray batchcodes = batchcodeinfos.result();
+								if (batchcodes == null || batchcodes.size() == 0) {
 									returnBatchFuture.complete();
 								}else{
-									List<Future> innerfutures = new ArrayList<>();
-									// 如果不等于空，根据此寻找仓位是否满足，如果满足返回批次+货位，如果不满足寻找下一个批次。
-									batchcodes.forEach(batchcodeObj -> {
-										Future<JsonObject> innerReturnFuture = Future.future();
-										innerfutures.add(innerReturnFuture);
-										
-										String bathcode = ((JsonObject) batchcodeObj).getString("batchcode");
-										this.appActivity.getEventBus().send(getOnHandAddress(),
-												getParamByLocations(warehousecode, detail, bathcode), onhandservice -> {
-											if (onhandservice.succeeded()) {
-												JsonArray los = (JsonArray) onhandservice.result().body();
-												if (los == null || los.isEmpty()) {
-													//innerReturnFuture.complete();
-												}else{
-													JsonArray newdetails = new JsonArray();
-													los.forEach(lo -> {
-														JsonObject lo2 = (JsonObject) lo;
-														JsonObject t = new JsonObject();
-														t = (JsonObject) detail;
-														t.put("location", lo2.getString("locationcode"));
-														newdetails.add(t);
-													});
-													replacedDetails.put(finalPos, newdetails);
-												}
-												innerReturnFuture.complete();
-											} else {
-												Throwable err = onhandservice.cause();
-												String errMsg = err.getMessage();
-												componentImpl.getLogger().error(errMsg, err);
-												returnBatchFuture.fail(err);
-			
-											}
-			
-										});
-			
-									});
-									CompositeFuture.join(innerfutures).setHandler(ar -> {
+									if(batchcodes.size() <= 0){
 										returnBatchFuture.complete();
-									});
+									}else{
+										List<Future> innerfutures = new ArrayList<>();
+										// 如果不等于空，根据此寻找仓位是否满足，如果满足返回批次+货位，如果不满足寻找下一个批次。
+										batchcodes.forEach(batchcodeObj -> {
+											Future<JsonObject> innerReturnFuture = Future.future();
+											innerfutures.add(innerReturnFuture);
+											
+											String bathcode = ((JsonObject) batchcodeObj).getString("batchcode");
+											this.appActivity.getEventBus().send(getOnHandAddress(),
+													getParamByLocations(warehousecode, detail, bathcode), onhandservice -> {
+												if (onhandservice.succeeded()) {
+													JsonArray los = (JsonArray) onhandservice.result().body();
+													if (los == null || los.isEmpty()) {
+														//innerReturnFuture.complete();
+													}else{
+														JsonArray newdetails = new JsonArray();
+														los.forEach(lo -> {
+															JsonObject lo2 = (JsonObject) lo;
+															JsonObject t = new JsonObject();
+															t = (JsonObject) detail;
+															t.put("location", lo2.getString("locationcode"));
+															newdetails.add(t);
+														});
+														replacedDetails.put(finalPos, newdetails);
+													}
+													innerReturnFuture.complete();
+												} else {
+													Throwable err = onhandservice.cause();
+													String errMsg = err.getMessage();
+													componentImpl.getLogger().error(errMsg, err);
+													returnBatchFuture.fail(err);
+				
+												}
+				
+											});
+				
+										});
+										CompositeFuture.join(innerfutures).setHandler(ar -> {
+											returnBatchFuture.complete();
+										});
+									}
 								}
+		
+							} else {
+								Throwable err = batchcodeinfos.cause();
+								String errMsg = err.getMessage();
+								componentImpl.getLogger().error(errMsg, err);
+		
+								returnBatchFuture.complete();
 							}
-	
-						} else {
-							Throwable err = batchcodeinfos.cause();
-							String errMsg = err.getMessage();
-							componentImpl.getLogger().error(errMsg, err);
-	
-							returnBatchFuture.complete();
-						}
-	
-					});				
+		
+						});		
+					}
 					
 				});
 				
 	
-				String batchCode = detailob.getString(StockOutConstant.batch_code);
 				if (batchCode != null && !batchCode.isEmpty()) {
 					// 根据批次和sku+仓库找货位（可能）
 					this.appActivity.getEventBus().send(getOnHandAddress(),
