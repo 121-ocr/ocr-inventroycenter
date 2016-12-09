@@ -1,6 +1,5 @@
 package ocr.inventorycenter.stockonhand;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,23 +16,24 @@ import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
 import otocloud.framework.core.OtoCloudBusMessage;
+
 /**
  * 库存中心：现存量-查询
  * 
  * @date 2016年11月20日
  * @author LCL
  */
-//业务活动功能处理器
+// 业务活动功能处理器
 public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObject> {
-	
+
 	public static final String ADDRESS = "querylocations";
 
 	public StockOnHandQueryByLocationHandler(AppActivityImpl appActivity) {
 		super(appActivity);
-		
+
 	}
 
-	//此action的入口地址
+	// 此action的入口地址
 	@Override
 	public String getEventAddress() {
 		return ADDRESS;
@@ -59,45 +59,44 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 		FindOptions findOptions = new FindOptions();
 
 		JsonObject sortFields = new JsonObject();
-		sortFields.put(StockOnHandConstant.onhandnum, 1);//从小到大排序
+		sortFields.put(StockOnHandConstant.onhandnum, 1);// 从小到大排序
 		findOptions.setSort(sortFields);
 
 		Future<JsonArray> future = Future.future();
 		future.setHandler(next);
-		JsonArray los= new JsonArray();
-		
+
 		appActivity.getAppDatasource().getMongoClient().findWithOptions(
 				appActivity.getDBTableName(appActivity.getBizObjectType()), params.getJsonObject("queryObj"),
 				findOptions, result -> {
 					if (result.succeeded()) {
-						
+
 						// 根据传入依次匹配多个货位
-						
 						Double pickoutnum = params.getJsonObject("params").getDouble("quantity_should");
-						Double allmatchnum= 0.0;
-						result.result().forEach( re ->{
-							
+
+						JsonObject sum = new JsonObject();
+						sum.put("sum", 0.0);
+						
+						JsonArray allresults = new JsonArray();
+						JsonObject results = new JsonObject();
+						results.put("bid", params.getJsonObject("params").getString("res_bid"));// 来源id
+						result.result().forEach(re -> {
 							Double onhandnum = re.getDouble("onhandnum");
-							if(onhandnum>=pickoutnum){//完全匹配
-								
-								los.add(re);
-								future.complete(new JsonArray(result.result()));
+							if (onhandnum.compareTo(pickoutnum) >= 0) {// 完全匹配
+								setResultValue(results, re, onhandnum - pickoutnum, allresults);
+								return;
 							}
-							else{
-								
-								los.add(re);
-							    Double newnum=	allmatchnum+onhandnum;
-							    allmatchnum=   newnum;
-							   
-							   
+
+							if (pickoutnum.compareTo(sum.getDouble("sum")) <= 0) {
+								// 部分匹配
+								setResultValue(results, re, onhandnum - sum.getDouble("sum"), allresults);
+								return;
 							}
-							
-							
+
+							sum.put("sum", sum.getDouble("sum") + onhandnum);
+							setResultValue(results, re, 0.0, allresults);
+
 						});
-						
-						
-						
-						future.complete(new JsonArray(result.result()));
+						future.complete(allresults);
 
 					} else {
 						Throwable errThrowable = result.cause();
@@ -108,25 +107,32 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 
 					}
 				});
-
+		
+		
 	}
 
+	private void setResultValue(JsonObject results, JsonObject re, Double surplus_onhand, JsonArray allresults) {
+		JsonObject newres = new JsonObject();
+		newres.put("bid", results.getString("bid"));
+		newres.put("onhandid", ((JsonObject) re.getValue("_id")).getString("$oid"));
+		newres.put("locationcode", re.getValue("locationcode"));
+		newres.put("surplus_onhand", surplus_onhand);
+		allresults.add(newres);
+	}
 
 	/**
 	 * 此action的自描述元数据
 	 */
 	@Override
-	public ActionDescriptor getActionDesc() {		
-		
+	public ActionDescriptor getActionDesc() {
+
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
-				
+
 		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
-		
-		
+
 		return actionDescriptor;
 	}
-	
-	
+
 }
