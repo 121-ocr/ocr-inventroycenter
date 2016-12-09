@@ -40,7 +40,7 @@ public class StockOnHandQueryByBatchCodeHandler extends ActionHandlerImpl<JsonOb
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> event) {
 
-		queryFristBatchNum(event.body(), ret -> {
+		queryAllBatchs(event.body(), ret -> {
 			if (ret.succeeded()) {
 				event.reply(ret.result());
 			} else {
@@ -52,7 +52,7 @@ public class StockOnHandQueryByBatchCodeHandler extends ActionHandlerImpl<JsonOb
 
 	}
 
-	public void queryFristBatchNum(JsonObject params, Handler<AsyncResult<JsonArray>> next) {
+	public void queryAllBatchs(JsonObject params, Handler<AsyncResult<JsonArray>> next) {
 		FindOptions findOptions = new FindOptions();
 		findOptions.setFields(params.getJsonObject("resFields"));
 		findOptions.setLimit(1);

@@ -1,10 +1,14 @@
 package ocr.inventorycenter.stockout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.http.HttpMethod;
@@ -83,8 +87,27 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 		List<Future> futures = new ArrayList<Future>();
 
 		JsonArray resultObjects = new JsonArray();
+		
+		documents.forEach(document -> {
+			JsonObject bo = (JsonObject) document;
 
-		batchProcess(headerMap, documents, actor, futures, resultObjects);
+			Future<JsonObject> returnFuture = Future.future();
+			futures.add(returnFuture);
+			
+			JsonObject allStockOutRet = new JsonObject();
+			resultObjects.add(allStockOutRet);
+			
+			Future<Void> nextFuture = Future.future();
+			nextFuture.setHandler(nextHandler->{
+				// 2 创建拣货单并且预留
+				createPickOutAndReseved(headerMap, actor, returnFuture, bo, allStockOutRet);
+
+			});
+
+			// 1 自动匹配批次+仓位
+			marchLocationsAndBatch(bo, allStockOutRet, nextFuture);
+
+		});
 
 		CompositeFuture.join(futures).setHandler(ar -> {
 
@@ -93,34 +116,7 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 		});
 
 	}
-
-	private void batchProcess(MultiMap headerMap, JsonArray documents, JsonObject actor, List<Future> futures,
-			JsonArray resultObjects) {
-
-		documents.forEach(document -> {
-
-			Future<JsonObject> returnFuture = Future.future();
-			futures.add(returnFuture);
-
-			processCreatePickoutOrderAndReseverd(headerMap, actor, futures, resultObjects, document, returnFuture);
-
-		});
-
-	}
-
-	private void processCreatePickoutOrderAndReseverd(MultiMap headerMap, JsonObject actor, List<Future> futures,
-			JsonArray resultObjects, Object document, Future<JsonObject> returnFuture) {
-		JsonObject bo = (JsonObject) document;
-
-		JsonObject allStockOutRet = new JsonObject();
-		resultObjects.add(allStockOutRet);
-
-		// 1 自动匹配批次+仓位
-		marchLocationsAndBatch(futures, bo, allStockOutRet);
-		// 2 创建拣货单并且预留
-		createPickOutAndReseved(headerMap, actor, returnFuture, bo, allStockOutRet);
-	}
-
+	
 	private void createPickOutAndReseved(MultiMap headerMap, JsonObject actor, Future<JsonObject> returnFuture,
 			JsonObject bo, JsonObject stockOutRet) {
 		// TODO 如果没有boid，则调用单据号生成规则生成一个单据号
@@ -143,30 +139,108 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 		});
 	}
 
-	private void marchLocationsAndBatch(List<Future> futures, JsonObject bo, JsonObject stockOutRet) {
+	private void marchLocationsAndBatch(JsonObject bo, JsonObject stockOutRet, Future<Void> next) {		
 		JsonArray details = bo.getJsonArray("detail");
-		String warehousecode = ((JsonObject) bo.getValue(StockOutConstant.warehouse)).getString("code");
-		details.forEach(detail -> {
+		int size = details.size();		
+		if(size == 0){
+			next.complete();
+		}else{
+			String warehousecode = ((JsonObject) bo.getValue(StockOutConstant.warehouse)).getString("code");	
+			Map<Integer, JsonArray> replacedDetails = new HashMap<Integer, JsonArray>();
 
-			Future<JsonObject> returnBatchFuture = Future.future();
-			futures.add(returnBatchFuture);
-
-			JsonObject detailob = (JsonObject) detail;
-
-			if (!detailob.containsKey(StockOutConstant.batch_code)) {
-				return;
-			}
-
-			String batchCode = detailob.getString(StockOutConstant.batch_code);
-			if (batchCode != null && !batchCode.isEmpty()) {
-				// 根据批次和sku+仓库找货位（可能）
-				this.appActivity.getEventBus().send(getOnHandAddress(),
-						getParamByLocations(warehousecode, detail, batchCode), onhandservice -> {
-							if (onhandservice.succeeded()) {
-								JsonArray los = (JsonArray) onhandservice.result().body();
-								if (los == null || los.isEmpty()) {
+			List<Future> futures = new ArrayList<>();
+			
+			for(Integer i=0; i<details.size(); i++){
+				final Integer finalPos = i;
+				
+				Object detail = details.getValue(i);
+				JsonObject detailob = (JsonObject) detail;
+				if (!detailob.containsKey(StockOutConstant.batch_code)) {
+					continue;
+				}
+	
+				Future<JsonObject> returnBatchFuture = Future.future();
+				futures.add(returnBatchFuture);
+				
+				Future<Void> nextFuture = Future.future();
+				nextFuture.setHandler(nextHandler->{
+					// 寻找自动匹配批次号,按照现存量批次号现进先出：根据批次号，入库日期先进先出
+					// 1 根据仓库+ sku 获取所有批次信息。并且排序，并且入库日期最早的那一条（先进先出）。
+					// 2 从匹配后结果，得到对应批次号。
+					StockOnHandQueryByBatchCodeHandler srmQueryHandler = new StockOnHandQueryByBatchCodeHandler(this.appActivity);
+					srmQueryHandler.queryAllBatchs(getParam4QueryBatch(detailob), batchcodeinfos -> {
+						if (batchcodeinfos.succeeded()) {
+							JsonArray batchcodes = batchcodeinfos.result();
+							if (batchcodes == null || batchcodes.size() == 0) {
+								returnBatchFuture.complete();
+							}else{
+								if(batchcodes.size() <= 0){
 									returnBatchFuture.complete();
+								}else{
+									List<Future> innerfutures = new ArrayList<>();
+									// 如果不等于空，根据此寻找仓位是否满足，如果满足返回批次+货位，如果不满足寻找下一个批次。
+									batchcodes.forEach(batchcodeObj -> {
+										Future<JsonObject> innerReturnFuture = Future.future();
+										innerfutures.add(innerReturnFuture);
+										
+										String bathcode = ((JsonObject) batchcodeObj).getString("batchcode");
+										this.appActivity.getEventBus().send(getOnHandAddress(),
+												getParamByLocations(warehousecode, detail, bathcode), onhandservice -> {
+											if (onhandservice.succeeded()) {
+												JsonArray los = (JsonArray) onhandservice.result().body();
+												if (los == null || los.isEmpty()) {
+													//innerReturnFuture.complete();
+												}else{
+													JsonArray newdetails = new JsonArray();
+													los.forEach(lo -> {
+														JsonObject lo2 = (JsonObject) lo;
+														JsonObject t = new JsonObject();
+														t = (JsonObject) detail;
+														t.put("location", lo2.getString("locationcode"));
+														newdetails.add(t);
+													});
+													replacedDetails.put(finalPos, newdetails);
+												}
+												innerReturnFuture.complete();
+											} else {
+												Throwable err = onhandservice.cause();
+												String errMsg = err.getMessage();
+												componentImpl.getLogger().error(errMsg, err);
+												returnBatchFuture.fail(err);
+			
+											}
+			
+										});
+			
+									});
+									CompositeFuture.join(innerfutures).setHandler(ar -> {
+										returnBatchFuture.complete();
+									});
 								}
+							}
+	
+						} else {
+							Throwable err = batchcodeinfos.cause();
+							String errMsg = err.getMessage();
+							componentImpl.getLogger().error(errMsg, err);
+	
+						}
+	
+					});				
+					
+				});
+				
+	
+				String batchCode = detailob.getString(StockOutConstant.batch_code);
+				if (batchCode != null && !batchCode.isEmpty()) {
+					// 根据批次和sku+仓库找货位（可能）
+					this.appActivity.getEventBus().send(getOnHandAddress(),
+							getParamByLocations(warehousecode, detail, batchCode), onhandservice -> {
+						if (onhandservice.succeeded()) {
+							JsonArray los = (JsonArray) onhandservice.result().body();
+							if (los == null || los.isEmpty()) {
+								//returnBatchFuture.complete();
+							}else{
 								JsonArray newdetails = new JsonArray();
 								los.forEach(lo -> {
 									JsonObject lo2 = (JsonObject) lo;
@@ -175,72 +249,35 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 									t.put("location", lo2.getString("locationcode"));
 									newdetails.add(t);
 								});
-
-							} else {
-								Throwable err = onhandservice.cause();
-								String errMsg = err.getMessage();
-								componentImpl.getLogger().error(errMsg, err);
-								returnBatchFuture.fail(err);
-
-							}
-
-						});
-
-				returnBatchFuture.complete();
-			}
-
-			// 寻找自动匹配批次号,按照现存量批次号现进先出：根据批次号，入库日期先进先出
-			// 1 根据仓库+ sku 获取所有批次信息。并且排序，并且入库日期最早的那一条（先进先出）。
-			// 2 从匹配后结果，得到对应批次号。
-			StockOnHandQueryByBatchCodeHandler srmQueryHandler = new StockOnHandQueryByBatchCodeHandler(
-					this.appActivity);
-			srmQueryHandler.queryAllBatchs(getParam4QueryBatch(detailob), batchcodeinfos -> {
-				if (batchcodeinfos.succeeded()) {
-					JsonArray batchcodes = batchcodeinfos.result();
-					if (batchcodes == null || batchcodes.size() == 0) {
-						returnBatchFuture.complete();
-					}
-					// 如果不等于空，根据此寻找仓位是否满足，如果满足返回批次+货位，如果不满足寻找下一个批次。
-					batchcodes.forEach(batchcodeObj -> {
-						String bathcode = ((JsonObject) batchcodeObj).getString("batchcode");
-						this.appActivity.getEventBus().send(getOnHandAddress(),
-								getParamByLocations(warehousecode, detail, bathcode), onhandservice -> {
-									if (onhandservice.succeeded()) {
-										JsonArray los = (JsonArray) onhandservice.result().body();
-										if (los == null || los.isEmpty()) {
-											returnBatchFuture.complete();
-										}
-										JsonArray newdetails = new JsonArray();
-										los.forEach(lo -> {
-											JsonObject lo2 = (JsonObject) lo;
-											JsonObject t = new JsonObject();
-											t = (JsonObject) detail;
-											t.put("location", lo2.getString("locationcode"));
-											newdetails.add(t);
-										});
-										returnBatchFuture.complete();
-									} else {
-										Throwable err = onhandservice.cause();
-										String errMsg = err.getMessage();
-										componentImpl.getLogger().error(errMsg, err);
-										returnBatchFuture.fail(err);
-
-									}
-
-								});
-
+								replacedDetails.put(finalPos, newdetails);
+							}						
+	
+						} else {
+							Throwable err = onhandservice.cause();
+							String errMsg = err.getMessage();
+							componentImpl.getLogger().error(errMsg, err);
+							//returnBatchFuture.fail(err);
+						}					
+						nextFuture.complete();
 					});
-
-				} else {
-					Throwable err = batchcodeinfos.cause();
-					String errMsg = err.getMessage();
-					componentImpl.getLogger().error(errMsg, err);
-
+				}else{
+					nextFuture.complete();
 				}
-
+	
+			}
+			CompositeFuture.join(futures).setHandler(ar -> {
+				if(replacedDetails.size() > 0){
+					replacedDetails.forEach((key,newDetails) -> {
+						
+						details.remove(key);
+						details.addAll(newDetails);
+						
+						next.complete();
+					});
+				}
 			});
-
-		});
+			
+		}
 	}
 
 	/**
