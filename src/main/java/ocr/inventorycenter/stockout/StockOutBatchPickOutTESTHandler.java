@@ -224,6 +224,7 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 							String errMsg = err.getMessage();
 							componentImpl.getLogger().error(errMsg, err);
 	
+							returnBatchFuture.complete();
 						}
 	
 					});				
