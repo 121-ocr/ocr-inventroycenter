@@ -2,16 +2,13 @@ package ocr.inventorycenter.pharseinv;
 
 
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonObject;
-import ocr.common.handler.SampleBillBaseHandler;
+import ocr.common.handler.SampleDocBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
-import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
 /**
  * 库存中心：采购入库-更新
  * 
@@ -19,7 +16,7 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  */
 //业务活动功能处理器
-public class PharseInvUpdateHandler extends SampleBillBaseHandler{
+public class PharseInvUpdateHandler extends SampleDocBaseHandler{
 
 	public static final String ADDRESS = PharseInvConstant.ModifyAddressConstant;
 

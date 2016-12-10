@@ -1,18 +1,8 @@
 package ocr.inventorycenter.pharseinv;
 
 
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import ocr.common.handler.SampleBillBaseQueryHandler;
-import ocr.inventorycenter.stockout.StockOutConstant;
-import otocloud.common.ActionURI;
-import otocloud.common.OtoCloudDirectoryHelper;
-import otocloud.framework.app.function.ActionDescriptor;
-import otocloud.framework.app.function.ActionHandlerImpl;
+import ocr.common.handler.SampleDocQueryHandler;
 import otocloud.framework.app.function.AppActivityImpl;
-import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
 /**
  * 库存中心：采购入库-查询
  * 
@@ -20,7 +10,7 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  */
 //业务活动功能处理器
-public class PharseInvQueryHandler  extends SampleBillBaseQueryHandler {
+public class PharseInvQueryHandler  extends SampleDocQueryHandler {
 
 	public static final String ADDRESS = PharseInvConstant.QueryAddressConstant;
 
@@ -41,11 +31,10 @@ public class PharseInvQueryHandler  extends SampleBillBaseQueryHandler {
 	 * 
 	 * @return
 	 */
-	@Override
-	public String getStatus(JsonObject msgBody) {
+	public String getStatus() {
 		// TODO Auto-generated method stub
-//		return PharseInvConstant.CreatedStatus;
-		return msgBody.getString("status");
+ 	return PharseInvConstant.CreatedStatus;
+		//return msgBody.getString("status");
 	}
 
 }
