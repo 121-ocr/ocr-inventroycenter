@@ -16,6 +16,7 @@ public class StockOutConstant {
 	
 	// -------------类变量
 	public static final String batch_code = "batch_code";
+	public static final String detail_code = "detail_code";
 	public static final String goods = "goods";
 	public static final String product_sku_code = "product_sku_code";;
 	public static final String quantity_should = "quantity_should";;
