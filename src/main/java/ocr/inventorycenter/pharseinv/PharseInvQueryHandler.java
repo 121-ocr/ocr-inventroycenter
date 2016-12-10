@@ -1,7 +1,7 @@
 package ocr.inventorycenter.pharseinv;
 
 
-import ocr.common.handler.SampleDocQueryHandler;
+import ocr.common.handler.SampleBillBaseQueryHandler;
 import otocloud.framework.app.function.AppActivityImpl;
 /**
  * 库存中心：采购入库-查询
@@ -10,7 +10,7 @@ import otocloud.framework.app.function.AppActivityImpl;
  * @author LCL
  */
 //业务活动功能处理器
-public class PharseInvQueryHandler  extends SampleDocQueryHandler {
+public class PharseInvQueryHandler  extends SampleBillBaseQueryHandler {
 
 	public static final String ADDRESS = PharseInvConstant.QueryAddressConstant;
 

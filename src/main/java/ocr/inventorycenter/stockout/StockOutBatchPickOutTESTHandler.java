@@ -89,6 +89,7 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 		JsonArray resultObjects = new JsonArray();
 		
 		documents.forEach(document -> {
+			
 			JsonObject bo = (JsonObject) document;
 
 			Future<JsonObject> returnFuture = Future.future();
@@ -172,7 +173,7 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 					if (batchCode != null && !batchCode.isEmpty()) {
 						returnBatchFuture.complete();
 					}else{
-						
+
 						// 寻找自动匹配批次号,按照现存量批次号现进先出：根据批次号，入库日期先进先出
 						// 1 根据仓库+ sku 获取所有批次信息。并且排序，并且入库日期最早的那一条（先进先出）。
 						// 2 从匹配后结果，得到对应批次号。
@@ -198,7 +199,8 @@ public class StockOutBatchPickOutTESTHandler extends ActionHandlerImpl<JsonArray
 												if (onhandservice.succeeded()) {
 													JsonArray los = (JsonArray) onhandservice.result().body();
 													if (los == null || los.isEmpty()) {
-														//innerReturnFuture.complete();
+														next.fail("没有货位");
+														return;
 													}else{
 														JsonArray newdetails = new JsonArray();
 														los.forEach(lo -> {

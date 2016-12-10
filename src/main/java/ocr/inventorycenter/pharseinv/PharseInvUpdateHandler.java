@@ -2,7 +2,7 @@ package ocr.inventorycenter.pharseinv;
 
 
 import io.vertx.core.http.HttpMethod;
-import ocr.common.handler.SampleDocBaseHandler;
+import ocr.common.handler.SampleBillBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
@@ -16,7 +16,7 @@ import otocloud.framework.core.HandlerDescriptor;
  * @author LCL
  */
 //业务活动功能处理器
-public class PharseInvUpdateHandler extends SampleDocBaseHandler{
+public class PharseInvUpdateHandler extends SampleBillBaseHandler{
 
 	public static final String ADDRESS = PharseInvConstant.ModifyAddressConstant;
 
