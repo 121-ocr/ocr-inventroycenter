@@ -57,9 +57,7 @@ public class StockOutManagementComponent extends AppActivityImpl {
 		ret.add(createHandler);
 
 		StockOutQueryHandler queryHandler = new StockOutQueryHandler(this);
-		ret.add(queryHandler);
-
-	
+		ret.add(queryHandler);	
 
 		StockOutPickOutHandler pickoutHandler = new StockOutPickOutHandler(this);
 		ret.add(pickoutHandler);
@@ -69,14 +67,9 @@ public class StockOutManagementComponent extends AppActivityImpl {
 		
 		StockOutBatchCreateHandler pickoutbatchHandler = new StockOutBatchCreateHandler(this);
 		ret.add(pickoutbatchHandler);
-
-		StockOutBatchPickOutTESTHandler testHandler = new StockOutBatchPickOutTESTHandler(this);
-		ret.add(testHandler);
 		
 		StockOutOnPickingHandler onshippingHandler = new StockOutOnPickingHandler(this);
-		ret.add(onshippingHandler);
-		
-		
+		ret.add(onshippingHandler);	
 	
 		
 		return ret;

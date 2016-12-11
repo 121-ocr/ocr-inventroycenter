@@ -68,7 +68,8 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 		StockOnHandQueryByLocationHandler stockOnHandQueryByLocationHandler = new StockOnHandQueryByLocationHandler(this);
 		ret.add(stockOnHandQueryByLocationHandler);
 		
-		
+		StockOnHandQueryByFIFOHandler stockOnHandQueryByFIFOHandler = new StockOnHandQueryByFIFOHandler(this);
+		ret.add(stockOnHandQueryByFIFOHandler);
 		
 		
 		return ret;

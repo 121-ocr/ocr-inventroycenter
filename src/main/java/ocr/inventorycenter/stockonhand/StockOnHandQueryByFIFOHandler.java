@@ -1,5 +1,6 @@
 package ocr.inventorycenter.stockonhand;
 
+
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -13,23 +14,24 @@ import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
 import otocloud.framework.core.OtoCloudBusMessage;
 
+
 /**
- * 库存中心：现存量-查询：传入批次，匹配货位
+ * 库存中心：现存量-先进先出（FIFO）查询
  * 
  * @date 2016年11月20日
  * @author LCL
  */
-// 业务活动功能处理器
-public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObject> {
+//业务活动功能处理器
+public class StockOnHandQueryByFIFOHandler extends ActionHandlerImpl<JsonObject> {
+	
+	public static final String ADDRESS = "query_fifo";
 
-	public static final String ADDRESS = "querylocations";
-
-	public StockOnHandQueryByLocationHandler(AppActivityImpl appActivity) {
+	public StockOnHandQueryByFIFOHandler(AppActivityImpl appActivity) {
 		super(appActivity);
-
+		
 	}
 
-	// 此action的入口地址
+	//此action的入口地址
 	@Override
 	public String getEventAddress() {
 		return ADDRESS;
@@ -38,8 +40,7 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> event) {
 
-		getLocationsByRule(event.body(), ret -> {
-			
+		getLocationsBatchByRule(event.body(), ret -> {
 			if (ret.succeeded()) {
 				event.reply(ret.result());
 			} else {
@@ -52,8 +53,11 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 	}
 	
 	/**
+	 * // 先进先出分组规则：仓库+SKU+批次+货位
+	   // 先进先出排序规则：先批次，后货位存量
+	   // 条件：仓库、SKU
 	 * 输入参数：{
-	 * 		query: { warehousecode: "WH001", sku: "WINE001SP0001SP0001", invbatchcode: "1"},
+	 * 		query: { warehousecode: "WH001", sku: "WINE001SP0001SP0001"},
 	 * 		groupKeys： ["warehousecode","sku", "invbatchcode", "locationcode"],
 	 * 		params: {"res_bid": "xxxx", "quantity_should": 200}, 
 	 * }
@@ -62,17 +66,18 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 	 * db.bs_stockonhand_3.aggregate(
 		   [
 		      {
-		          $match : { warehousecode: "WH001", sku: "WINE001SP0001SP0001", invbatchcode: "1"}
+		          $match : { warehousecode: "WH001", sku: "WINE001SP0001SP0001"}
 		      },
 		      {
 		        $group : {
 		           _id : { warehousecode: "$warehousecode", sku: "$sku", invbatchcode: "$invbatchcode", locationcode: "$locationcode" },
+		           invbatchcode : { $first: "$invbatchcode" },
 		           onhandnum: { $sum: "$onhandnum" }
 		        }
 		      },
 		      {
 		        $sort: {
-		          onhandnum: 1 
+		          invbatchcode: 1, onhandnum: 1   //先进先出排序规则：先批次，后货位数量
 		        }
 		      }
 		   ]
@@ -80,7 +85,7 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 	 * @param params
 	 * @param next
 	 */
-	private void getLocationsByRule(JsonObject params, Handler<AsyncResult<JsonArray>> next) {
+	private void getLocationsBatchByRule(JsonObject params, Handler<AsyncResult<JsonArray>> next) {
 
 		Future<JsonArray> future = Future.future();
 		future.setHandler(next);
@@ -99,8 +104,11 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 		JsonObject matchObj = new JsonObject().put("$match", query);
 		JsonObject groupObj = new JsonObject().put("$group", new JsonObject()
 															.put("_id", groupIds)
+															.put("invbatchcode", new JsonObject().put("$first", "$invbatchcode"))
 															.put("onhandnum", new JsonObject().put("$sum", "$onhandnum")));		
-		JsonObject sortObj = new JsonObject().put("$sort", new JsonObject().put("onhandnum", 1));
+		JsonObject sortObj = new JsonObject().put("$sort", new JsonObject()
+															.put("invbatchcode", 1)
+															.put("onhandnum", 1));
 		
 		JsonArray piplelineArray = new JsonArray();
 		piplelineArray.add(matchObj).add(groupObj).add(sortObj);
@@ -128,14 +136,6 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 							JsonObject stockOnHandItem = (JsonObject)item;
 							
 							Double onhandnum = stockOnHandItem.getDouble("onhandnum");
-							
-							//先匹配当前货位量，如果够全出，则直接出此货位量
-							if (onhandnum.compareTo(pickoutnum) == 0) {// 整仓匹配
-								allresults = new JsonArray();
-								addToPickOutLocations(boId, stockOnHandItem, onhandnum, allresults);
-								break;
-							}
-
 							JsonObject _idFeilds = stockOnHandItem.getJsonObject("_id");
 							
 							//否则，计算累加量
@@ -169,31 +169,34 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 		
 		
 	}
-
-
-
+	
 	private void addToPickOutLocations(String boId, JsonObject re, Double surplus_onhand, JsonArray allresults) {
 		JsonObject newres = new JsonObject();
 		newres.put("bid", boId);
 		//newres.put("onhandid", ((JsonObject) re.getValue("_id")).getString("$oid")); //因为是现存量是流水写入，故不需要返回_id
+		newres.put("invbatchcode", re.getValue("invbatchcode"));
 		newres.put("locationcode", re.getValue("locationcode"));
 		newres.put("surplus_onhand", surplus_onhand);
 		allresults.add(newres);
 	}
 
+
+
 	/**
 	 * 此action的自描述元数据
 	 */
 	@Override
-	public ActionDescriptor getActionDesc() {
-
+	public ActionDescriptor getActionDesc() {		
+		
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
-
+				
 		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
-
+		
+		
 		return actionDescriptor;
 	}
-
+	
+	
 }
