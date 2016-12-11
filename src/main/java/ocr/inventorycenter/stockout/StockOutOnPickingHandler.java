@@ -14,7 +14,7 @@ import otocloud.framework.core.HandlerDescriptor;
 import otocloud.framework.core.OtoCloudBusMessage;
 
 /**
- * 拣货出库单--（拣货态-->发货状）
+ * 拣货出库单--（创建态-->拣货中）
  * 
  * @author LCL
  *

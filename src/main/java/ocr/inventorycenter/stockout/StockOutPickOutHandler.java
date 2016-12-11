@@ -13,7 +13,7 @@ import otocloud.framework.core.HandlerDescriptor;
 import otocloud.framework.core.OtoCloudBusMessage;
 
 /**
- * 拣货出库单--（创建态-->拣货状）
+ * 拣货出库单--（贱货中-->拣货完成）
  * 
  * @author LCL
  *
@@ -49,7 +49,7 @@ public class StockOutPickOutHandler extends SampleBillBaseHandler {
 
 		// 状态变化定义
 		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT,
-				StockOutConstant.ONPickingStatus, StockOutConstant.PickOutedStatus);
+				StockOutConstant.ONPickingStatus, StockOutConstant.PickOutedStatus, true, true);
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
 

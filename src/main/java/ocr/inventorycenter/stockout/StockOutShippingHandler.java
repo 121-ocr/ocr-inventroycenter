@@ -10,7 +10,7 @@ import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
 
 /**
- * 拣货出库单--（拣货态-->发货状）
+ * 拣货出库单--（拣货完成-->发货状）
  * 
  * @author LCL
  *
