@@ -11,7 +11,6 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.impl.CompositeFutureImpl;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import ocr.inventorycenter.stockout.StockOutConstant;
 import orc.common.busi.open.inventorycenter.InvBusiOpenContant;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
@@ -28,20 +27,17 @@ import otocloud.framework.core.OtoCloudBusMessage;
  */
 // 业务活动功能处理器
 public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> {
-
+    
+	//查询方法中间变量
 	public static final String ADDRESS = "query_avaliable";
-
 	public static final String onhandArray = "onhandArray";
-
 	public static final String locationArray = "locationArray";
-
 	public static final String reversedArray = "reversedArray";
-
+	// 前台传递参数：
 	public static final String sku = "sku";
 	public static final String warehouse = "warehouse";
-
+	// results 结果集合：
 	public static final String results = "results";
-	// results 包括如下结果集合
 	public static final String batchcode = "batchcode";
 	public static final String location = "location";
 	public static final String onhandnum = "onhandnum";
