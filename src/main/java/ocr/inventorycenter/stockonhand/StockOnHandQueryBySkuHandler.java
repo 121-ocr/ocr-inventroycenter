@@ -88,24 +88,31 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		resultObjects.put("warehouse", bo.getString("warehouse"));
 		JsonArray resultArray = new JsonArray();
 
-		Future<JsonObject> returnFuture = Future.future();
-		futures.add(returnFuture);
+		//由于需要等到步骤二、三都执行完后再执行合并数据逻辑，故需要定义两个future
+		Future<JsonObject> returnFuture1 = Future.future();
+		futures.add(returnFuture1);
+		Future<JsonObject> returnFuture2 = Future.future();
+		futures.add(returnFuture2);
+
 
 		Future<Void> nextFuture1 = Future.future(); // 黄色部分，规定步骤1、2之间的顺序
-		Future<Void> nextFuture2 = Future.future(); // 黄色部分，规定步骤1、2之间的顺序
+		//Future<Void> nextFuture2 = Future.future(); // 黄色部分，规定步骤1、2之间的顺序
 
+		//因为步骤二、三即便放在一起调用也是异步的，故只需要一个future即可
 		nextFuture1.setHandler(nextHandler -> {
 			// 步骤二，与步骤一串行的，并且结束后通过returnFurture通知外面future
-			getOnHandByLcations(bo, resultObjects, returnFuture);
+			getOnHandByLcations(bo, resultObjects, returnFuture1);
+			// 步骤三，与步骤一串行的，并且结束后通过returnFurture通知外面future
+			getResevedByLcations(bo, resultObjects, returnFuture2);
 		});
 
-		nextFuture2.setHandler(nextHandler -> {
+/*		nextFuture2.setHandler(nextHandler -> {
 			// 步骤三，与步骤一串行的，并且结束后通过returnFurture通知外面future
 			getResevedByLcations(bo, resultObjects, returnFuture);
-		});
+		});*/
 
 		// 步骤一,批量产品仓位对应关系
-		getLocationByGoods(bo, resultObjects, nextFuture1, nextFuture2);
+		getLocationByGoods(bo, resultObjects, nextFuture1);
 
 		CompositeFuture.join(futures).setHandler(ar -> { // 合并所有for循环结果，返回外面
 			CompositeFutureImpl comFutures = (CompositeFutureImpl) ar;
@@ -217,8 +224,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 	}
 
-	private void getLocationByGoods(JsonObject params, JsonObject resultObjects, Future<Void> nextFuture,
-			Future<Void> nextFuture2) {
+	private void getLocationByGoods(JsonObject params, JsonObject resultObjects, Future<Void> nextFuture) {
 
 		this.appActivity.getEventBus().send(getLocationGoodsRelAddress(), getLocationGoodsRelCond(params),
 				facilityRes -> {
@@ -226,13 +232,13 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 						JsonArray locations = (JsonArray) facilityRes.result().body();
 						resultObjects.put(locationArray, locations);
 						nextFuture.complete();
-						nextFuture2.complete();
+						//nextFuture2.complete();
 					} else {
 						Throwable err = facilityRes.cause();
 						String errMsg = err.getMessage();
 						appActivity.getLogger().error(errMsg, err);
 						nextFuture.failed();
-						nextFuture2.complete();
+						//nextFuture2.complete();
 					}
 
 				});
