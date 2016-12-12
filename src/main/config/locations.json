@@ -1,15 +1,28 @@
-
 [
-    {
-            "code":"1-6-2-10",  
-            "standfullnum":"6",
-            "currentnum":"3",
-            "packunit":"箱",
-            "ismixedLot":0,
-            "warehouses":{
-             },
-             "goods":{
-             }
-      
-    }
+	{
+		"code": "1-6-2-10",
+		"standfullnum": "6",
+		"currentnum": "3",
+		"packunit": "箱",
+		"ismixedLot": 0,
+		"warehouses": 
+		{
+			"code": "WH001",
+			"name": "北京总仓",
+			"type": "1",
+			"character": "2",
+			"account": "3",
+			"vmi_org": "北京门店",
+			"address": 
+			{
+				"region": 
+				{
+					"code": "110115",
+					"full_name": "北京市大兴区"
+				},
+
+				"address_detail": "XXX街道38号,1层1012室"
+			}
+		}
+	}
 ]

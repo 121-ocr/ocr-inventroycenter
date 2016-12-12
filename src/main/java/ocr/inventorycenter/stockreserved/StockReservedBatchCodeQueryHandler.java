@@ -8,6 +8,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.FindOptions;
 import ocr.inventorycenter.stockonhand.StockOnHandConstant;
+import orc.common.busi.open.inventorycenter.InvBusiOpenContant;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
@@ -17,7 +18,7 @@ import otocloud.framework.core.OtoCloudBusMessage;
 
 public class StockReservedBatchCodeQueryHandler extends ActionHandlerImpl<JsonObject> {
 
-	public static final String ADDRESS = "getFirstBatch";
+	public static final String ADDRESS = InvBusiOpenContant.QUERYRESERVEDSADDRESS;
 
 	public StockReservedBatchCodeQueryHandler(AppActivityImpl appActivity) {
 		super(appActivity);

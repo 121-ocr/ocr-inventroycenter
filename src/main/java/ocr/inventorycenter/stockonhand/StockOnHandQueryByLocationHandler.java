@@ -80,7 +80,7 @@ public class StockOnHandQueryByLocationHandler extends ActionHandlerImpl<JsonObj
 	 * @param params
 	 * @param next
 	 */
-	private void getLocationsByRule(JsonObject params, Handler<AsyncResult<JsonArray>> next) {
+	public void getLocationsByRule(JsonObject params, Handler<AsyncResult<JsonArray>> next) {
 
 		Future<JsonArray> future = Future.future();
 		future.setHandler(next);

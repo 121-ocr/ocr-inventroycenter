@@ -1,5 +1,7 @@
 package ocr.inventorycenter.stockreserved;
 
+import orc.common.busi.open.inventorycenter.InvBusiOpenContant;
+
 /**
  * 现存量 常量类
  * 
@@ -34,7 +36,7 @@ public class StockReservedConstant {
 	
 	
 	// -----------------组件信息
-	public static String ComponentNameConstant = "stockreserved";
+	public static String ComponentNameConstant = InvBusiOpenContant.RESERVEDCOMPONTENNAME;
 	public static String ComponentBizObjectTypeConstant = "bs_stockreserved";
 
 	// -----------------handler address

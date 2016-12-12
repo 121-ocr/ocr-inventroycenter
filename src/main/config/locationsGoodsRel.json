@@ -1,0 +1,29 @@
+[
+	{
+		"product_sku_code": "WINE001SP0001SP0001",
+		"allotLocatons": 
+		[
+			{
+				"locationcode": "1-6-2-10"
+			},
+
+			{
+				"locationcode": "1-6-2-11"
+			}
+		]
+	},
+
+	{
+		"product_sku_code": "WINE001SP0001SP0002",
+		"allotLocatons": 
+		[
+			{
+				"locationcode": "1-6-2-12"
+			},
+
+			{
+				"locationcode": "1-6-2-13"
+			}
+		]
+	}
+]

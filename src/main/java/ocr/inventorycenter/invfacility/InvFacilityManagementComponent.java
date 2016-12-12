@@ -3,6 +3,7 @@ package ocr.inventorycenter.invfacility;
 import java.util.ArrayList;
 import java.util.List;
 
+import orc.common.busi.open.inventorycenter.InvBusiOpenContant;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRoleDescriptor;
 import otocloud.framework.core.OtoCloudEventDescriptor;
@@ -19,7 +20,7 @@ public class InvFacilityManagementComponent extends AppActivityImpl {
 	// 业务活动组件名
 	@Override
 	public String getName() {
-		return "invfacility-mgr";
+		return InvBusiOpenContant.FACILITYCOMPONTENNAME;
 	}
 
 	// 业务活动组件要处理的核心业务对象

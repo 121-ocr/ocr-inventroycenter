@@ -97,8 +97,7 @@ public class StockOutBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
 			resultObjects.add(allStockOutRet);
 			
 			//allStockOutRet.put("sku", bo.getJsonObject("goods").getString("product_sku_code"));				
-
-			
+	
 			Future<Void> nextFuture = Future.future();
 			nextFuture.setHandler(nextHandler->{
 				// 2 创建拣货单

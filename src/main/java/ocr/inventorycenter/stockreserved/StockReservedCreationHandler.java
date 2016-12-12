@@ -77,6 +77,8 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 				// 步骤2、校验数量是否可以预留 根据 sku + warehousecode 查询预留量
 				String sku = so.getString(StockReservedConstant.sku);
 				String whcode = so.getString(StockReservedConstant.warehousecode);
+				
+				
 				JsonObject queryObj = new JsonObject();
 				queryObj.put(StockReservedConstant.sku, sku);
 				queryObj.put(StockReservedConstant.warehousecode, whcode);				
@@ -92,8 +94,7 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 				//this.appActivity.getEventBus().send(this.appActivity.getAppInstContext().getAccount() +"."+ "ocr-inventorycenter.stockreserved.querySRNum", queryMsg,
 				StockReservedNumQueryHandler srmQueryHandler = new StockReservedNumQueryHandler(this.appActivity);				
 				srmQueryHandler.querySRNum(queryMsg, onQueryServerdNum -> {
-					if(onQueryServerdNum.succeeded()){
-						
+					if(onQueryServerdNum.succeeded()){						
 						JsonArray jArray = onQueryServerdNum.result();
 						if(jArray != null && jArray.size() > 0){
 							Double count = 0.0;
