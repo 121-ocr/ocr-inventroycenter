@@ -88,7 +88,7 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 			errors.append("来源单据ID");
 		}
 		
-		Object locations = so.getValue(StockOnHandConstant.locations);
+		Object locations = so.getValue(StockOnHandConstant.locationcode);
 
 		if (null == locations || locations.equals("")) {
 			errors.append("货位");

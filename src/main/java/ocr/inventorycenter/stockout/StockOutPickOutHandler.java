@@ -1,5 +1,6 @@
 package ocr.inventorycenter.stockout;
 
+import io.vertx.core.Future;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import ocr.common.handler.SampleBillBaseHandler;
@@ -54,10 +55,11 @@ public class StockOutPickOutHandler extends SampleBillBaseHandler {
 
 		return actionDescriptor;
 	}
-
+	
+	
 	// 拣货后，调用预留出库
-	protected void afterProcess(OtoCloudBusMessage<JsonObject> msg) {
-		JsonObject bo = msg.body();
+	@Override
+	protected void afterProcess(JsonObject bo, Future<JsonObject> future){
 
 		String ReservedAddress = getReservedAdd();		
 
@@ -69,12 +71,12 @@ public class StockOutPickOutHandler extends SampleBillBaseHandler {
 		this.appActivity.getEventBus().send(ReservedAddress, params, reservedResults -> {
 
 			if (reservedResults.succeeded()) {
-				msg.reply("预留成功");
+				future.complete((JsonObject)reservedResults.result().body());
 			} else {
 				Throwable err = reservedResults.cause();
 				String errMsg = err.getMessage();
 				componentImpl.getLogger().error(errMsg, err);
-				msg.fail(100, errMsg);
+				future.fail(err);
 			}
 		});
 	}
@@ -82,7 +84,7 @@ public class StockOutPickOutHandler extends SampleBillBaseHandler {
 
 	private String getReservedAdd() {
 		return this.appActivity.getAppInstContext().getAccount() + "."
-				+ this.appActivity.getAppService().getRealServiceName() + "stockonhand-mgr.update_status";
+				+ this.appActivity.getAppService().getRealServiceName() + ".stockonhand-mgr.update_status";
 	}
 
 }

@@ -312,7 +312,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 	private String getLocationGoodsRelAddress() {
 		String facilitySer = this.appActivity.getService().getRealServiceName();
-		String facilityAddress = this.appActivity.getAppInstContext().getAccount() + "." + facilitySer + "." + "."
+		String facilityAddress = this.appActivity.getAppInstContext().getAccount() + "." + facilitySer + "." 
 				+ InvBusiOpenContant.FACILITYCOMPONTENNAME + "." + InvBusiOpenContant.LOCATIONSADDRESS;
 		return facilityAddress;
 	}

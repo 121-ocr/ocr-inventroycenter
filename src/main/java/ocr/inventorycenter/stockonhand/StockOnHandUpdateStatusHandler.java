@@ -2,6 +2,7 @@ package ocr.inventorycenter.stockonhand;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.MongoClientUpdateResult;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
@@ -48,7 +49,8 @@ public class StockOnHandUpdateStatusHandler extends ActionHandlerImpl<JsonObject
 		appActivity.getAppDatasource().getMongoClient().updateCollection(appActivity.getDBTableName(appActivity.getBizObjectType()),
 				query, updateObj, res -> {
 					if (res.succeeded()) {
-						msg.reply(res.result());
+						MongoClientUpdateResult updateRet = res.result();						
+						msg.reply(updateRet.toJson());
 					} else {
 						Throwable errThrowable = res.cause();
 						String errMsgString = errThrowable.getMessage();

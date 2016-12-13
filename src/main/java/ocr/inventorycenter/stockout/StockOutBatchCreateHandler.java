@@ -503,7 +503,7 @@ public class StockOutBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
 		retObj.put(StockReservedConstant.warehouses, warehouseJsonObject);
 		retObj.put(StockReservedConstant.sku, goodsJsonObject.getString("product_sku_code"));
 		retObj.put(StockReservedConstant.goods, goodsJsonObject);
-		retObj.put(StockReservedConstant.goodaccount, so.getString("goodaccount"));
+		retObj.put(StockReservedConstant.goodaccount, goodsJsonObject.getString("account"));
 		if (detail.containsKey("batch_code")) {
 			String batchCode = detail.getString("batch_code");
 			if (batchCode != null && !batchCode.isEmpty())
@@ -515,7 +515,7 @@ public class StockOutBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
 				retObj.put("shelf_life", shelfLife);
 		}		
 		retObj.put(StockReservedConstant.locationcode, detail.getString("location_code"));
-		retObj.put(StockReservedConstant.onhandnum, detail.getDouble("quantity_should"));
+		retObj.put(StockReservedConstant.onhandnum, detail.getDouble("quantity_should")*(-1));
 		
 		retObj.put("status", "RES");
 		retObj.put("biz_data_type", this.appActivity.getBizObjectType());

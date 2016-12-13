@@ -104,6 +104,9 @@ public class MatchLocationByInvBatchHandler extends ActionHandlerImpl<JsonObject
 							JsonObject stockOnHandItem = (JsonObject)item;
 							
 							Double onhandnum = stockOnHandItem.getDouble("onhandnum");
+							if(onhandnum <= 0.00){
+								continue;
+							}
 							
 							//先匹配当前货位量，如果够全出，则直接出此货位量
 							if (onhandnum.compareTo(pickoutnum) == 0) {// 整仓匹配
@@ -122,7 +125,8 @@ public class MatchLocationByInvBatchHandler extends ActionHandlerImpl<JsonObject
 								// 多货位累加匹配
 								addToPickOutLocations(boId, _idFeilds, pickoutnum - sumNum, allresults);
 								break;
-							}							
+							}			
+							
 							
 							//否则，将当前货位量加入拣货列表
 							addToPickOutLocations(boId, _idFeilds, onhandnum, allresults);
