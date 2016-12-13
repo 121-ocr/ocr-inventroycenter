@@ -180,7 +180,7 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 					
 					for(int i=0; i<skSize; i++){
 						JsonObject stockOnHandItem = stockOnHandRet.getJsonObject(i);
-						if(stockOnHandItem.getDouble("onhandnum").equals("0.00")){
+						if(stockOnHandItem.getDouble("onhandnum").compareTo(new Double("0.00")) == 0){
 							removedItems.add(i);
 						}else{						
 							if(needGoods){
@@ -212,7 +212,7 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 					}	
 					if(removedItems.size() > 0){
 						for(Integer idx: removedItems){
-							stockOnHandRet.remove(idx);
+							stockOnHandRet.remove(idx.intValue());
 						}
 					}
 					if(needGoods){

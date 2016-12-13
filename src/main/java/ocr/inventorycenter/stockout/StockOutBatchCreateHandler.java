@@ -253,7 +253,7 @@ public class StockOutBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
 												newDetailCodeBase = newDetailCodeBase + 1;
 												
 												//设置货位和拣货量
-												t.put("invbatchcode", lo2.getString("invbatchcode"));
+												t.put("batch_code", lo2.getString("invbatchcode"));
 												t.put("shelf_life", lo2.getString("shelf_life"));
 												t.put("location_code", lo2.getString("locationcode"));
 												t.put("quantity_should", lo2.getDouble("surplus_onhand"));
