@@ -1,9 +1,7 @@
 package ocr.inventorycenter.stockreserved;
 
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import ocr.inventorycenter.stockonhand.StockOnHandConstant;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
@@ -42,7 +40,7 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 	// -------------------
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
-		JsonObject so = msg.body();
+/*		JsonObject so = msg.body();
 		
 		String errString = stockOnHandNullVal(so);
 		if (errString != null && !errString.equals("")) {
@@ -139,7 +137,7 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 			}
 
 		});
-
+*/
 	}
 
 
@@ -160,9 +158,9 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 
 	private String getOnHandAddress() {
 		String accountID = this.appActivity.getAppInstContext().getAccount();
-		String authSrvName = this.appActivity.getDependencies().getJsonObject("stockonhand_service")
-				.getString("service_name", "");
-		String address =accountID + "."+ authSrvName + "." + ONHAND_REGISTER;
+/*		String authSrvName = this.appActivity.getDependencies().getJsonObject("stockonhand_service")
+				.getString("service_name", "");*/
+		String address =accountID + "."+ this.appActivity.getService().getRealServiceName() + "." + ONHAND_REGISTER;
 		return address;
 	}
 

@@ -59,14 +59,17 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 		StockOnHandUpdateHandler updateHandler = new StockOnHandUpdateHandler(this);
 		ret.add(updateHandler);
 		
+		StockOnHandUpdateStatusHandler stockOnHandUpdateStatusHandler = new StockOnHandUpdateStatusHandler(this);
+		ret.add(stockOnHandUpdateStatusHandler);
+		
 		StockOnHandQuery4SalesHandler query4SalesHandler = new StockOnHandQuery4SalesHandler(this);
 		ret.add(query4SalesHandler);
 		
 		StockOnHandBatchCreationHandler stockOnHandBatchCreationHandler = new StockOnHandBatchCreationHandler(this);
 		ret.add(stockOnHandBatchCreationHandler);
 		
-		StockOnHandQueryByLocationHandler stockOnHandQueryByLocationHandler = new StockOnHandQueryByLocationHandler(this);
-		ret.add(stockOnHandQueryByLocationHandler);
+		MatchLocationByInvBatchHandler matchLocationByInvBatchHandler = new MatchLocationByInvBatchHandler(this);
+		ret.add(matchLocationByInvBatchHandler);
 		
 		StockOnHandQueryByFIFOHandler stockOnHandQueryByFIFOHandler = new StockOnHandQueryByFIFOHandler(this);
 		ret.add(stockOnHandQueryByFIFOHandler);

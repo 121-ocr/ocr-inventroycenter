@@ -66,7 +66,7 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 			JsonObject settingInfo = (JsonObject)temp;
 			//settingInfo.put(StockOnHandConstant.bo_id, "");
 			settingInfo.put(StockOnHandConstant.account, this.appActivity.getAppInstContext().getAccount());
-			settingInfo.put(StockOnHandConstant.locations, settingInfo.getValue("locations"));
+/*			settingInfo.put(StockOnHandConstant.locations, settingInfo.getValue("locations"));
 			settingInfo.put(StockOnHandConstant.warehouses, settingInfo.getValue("warehouses"));
 			settingInfo.put(StockOnHandConstant.goods, settingInfo.getValue("goods"));
 			settingInfo.put(StockOnHandConstant.sku, settingInfo.getString("sku"));
@@ -74,7 +74,7 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 			settingInfo.put(StockOnHandConstant.invbatchcode, settingInfo.getString("invbatchcode"));
 			settingInfo.put(StockOnHandConstant.locationcode, settingInfo.getString("locationcode"));
 			settingInfo.put(StockOnHandConstant.warehousecode, settingInfo.getString("warehousecode"));
-			settingInfo.put(StockOnHandConstant.onhandnum, settingInfo.getString("onhandnum"));
+			settingInfo.put(StockOnHandConstant.onhandnum, settingInfo.getString("onhandnum"));*/
 			
 		}
 		

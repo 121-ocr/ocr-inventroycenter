@@ -22,6 +22,9 @@ public class StockOnHandConstant {
 	public static String locationcode = "locationcode";
 	public static String warehousecode = "warehousecode";
 	public static String onhandnum = "onhandnum";
+	public static String status = "status";
+	public static String biz_data_type = "biz_data_type";
+	//public static String bo_id = "bo_id";
 
 	// -----------------组件信息
 	public static String ComponentNameConstant = "stockonhand-mgr";
