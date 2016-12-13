@@ -164,8 +164,8 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 		appActivity.getAppDatasource().getMongoClient().runCommand("aggregate", command, result -> {
 		if (result.succeeded()) {
 				JsonArray stockOnHandRet = result.result().getJsonArray("result");    	  
-				
-				if(stockOnHandRet.size() > 0 && needGoods){
+				int skSize = stockOnHandRet.size();
+				if(skSize > 0){
 					List<Future> futures = new ArrayList<Future>();
 					
 					String goodsSrvName = this.appActivity.getDependencies().getJsonObject("goods_service").getString("service_name","");
@@ -176,35 +176,52 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 					}
 					final String goodsAddress = _goodsAddress;
 					
-					for(Object item : stockOnHandRet){
-						Future<JsonObject> returnFuture = Future.future();
-						futures.add(returnFuture);
-						
-						JsonObject stockOnHandItem = (JsonObject)item;
-						
-						String goodsSrvAddr = goodsAddress;
-						if(hasGoodsAccountGroup){
-							goodsSrvAddr = stockOnHandItem.getJsonObject("_id").getString("goodaccount") + "." + goodsSrvName + "." + "goods-mgr.findone";	
-						}
-						
-						this.appActivity.getEventBus().send(goodsSrvAddr, 
-								new JsonObject().put("product_sku_code", stockOnHandItem.getJsonObject("_id").getString("sku")), goodsRet->{
-							if(goodsRet.succeeded()){
-								JsonObject goodsRetObj = (JsonObject)goodsRet.result().body();
-								JsonObject goods = goodsRetObj.getJsonArray("result").getJsonObject(0);
-								stockOnHandItem.put("goods", goods);		
-								returnFuture.complete();
-							}else{
-								Throwable errThrowable = goodsRet.cause();
-								String errMsgString = errThrowable.getMessage();
-								appActivity.getLogger().error(errMsgString, errThrowable);
-								returnFuture.fail(errThrowable);
+					List<Integer> removedItems = new ArrayList<Integer>();
+					
+					for(int i=0; i<skSize; i++){
+						JsonObject stockOnHandItem = stockOnHandRet.getJsonObject(i);
+						if(stockOnHandItem.getDouble("onhandnum").equals("0.00")){
+							removedItems.add(i);
+						}else{						
+							if(needGoods){
+							
+								Future<JsonObject> returnFuture = Future.future();
+								futures.add(returnFuture);
+								
+								String goodsSrvAddr = goodsAddress;
+								if(hasGoodsAccountGroup){
+									goodsSrvAddr = stockOnHandItem.getJsonObject("_id").getString("goodaccount") + "." + goodsSrvName + "." + "goods-mgr.findone";	
+								}
+								
+								this.appActivity.getEventBus().send(goodsSrvAddr, 
+										new JsonObject().put("product_sku_code", stockOnHandItem.getJsonObject("_id").getString("sku")), goodsRet->{
+									if(goodsRet.succeeded()){
+										JsonObject goodsRetObj = (JsonObject)goodsRet.result().body();
+										JsonObject goods = goodsRetObj.getJsonArray("result").getJsonObject(0);
+										stockOnHandItem.put("goods", goods);		
+										returnFuture.complete();
+									}else{
+										Throwable errThrowable = goodsRet.cause();
+										String errMsgString = errThrowable.getMessage();
+										appActivity.getLogger().error(errMsgString, errThrowable);
+										returnFuture.fail(errThrowable);
+									}
+								});
 							}
+						}
+					}	
+					if(removedItems.size() > 0){
+						for(Integer idx: removedItems){
+							stockOnHandRet.remove(idx);
+						}
+					}
+					if(needGoods){
+						CompositeFuture.join(futures).setHandler(ar -> {
+							future.complete(stockOnHandRet);
 						});
-					}			
-					CompositeFuture.join(futures).setHandler(ar -> {
+					}else{
 						future.complete(stockOnHandRet);
-					});
+					}
 				}else{				
 					future.complete(stockOnHandRet);    
 				}
