@@ -140,7 +140,6 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 								if (!onhandObject2.getString(location).equals(locationvalue)) {
 									continue;
 								}
-
 								JsonObject resultObject = new JsonObject();
 								resultObject.put(sku, onhandObject2.getString(sku)); // 目前存放的sku
 								resultObject.put(batchcode, onhandObject2.getString(batchcode)); // 批次号
@@ -169,6 +168,9 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 		Double reversennum = 0.0;
 
+		if (null == reverseds || reverseds.size() == 0) {
+			return reversennum;
+		}
 		for (Object reversedObj : reverseds) {
 			JsonObject reversed2 = (JsonObject) reversedObj;
 			JsonObject reversed = (JsonObject) reversed2.getValue("_id");
@@ -251,11 +253,6 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		// 设置排序
 		queryParams.put("sort", new JsonObject().put("onhandnum", 1));
 
-		// 设置条件
-		// queryParams.put("query", new JsonObject().put("warehousecode",
-		// reqParams.getString(warehouse))
-		// .put("locationcode", reqParams.getString(location)));
-
 		JsonArray locations = resultObjects.getJsonArray(locationArray);
 		JsonObject queryInv = new JsonObject();
 
@@ -299,13 +296,13 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 						JsonArray locations = (JsonArray) facilityRes.result().body();
 						resultObjects.put(locationArray, locations);
 						nextFuture.complete();
-						// nextFuture2.complete();
+
 					} else {
 						Throwable err = facilityRes.cause();
 						String errMsg = err.getMessage();
 						appActivity.getLogger().error(errMsg, err);
 						nextFuture.failed();
-						// nextFuture2.complete();
+
 					}
 
 				});
@@ -318,47 +315,11 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		return facilityAddress;
 	}
 
-	/*
-	 * private String getReservedAddress() { String facilitySer =
-	 * this.appActivity.getService().getRealServiceName(); String
-	 * facilityAddress = this.appActivity.getAppInstContext().getAccount() + "."
-	 * + facilitySer + "." + "." + InvBusiOpenContant.RESERVEDCOMPONTENNAME +
-	 * "." + InvBusiOpenContant.QUERYRESERVEDSADDRESS; return facilityAddress; }
-	 */
 	private JsonObject getLocationGoodsRelCond(JsonObject params) {
 		JsonObject queryLocationGoodsRelCondObject = new JsonObject();
 		queryLocationGoodsRelCondObject.put(sku, params.getString(sku));
 		return queryLocationGoodsRelCondObject;
 	}
-
-	/*
-	 * private JsonObject getReservedCond(JsonObject params) { JsonObject
-	 * queryCondition = new JsonObject();
-	 * queryCondition.put(StockOnHandConstant.warehousecode,
-	 * params.getString(warehouse));
-	 * queryCondition.put(StockOnHandConstant.locationcode,
-	 * params.getString(location)); return queryCondition; }
-	 */
-
-	/*
-	 * private JsonObject getParamByFIFO(JsonObject param) {
-	 * 
-	 * // 根据 [仓库+仓位 ] 批量获取所有现存量数据（sku + 现存量、批次、仓位 ）并行
-	 * 
-	 * JsonObject queryObj = new JsonObject();
-	 * queryObj.put(StockOnHandConstant.warehousecode,
-	 * param.getString(warehouse));
-	 * queryObj.put(StockOnHandConstant.locationcode,
-	 * param.getString(location));
-	 * 
-	 * JsonObject params = new JsonObject(); params.put("query", queryObj);
-	 * 
-	 * JsonArray groupKeys = new JsonArray();
-	 * groupKeys.add(StockOnHandConstant.warehousecode).add(StockOnHandConstant.
-	 * sku) .add(StockOnHandConstant.invbatchcode).add(StockOnHandConstant.
-	 * locationcode); params.put("group_keys", groupKeys); // TODO 还需要稍微改造下
-	 * 此获取fifo方法 return params; }
-	 */
 
 	/**
 	 * 此action的自描述元数据
