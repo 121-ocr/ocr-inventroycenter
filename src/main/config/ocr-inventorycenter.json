@@ -15,8 +15,7 @@
 				"eventbus_enabled": true,
 				"static_res_service": true
 			},
-			"api_register_server": {
-				//"webserver_name": "121webserver-N01"
+			"api_register_server": {				
 			},
 			"sys_datasource": {
 				"config": {
@@ -42,28 +41,17 @@
 				"component_common": {
 				},
 				"component_config": {
-				  "stockreserved": {
-				      		"options": {
-		        				"config" :  {
-		        				    "dependencies":{
-			        					"stockonhand_service": {
-			        						"service_name": "ocr-inventorycenter"
-			        					}
+				  	"stockonhand-mgr": {
+			      		"options": {
+	        				"config" :  {
+	        				    "dependencies":{
+		        					"goods_service": {
+		        						"service_name": "ocr-goods-center"
 		        					}
-								}
-							 }
-					   },
-					    "stockout-mgr": {
-				      		"options": {
-		        				"config" :  {
-		        				    "dependencies":{
-			        					"stockonhand_service": {
-			        						"service_name": "ocr-inventorycenter"
-			        					}
-		        					}
-								}
-							 }
-					   }
+	        					}
+							}
+						 }
+					 }
 				},
 				"component_deployment": []
 			},

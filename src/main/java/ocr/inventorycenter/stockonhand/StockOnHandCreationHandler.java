@@ -40,12 +40,13 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 		}
 
 		// 现存量维度=商品SKU+商品租户id+批次号+货位编码+仓库编码+存量+冗余字段 {主键+租户id+货位集合+仓库集合+商品集合}
-		JsonObject settingInfo = getParams(msg, so);
+		so.put(StockOnHandConstant.account, this.appActivity.getAppInstContext().getAccount());
+		//JsonObject settingInfo = getParams(msg, so);
 		appActivity.getAppDatasource().getMongoClient().save(appActivity.getDBTableName(appActivity.getBizObjectType()),
-				settingInfo, result -> {
+				so, result -> {
 					if (result.succeeded()) {
-						settingInfo.put("_id", result.result());
-						msg.reply(settingInfo);
+						//settingInfo.put("_id", result.result());
+						msg.reply(so);
 					} else {
 						Throwable errThrowable = result.cause();
 						String errMsgString = errThrowable.getMessage();
@@ -56,7 +57,7 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 
 	}
 
-	private JsonObject getParams(OtoCloudBusMessage<JsonObject> msg, JsonObject so) {
+/*	private JsonObject getParams(OtoCloudBusMessage<JsonObject> msg, JsonObject so) {
 		JsonObject settingInfo = msg.body();
 		//settingInfo.put(StockOnHandConstant.bo_id, "");
 		settingInfo.put(StockOnHandConstant.account, this.appActivity.getAppInstContext().getAccount());
@@ -70,12 +71,24 @@ public class StockOnHandCreationHandler extends ActionHandlerImpl<JsonObject> {
 		settingInfo.put(StockOnHandConstant.warehousecode, so.getString("warehousecode"));
 		settingInfo.put(StockOnHandConstant.onhandnum, so.getInteger("onhandnum"));
 		return settingInfo;
-	}
+	}*/
 
 	private String stockOnHandNullVal(JsonObject so) {
 		StringBuffer errors = new StringBuffer();
 		
-		Object locations = so.getValue(StockOnHandConstant.locations);
+		if(!so.containsKey(StockOnHandConstant.status)){
+			errors.append("状态");
+		}
+		
+		if(!so.containsKey(StockOnHandConstant.biz_data_type)){
+			errors.append("来源单据类型");
+		}
+		
+		if(!so.containsKey(StockOnHandConstant.bo_id)){
+			errors.append("来源单据ID");
+		}
+		
+		Object locations = so.getValue(StockOnHandConstant.locationcode);
 
 		if (null == locations || locations.equals("")) {
 			errors.append("货位");

@@ -18,26 +18,25 @@ public class StockReservedConstant {
 	public static String goods = "goods";
 	public static String sku = "sku";
 	
-	
-	
-	
 	public static String invbatchcode = "invbatchcode";
 
 	public static String locationcode = "locationcode";
 	public static String warehousecode = "warehousecode";
-	public static String reserverdnum = "reserverdnum";
 
-	public static String pickoutid = "pickoutid";
-	public static String pickoutnum = "pickoutnum";
 	public static String goodaccount = "goodaccount";
 	
+	public static String onhandnum = "onhandnum";
+	
 	public static String quantity_should = "quantity_should";
-	public static String batch_code = "batch_code";
+	public static String batch_code = "invbatchcode";
+	
+	public static String reserverdnum = "reserverdnum";
+	
 	
 	
 	// -----------------组件信息
 	public static String ComponentNameConstant = InvBusiOpenContant.RESERVEDCOMPONTENNAME;
-	public static String ComponentBizObjectTypeConstant = "bs_stockreserved";
+	public static String ComponentBizObjectTypeConstant = "bs_stockonhand";
 
 	// -----------------handler address
 	public static String ReservedAddressConstant = "reserved";

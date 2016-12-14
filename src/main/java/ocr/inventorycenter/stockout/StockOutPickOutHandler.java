@@ -1,9 +1,9 @@
 package ocr.inventorycenter.stockout;
 
+import io.vertx.core.Future;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import ocr.common.handler.SampleBillBaseHandler;
-import ocr.inventorycenter.stockreserved.StockReservedConstant;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
@@ -55,58 +55,36 @@ public class StockOutPickOutHandler extends SampleBillBaseHandler {
 
 		return actionDescriptor;
 	}
+	
+	
+	// 拣货后，调用预留出库
+	@Override
+	protected void afterProcess(JsonObject bo, Future<JsonObject> future){
 
-	// 拣货后，调用预留
-	protected void afterProcess(OtoCloudBusMessage<JsonObject> msg) {
-		processReserved(msg);
-	}
+		String ReservedAddress = getReservedAdd();		
 
-	private void processReserved(OtoCloudBusMessage<JsonObject> msg) {
+		JsonObject params = new JsonObject().put("biz_data_type", this.appActivity.getBizObjectType())
+				.put("bo_id", bo.getString("bo_id"))
+				.put("from_status", "RES")
+				.put("to_status", "OUT");
 
-		String ReservedAddress = getReservedAdd();
-
-		this.appActivity.getEventBus().send(ReservedAddress, getQueryParam(msg.body()), reservedResults -> {
+		this.appActivity.getEventBus().send(ReservedAddress, params, reservedResults -> {
 
 			if (reservedResults.succeeded()) {
-				msg.reply("预留成功");
+				future.complete((JsonObject)reservedResults.result().body());
 			} else {
 				Throwable err = reservedResults.cause();
 				String errMsg = err.getMessage();
 				componentImpl.getLogger().error(errMsg, err);
-				msg.fail(100, errMsg);
+				future.fail(err);
 			}
 		});
 	}
 
+
 	private String getReservedAdd() {
 		return this.appActivity.getAppInstContext().getAccount() + "."
-				+ this.appActivity.getAppService().getRealServiceName() + "."
-				+ StockReservedConstant.ComponentNameConstant + "."
-				+ StockReservedConstant.ReservedAddressConstant;
-
-	}
-
-	private JsonObject getQueryParam(JsonObject so) {
-		JsonObject queryMsg = new JsonObject();
-		queryMsg.put("queryObj", getQueryConditon(so));
-		queryMsg.put("resFields", getFieldsCols());
-		return queryMsg;
-	}
-
-	private JsonObject getQueryConditon(JsonObject so) {
-		JsonObject queryObj = new JsonObject();
-		queryObj.put(StockReservedConstant.sku, so.getString(StockReservedConstant.sku));
-		queryObj.put(StockReservedConstant.warehousecode, so.getString(StockReservedConstant.warehousecode));
-		queryObj.put(StockReservedConstant.pickoutid, so.getString(StockReservedConstant.pickoutid));
-		queryObj.put(StockReservedConstant.pickoutnum, so.getString(StockReservedConstant.pickoutnum));
-		return queryObj;
-	}
-
-	private JsonObject getFieldsCols() {
-		JsonObject fields = new JsonObject();
-		fields.put("_id", false);
-		fields.put(StockReservedConstant.pickoutnum, true);
-		return fields;
+				+ this.appActivity.getAppService().getRealServiceName() + ".stockonhand-mgr.update_status";
 	}
 
 }
