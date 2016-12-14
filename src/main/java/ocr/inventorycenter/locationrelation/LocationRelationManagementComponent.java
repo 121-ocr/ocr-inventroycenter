@@ -1,4 +1,4 @@
-package ocr.inventorycenter.invfacility;
+package ocr.inventorycenter.locationrelation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +15,18 @@ import otocloud.framework.core.OtoCloudEventHandlerRegistry;
  * @date 2016年11月20日
  * @author LCL
  */
-public class InvFacilityManagementComponent extends AppActivityImpl {
+public class LocationRelationManagementComponent extends AppActivityImpl {
 
 	// 业务活动组件名
 	@Override
 	public String getName() {
-		return InvBusiOpenContant.FACILITYCOMPONTENNAME;
+		return InvBusiOpenContant.LOCATIONRELATIONCOMPONTENNAME;
 	}
 
 	// 业务活动组件要处理的核心业务对象
 	@Override
 	public String getBizObjectType() {
-		return "ba_invfacility";
+		return "bs_locationrelation";
 	}
 
 	// 发布此业务活动关联的业务角色
@@ -47,10 +47,9 @@ public class InvFacilityManagementComponent extends AppActivityImpl {
 
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
 
-		InvFacilityQueryHandler queryHandler = new InvFacilityQueryHandler(this);
-		ret.add(queryHandler);
-		
-		
+		LocationsGoodsRelationQueryHandler locationsGoodsRelationQueryHandler = new LocationsGoodsRelationQueryHandler(
+				this);
+		ret.add(locationsGoodsRelationQueryHandler);
 
 		return ret;
 	}
