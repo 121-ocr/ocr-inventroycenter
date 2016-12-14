@@ -95,11 +95,11 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		futures.add(returnFuture2);
 
 
-		Future<Void> nextFuture1 = Future.future(); // 黄色部分，规定步骤1、2之间的顺序
+		Future<Void> nextFuture = Future.future(); // 黄色部分，规定步骤1、2之间的顺序
 		//Future<Void> nextFuture2 = Future.future(); // 黄色部分，规定步骤1、2之间的顺序
 
 		//因为步骤二、三即便放在一起调用也是异步的，故只需要一个future即可
-		nextFuture1.setHandler(nextHandler -> {
+		nextFuture.setHandler(nextHandler -> {
 			// 步骤二，与步骤一串行的，并且结束后通过returnFurture通知外面future
 			getOnHandByLcations(bo, resultObjects, returnFuture1);
 			// 步骤三，与步骤一串行的，并且结束后通过returnFurture通知外面future
@@ -112,7 +112,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		});*/
 
 		// 步骤一,批量产品仓位对应关系
-		getLocationByGoods(bo, resultObjects, nextFuture1);
+		getLocationByGoods(bo, resultObjects, nextFuture);
 
 		CompositeFuture.join(futures).setHandler(ar -> { // 合并所有for循环结果，返回外面
 			CompositeFutureImpl comFutures = (CompositeFutureImpl) ar;
@@ -168,13 +168,13 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 	private Double getReserved(JsonObject onhands, JsonArray reverseds) {
 
-		String key = onhands.getString(sku) + onhands.getString(batchcode) + onhands.getString(location);
+		String onhandkey = onhands.getString(sku) + onhands.getString(batchcode) + onhands.getString(location);
 
 		Double reversennum = 0.0;
 		for (Object reversedObj : reverseds) {
 			JsonObject reversed = (JsonObject) reversedObj;
-			String key2 = reversed.getString(sku) + reversed.getString(batchcode) + reversed.getString(location);
-			if (key.equals(key2)) {
+			String reversekey = reversed.getString(sku) + reversed.getString(batchcode) + reversed.getString(location);
+			if (onhandkey.equals(reversekey)) {
 				reversennum = reversed.getDouble(resevednum);
 				break;
 
@@ -246,7 +246,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 	private String getLocationGoodsRelAddress() {
 		String facilitySer = this.appActivity.getService().getRealServiceName();
-		String facilityAddress = this.appActivity.getAppInstContext().getAccount() + "." + facilitySer + "." + "."
+		String facilityAddress = this.appActivity.getAppInstContext().getAccount() + "." + facilitySer + "." 
 				+ InvBusiOpenContant.FACILITYCOMPONTENNAME + "." + InvBusiOpenContant.LOCATIONSADDRESS;
 		return facilityAddress;
 	}

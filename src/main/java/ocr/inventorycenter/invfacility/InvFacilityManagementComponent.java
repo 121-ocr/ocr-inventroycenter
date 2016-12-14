@@ -49,6 +49,9 @@ public class InvFacilityManagementComponent extends AppActivityImpl {
 
 		InvFacilityQueryHandler queryHandler = new InvFacilityQueryHandler(this);
 		ret.add(queryHandler);
+		
+		LocationsGoodsRelationQueryHandler locationsGoodsRelationQueryHandler = new LocationsGoodsRelationQueryHandler(this);
+		ret.add(locationsGoodsRelationQueryHandler);
 
 		return ret;
 	}

@@ -71,6 +71,9 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 		StockOnHandQueryByFIFOHandler stockOnHandQueryByFIFOHandler = new StockOnHandQueryByFIFOHandler(this);
 		ret.add(stockOnHandQueryByFIFOHandler);
 		
+		StockOnHandQueryBySkuHandler stockOnHandQueryBySkuHandler = new StockOnHandQueryBySkuHandler(this);
+		ret.add(stockOnHandQueryBySkuHandler);
+		
 		
 		return ret;
 	}
