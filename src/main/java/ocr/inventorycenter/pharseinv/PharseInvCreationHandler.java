@@ -37,23 +37,37 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 	}
 
 	/**
-	 * 单据保存后处理
+	 * 单据保存前，
 	 * 
 	 * @param bo
 	 * @param future
 	 */
 	protected void beforeProess(OtoCloudBusMessage<JsonObject> msg, Future<JsonObject> future) {
 		JsonObject bo = msg.body();
-
 		String inv_date = bo.getString(PharseInvConstant.INV_DATE);
-		for (Object detail : bo.getJsonArray("detail")) {
-			JsonObject detailO = (JsonObject) detail;
-			String batchCode = detailO.getString(PharseInvConstant.BATCH_CODE);
-			if (null == batchCode || batchCode.isEmpty()) {
-				detailO.put(PharseInvConstant.BATCH_CODE, generatorBatchCode(detailO, inv_date));
-			}
+		JsonArray replacedDetails = new JsonArray();
+		JsonArray details = bo.getJsonArray("detail");
 
+		for (Object detailObj : details) {
+			JsonObject detail = (JsonObject) detailObj;
+			String batchCode = detail.getString(PharseInvConstant.BATCH_CODE);
+			if (null == batchCode || batchCode.isEmpty()) {
+				JsonObject newDetail = new JsonObject();
+				newDetail = detail.copy();
+				newDetail.put(PharseInvConstant.BATCH_CODE, generatorBatchCode(detail, inv_date));
+				replacedDetails.add(newDetail);
+				continue;
+			}
+			replacedDetails.add(detail);
 		}
+
+		if (replacedDetails.size() > 0) {
+			details.clear();
+			details.addAll(replacedDetails);
+			// bo.put("detail", details);
+		}
+
+		future.complete(bo);
 	}
 
 	/**
@@ -64,8 +78,8 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 	 * @return 批次号
 	 */
 	private String generatorBatchCode(JsonObject detailO, String inv_date) {
-
-		return detailO.getString(PharseInvConstant.EXPDATE) + inv_date;
+		String code = detailO.getString(PharseInvConstant.EXPDATE) + "-" + inv_date;
+		return code.replace("-", "/");
 	}
 
 	/**
@@ -94,16 +108,19 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 		}
 
 		// 增加现存量，调用现存量的接口
-		String invSrvName = this.appActivity.getDependencies().getJsonObject("inventorycenter_service")
-				.getString("service_name", "");
-		String getWarehouseAddress = from_account + "." + invSrvName + "." + "stockonhand-mgr.batchcreate";
-		this.appActivity.getEventBus().send(getWarehouseAddress, paramList, invRet -> {
+		this.appActivity.getEventBus().send(getOnhandAddr(), paramList, invRet -> {
 			if (invRet.succeeded()) {
 				future.complete(bo);
 			} else {
 				future.fail(invRet.cause());
 			}
 		});
+
+	}
+
+	private String getOnhandAddr() {
+		return this.appActivity.getAppInstContext().getAccount() + "."
+				+ this.appActivity.getAppService().getRealServiceName() + ".stockonhand-mgr.batchcreate";
 
 	}
 
