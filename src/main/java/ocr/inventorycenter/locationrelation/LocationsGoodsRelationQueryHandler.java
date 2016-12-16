@@ -78,7 +78,7 @@ public class LocationsGoodsRelationQueryHandler extends ActionHandlerImpl<JsonOb
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
 
-		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.GET);
+		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
 
 		return actionDescriptor;

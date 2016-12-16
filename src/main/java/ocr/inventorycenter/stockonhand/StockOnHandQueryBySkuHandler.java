@@ -1,6 +1,8 @@
 package ocr.inventorycenter.stockonhand;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.vertx.core.AsyncResult;
@@ -43,6 +45,8 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 	public static final String onhandnum = "onhandnum";
 	public static final String resevednum = "resevednum";
 	public static final String locationnum = "locationnum";
+	public static final String packageunit = "packageunit";
+	public static final String warehousecode = "warehousecode";
 
 	public StockOnHandQueryBySkuHandler(AppActivityImpl appActivity) {
 		super(appActivity);
@@ -84,7 +88,8 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		List<Future> futures = new ArrayList<Future>();
 
 		JsonObject resultObjects = new JsonObject();
-		resultObjects.put("sku", bo.getString("sku"));
+
+		resultObjects.put("sku", ((JsonObject) bo.getJsonObject("query")).getString("sku"));
 		resultObjects.put("warehouse", bo.getString("warehouse"));
 		JsonArray resultArray = new JsonArray();
 
@@ -128,6 +133,9 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 								resultObject.put(batchcode, ""); // 批次空
 								resultObject.put(location, locationvalue); // 仓位
 								resultObject.put(locationnum, locationnumvalue);// 仓位满载数量
+								resultObject.put(packageunit, locationObj.getString(packageunit));// 单位
+								resultObject.put(warehousecode, locationObj.getString(warehousecode));
+
 								resultObject.put(onhandnum, 0.0);// 现存量
 								resultObject.put(resevednum, 0.0);// 预留量
 								resultArray.add(resultObject);
@@ -141,9 +149,11 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 									continue;
 								}
 								JsonObject resultObject = new JsonObject();
+								resultObject.put(packageunit, locationObj.getString(packageunit));// 单位
 								resultObject.put(sku, onhandObject2.getString(sku)); // 目前存放的sku
 								resultObject.put(batchcode, onhandObject2.getString(batchcode)); // 批次号
 								resultObject.put(location, locationvalue); // 仓位
+								resultObject.put(warehousecode, locationObj.getString(warehousecode));
 								resultObject.put(locationnum, locationnumvalue);// 仓位满载数量
 								resultObject.put(onhandnum, onhandObject.getDouble(onhandnum));// 现存量
 								resultObject.put(resevednum, getReserved(onhandObject2, reverseds));// 根据key维度，得到对应预留量
@@ -157,9 +167,45 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 				}
 			}
-
-			mgs.reply(resultArray);
+			;
+			mgs.reply(sort2(resultArray));
 		});
+	}
+
+	private JsonArray sort2(JsonArray resultArray) {
+
+		JsonArray sortedJsonArray =new JsonArray();
+		
+		List<JsonObject> jsonValues = new ArrayList<JsonObject>();
+		for (int i = 0; i < resultArray.size(); i++) {
+			jsonValues.add(resultArray.getJsonObject(i));
+		}
+
+		Collections.sort(jsonValues, new Comparator<JsonObject>() {
+
+			@Override
+			public int compare(JsonObject a, JsonObject b) {
+				String valA = new String();
+				String valB = new String();
+
+				try {
+					valA = a.getString(warehousecode) + a.getString(location);
+
+					valB = b.getString(warehousecode) + b.getString(location);
+
+				} catch (Exception e) {
+
+				}
+
+				return valA.compareTo(valB);
+
+			}
+		});
+		
+		for (int i = 0; i < jsonValues.size(); i++) {
+	        sortedJsonArray.add(jsonValues.get(i));
+	    }
+		return sortedJsonArray;
 	}
 
 	private Double getReserved(JsonObject onhands, JsonArray reverseds) {
@@ -176,7 +222,13 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 			JsonObject reversed = (JsonObject) reversed2.getValue("_id");
 			String reversekey = reversed.getString(sku) + reversed.getString(batchcode) + reversed.getString(location);
 			if (onhandkey.equals(reversekey)) {
-				reversennum = reversed.getDouble(resevednum);
+				Double reversennum2 = reversed.getDouble(resevednum);
+				if (reversennum2 == null) {
+					reversennum = 0.0;
+					break;
+				}
+
+				reversennum = reversennum2;
 				break;
 
 			}
