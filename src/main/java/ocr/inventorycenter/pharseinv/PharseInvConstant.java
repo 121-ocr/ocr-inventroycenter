@@ -28,6 +28,19 @@ public class PharseInvConstant {
 	public static String CreatedStatus = "created"; //创建完毕
 	
 	
-	
+	public static final String GOODACCOUNT = "goodaccount";
+	public static final String NSNUM = "nsnum";
+	public static final String ONHANDNUM = "onhandnum";
+	public static final String WAREHOUSECODE = "warehousecode";
+	public static final String WAREHOUSES = "warehouses";
+	public static final String SKU = "sku";
+	public static final String INVBATCHCODE = "invbatchcode";
+	public static final String PRODUCT_SKU_CODE = "product_sku_code";
+	public static final String GOODS = "goods";
+	public static final String WAREHOUSE = "warehouse";
+	public static final String EXPDATE = "expdate";
+	public static final String BATCH_CODE = "batch_code";
+	public static final String INV_DATE = "inv_date";
+	public static final String ADDRESS = PharseInvConstant.CreateAddressConstant;
 
 }
