@@ -5,6 +5,7 @@ import java.util.List;
 
 import ocr.inventorycenter.invfacility.InvFacilityManagementComponent;
 import ocr.inventorycenter.invorg.InvOrgManagementComponent;
+import ocr.inventorycenter.locationrelation.LocationRelationManagementComponent;
 import ocr.inventorycenter.pharseinv.PharseInvManagementComponent;
 import ocr.inventorycenter.stockonhand.StockOnHandManagementComponent;
 import ocr.inventorycenter.stockout.StockOutManagementComponent;
@@ -45,22 +46,22 @@ public class InventoryCenterService extends AppServiceImpl {
 
 		InvOrgManagementComponent invOrgManagementComponent = new InvOrgManagementComponent();
 		retActivities.add(invOrgManagementComponent);
-		
-		
+
 		InvFacilityManagementComponent invFacilityManagementComponent = new InvFacilityManagementComponent();
 		retActivities.add(invFacilityManagementComponent);
+
+		LocationRelationManagementComponent locationRelationManagementComponent = new LocationRelationManagementComponent();
+		retActivities.add(locationRelationManagementComponent);
 
 		StockOnHandManagementComponent stockOnHand = new StockOnHandManagementComponent();
 		retActivities.add(stockOnHand);
 
 		StockReservedManagementComponent stockReserved = new StockReservedManagementComponent();
 		retActivities.add(stockReserved);
-		
 
 		StockOutManagementComponent stockOut = new StockOutManagementComponent();
 		retActivities.add(stockOut);
-		
-	
+
 		return retActivities;
 	}
 }

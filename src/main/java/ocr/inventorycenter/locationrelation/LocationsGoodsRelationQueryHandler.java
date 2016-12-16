@@ -1,11 +1,10 @@
-package ocr.inventorycenter.invfacility;
+package ocr.inventorycenter.locationrelation;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import orc.common.busi.open.inventorycenter.InvBusiOpenContant;
 import otocloud.common.ActionURI;
-import otocloud.common.OtoCloudDirectoryHelper;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
@@ -13,7 +12,7 @@ import otocloud.framework.core.HandlerDescriptor;
 import otocloud.framework.core.OtoCloudBusMessage;
 
 /**
- * 库存中心：货位查询
+ * 库存中心：货位查询根据sku条件
  * 
  * @date 2016年11月20日
  * @author LCL
@@ -22,6 +21,7 @@ import otocloud.framework.core.OtoCloudBusMessage;
 public class LocationsGoodsRelationQueryHandler extends ActionHandlerImpl<JsonObject> {
 
 	public static final String ADDRESS = InvBusiOpenContant.LOCATIONSADDRESS;
+	private static final String sku = "sku";
 
 	public LocationsGoodsRelationQueryHandler(AppActivityImpl appActivity) {
 		super(appActivity);
@@ -38,22 +38,35 @@ public class LocationsGoodsRelationQueryHandler extends ActionHandlerImpl<JsonOb
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 
-		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "locationsGoodsRel.json";
-		this.getAppActivity().getVertx().fileSystem().readFile(menusFilePath, result -> {
-			if (result.succeeded()) {
-				String fileContent = result.result().toString();
-				JsonArray srvCfg = new JsonArray(fileContent);
-				msg.reply(srvCfg);
+		appActivity.getAppDatasource().getMongoClient().find(appActivity.getDBTableName(appActivity.getBizObjectType()),
+				getQueryConditon(msg.body()), result -> {
+					if (result.succeeded()) {
+						JsonArray jsonArray = new JsonArray();
+						String fileContent = result.result().toString();
+						if (fileContent != null && !fileContent.isEmpty()) {
+							JsonArray t = new JsonArray(fileContent);
+							JsonObject tt = t.getJsonObject(0);
+							jsonArray = tt.getJsonArray("allotLocations");
+						}
+						msg.reply(jsonArray);
 
-			} else {
-				Throwable errThrowable = result.cause();
-				String errMsgString = errThrowable.getMessage();
-				appActivity.getLogger().error(errMsgString, errThrowable);
-				msg.fail(100, errMsgString);
+					} else {
+						Throwable errThrowable = result.cause();
+						String errMsgString = errThrowable.getMessage();
+						appActivity.getLogger().error(errMsgString, errThrowable);
+						msg.fail(100, errMsgString);
 
-			}
-		});
+					}
+				});
 
+	}
+
+	private JsonObject getQueryConditon(JsonObject so) {
+		JsonObject query = new JsonObject();
+		if (so.containsKey(sku) && so.getString(sku) != null && !so.isEmpty()) {
+			query.put(sku, so.getString(sku));
+		}
+		return query;
 	}
 
 	/**
@@ -65,7 +78,7 @@ public class LocationsGoodsRelationQueryHandler extends ActionHandlerImpl<JsonOb
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
 
-		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.GET);
+		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
 
 		return actionDescriptor;

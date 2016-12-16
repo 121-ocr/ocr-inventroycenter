@@ -1,29 +1,18 @@
-[
-	{
-		"product_sku_code": "WINE001SP0001SP0001",
-		"allotLocatons": 
-		[
-			{
-				"locationcode": "1-6-2-10"
-			},
-
-			{
-				"locationcode": "1-6-2-11"
-			}
-		]
-	},
-
-	{
-		"product_sku_code": "WINE001SP0001SP0002",
-		"allotLocatons": 
-		[
-			{
-				"locationcode": "1-6-2-12"
-			},
-
-			{
-				"locationcode": "1-6-2-13"
-			}
-		]
-	}
-]
+{ 
+    
+    "sku" : "WINE001SP0006SP0006", 
+    "allotLocations" : [
+        {
+            "locationcode" : "1-6-2-10", 
+            "locationnum" : 100, 
+            "packageunit" : "箱", 
+            "warehousecode" : "WIN001"
+        }, 
+        {
+            "locationcode" : "1-6-2-11", 
+            "locationnum" : 110, 
+            "packageunit" : "袋", 
+            "warehousecode" : "WIN002"
+        }
+    ]
+}
