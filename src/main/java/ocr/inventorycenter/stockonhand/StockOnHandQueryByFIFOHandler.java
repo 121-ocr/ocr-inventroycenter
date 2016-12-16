@@ -82,6 +82,7 @@ public class StockOnHandQueryByFIFOHandler extends ActionHandlerImpl<JsonObject>
 				.add("locationcode"));
 		
 		params.put("sort",  new JsonObject()
+								.put("shelf_life", 1)
 								.put("invbatchcode", 1)
 								.put("onhandnum", 1));
 		
