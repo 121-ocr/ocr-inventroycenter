@@ -15,8 +15,7 @@
             "ismixedLot":0,
             "warehouses":{
             },
-            "goods":{
-            }
+           
         }, 
         "parentshelfs":{  //父项设施
             "code":"1-6-2",

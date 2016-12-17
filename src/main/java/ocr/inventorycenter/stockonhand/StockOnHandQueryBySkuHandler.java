@@ -30,6 +30,8 @@ import otocloud.framework.core.OtoCloudBusMessage;
 // 业务活动功能处理器
 public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> {
 
+	private static final String FIXEDTYPE = "fixed";
+	private static final String FREETYPE = "free";
 	// 查询方法中间变量
 	public static final String ADDRESS = "query_avaliable";
 	public static final String onhandArray = "onhandArray";
@@ -44,9 +46,11 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 	public static final String location = "locationcode";
 	public static final String onhandnum = "onhandnum";
 	public static final String resevednum = "resevednum";
+	public static final String plusnum = "plusnum";
 	public static final String locationnum = "locationnum";
 	public static final String packageunit = "packageunit";
 	public static final String warehousecode = "warehousecode";
+	public static final String sheftscode = "sheftscode";
 
 	public StockOnHandQueryBySkuHandler(AppActivityImpl appActivity) {
 		super(appActivity);
@@ -97,8 +101,8 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		Future<JsonObject> returnFuture1 = Future.future();
 		futures.add(returnFuture1);
 
-		Future<JsonObject> returnFuture2 = Future.future();
-		futures.add(returnFuture2);
+		// Future<JsonObject> returnFuture2 = Future.future();
+		// futures.add(returnFuture2);
 
 		Future<Void> nextFuture = Future.future(); // 黄色部分，规定步骤1、2之间的顺序
 
@@ -106,12 +110,13 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		nextFuture.setHandler(nextHandler -> {
 			// 步骤二，与步骤一串行的，并且结束后通过returnFurture通知外面future
 			getOnHandByLcations(bo, resultObjects, returnFuture1);
-			// 步骤三，与步骤一串行的，并且结束后通过returnFurture通知外面future
-			getResevedByLcations(bo, resultObjects, returnFuture2);
+			// 步骤三，与步骤一串行的，并且结束后通过returnFurture通知外面future，先先
+			// getResevedByLcations(bo, resultObjects, returnFuture2);
 		});
 
 		// 步骤一,批量产品仓位对应关系
-		getLocationByGoods(bo, resultObjects, nextFuture);
+
+		getLocations(bo, resultObjects, nextFuture);
 
 		CompositeFuture.join(futures).setHandler(ar -> { // 合并所有for循环结果，返回外面
 			CompositeFutureImpl comFutures = (CompositeFutureImpl) ar;
@@ -120,12 +125,16 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 					if (comFutures.succeeded(i)) {
 						JsonObject itemObject = comFutures.result(i);
 						JsonArray onhands = itemObject.getJsonArray(onhandArray);
-						JsonArray reverseds = itemObject.getJsonArray(reversedArray);
+						// JsonArray reverseds =
+						// itemObject.getJsonArray(reversedArray);
 						JsonArray locations = itemObject.getJsonArray(locationArray);
 						for (Object locationObject : locations) {
 							JsonObject locationObj = (JsonObject) locationObject;
 							String locationvalue = locationObj.getString(location);
-							Double locationnumvalue = locationObj.getDouble(locationnum);
+							Double locationnumvalue = 0.0;
+							if (locationObj.containsKey(locationnum)) {
+								locationnumvalue = locationObj.getDouble(locationnum);
+							}
 							// 现存量没有数据，那么就是此货位目前为空
 							if (onhands == null || onhands.size() == 0) {
 								JsonObject resultObject = new JsonObject();
@@ -135,9 +144,9 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 								resultObject.put(locationnum, locationnumvalue);// 仓位满载数量
 								resultObject.put(packageunit, locationObj.getString(packageunit));// 单位
 								resultObject.put(warehousecode, locationObj.getString(warehousecode));
-
 								resultObject.put(onhandnum, 0.0);// 现存量
 								resultObject.put(resevednum, 0.0);// 预留量
+								resultObject.put(plusnum, locationnumvalue);// 剩余数量
 								resultArray.add(resultObject);
 
 								continue;
@@ -156,7 +165,14 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 								resultObject.put(warehousecode, locationObj.getString(warehousecode));
 								resultObject.put(locationnum, locationnumvalue);// 仓位满载数量
 								resultObject.put(onhandnum, onhandObject.getDouble(onhandnum));// 现存量
-								resultObject.put(resevednum, getReserved(onhandObject2, reverseds));// 根据key维度，得到对应预留量
+								resultObject.put(resevednum, 0.0);// 根据key维度，得到对应预留量
+								resultObject.put(plusnum, locationnumvalue - onhandObject.getDouble(onhandnum));// 剩余数量
+								//resultObject.put(sheftscode,locationObj.getString(sheftscode) );// hh
+								
+								
+							// resultObject.put(resevednum,
+								// getReserved(onhandObject2, reverseds));//
+								// 根据key维度，得到对应预留量
 								resultArray.add(resultObject);
 
 							}
@@ -172,10 +188,51 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		});
 	}
 
+	private void getLocations(JsonObject bo, JsonObject resultObjects, Future<Void> nextFuture) {
+
+		if (isFixedType(bo)) { // 固定货位，根据货位和商品对应关系寻找货位
+			getLocationByGoods(bo, resultObjects, nextFuture);
+
+		}
+		if (isFreeType(bo)) {// 自由货位，根据货架标识（=散货），获取下面所有的货位。
+			getLocationByShift(bo, resultObjects, nextFuture);
+
+		}
+
+	}
+
+	private boolean isFreeType(JsonObject bo) {
+		return ((JsonObject) bo.getJsonObject("query")).getString("type").equals(FREETYPE);
+	}
+
+	private void getLocationByShift(JsonObject params, JsonObject resultObjects, Future<Void> nextFuture) {
+
+		this.appActivity.getEventBus().send(getSheftsGoodsRelAddress(), getSheftGoodsRelCond(params), facilityRes -> {
+			if (facilityRes.succeeded()) {
+				JsonArray locations = (JsonArray) facilityRes.result().body();
+				resultObjects.put(locationArray, locations);
+				nextFuture.complete();
+
+			} else {
+				Throwable err = facilityRes.cause();
+				String errMsg = err.getMessage();
+				appActivity.getLogger().error(errMsg, err);
+				nextFuture.failed();
+
+			}
+
+		});
+
+	}
+
+	private boolean isFixedType(JsonObject bo) {
+		return ((JsonObject) bo.getJsonObject("query")).getString("type").equals(FIXEDTYPE);
+	}
+
 	private JsonArray sort2(JsonArray resultArray) {
 
-		JsonArray sortedJsonArray =new JsonArray();
-		
+		JsonArray sortedJsonArray = new JsonArray();
+
 		List<JsonObject> jsonValues = new ArrayList<JsonObject>();
 		for (int i = 0; i < resultArray.size(); i++) {
 			jsonValues.add(resultArray.getJsonObject(i));
@@ -185,13 +242,13 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 			@Override
 			public int compare(JsonObject a, JsonObject b) {
-				String valA = new String();
-				String valB = new String();
+				Double valA = 0.0;
+				Double valB = 0.0;
 
 				try {
-					valA = a.getString(warehousecode) + a.getString(location);
+					valA = a.getDouble(plusnum);// 剩余数量
 
-					valB = b.getString(warehousecode) + b.getString(location);
+					valB = a.getDouble(plusnum);// 剩余数量
 
 				} catch (Exception e) {
 
@@ -201,13 +258,21 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 			}
 		});
-		
+
 		for (int i = 0; i < jsonValues.size(); i++) {
-	        sortedJsonArray.add(jsonValues.get(i));
-	    }
+			sortedJsonArray.add(jsonValues.get(i));
+		}
 		return sortedJsonArray;
 	}
 
+	/**
+	 * 预留方法先不使用
+	 * 
+	 * @param onhands
+	 * @param reverseds
+	 * @return
+	 * @deprecated
+	 */
 	private Double getReserved(JsonObject onhands, JsonArray reverseds) {
 
 		String onhandkey = onhands.getString(sku) + onhands.getString(batchcode) + onhands.getString(location);
@@ -238,6 +303,14 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		return reversennum;
 	}
 
+	/**
+	 * 先不考虑预留了
+	 * 
+	 * @param reqParams
+	 * @param resultObjects
+	 * @param returnFuture
+	 * @deprecated
+	 */
 	private void getResevedByLcations(JsonObject reqParams, JsonObject resultObjects, Future<JsonObject> returnFuture) {
 
 		// 根据 [仓库+仓位 ] 批量获取所有预留数据（sku + 现存量、批次、仓位 ）并行
@@ -309,14 +382,25 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		JsonObject queryInv = new JsonObject();
 
 		if (locations.size() == 1) {
-			queryInv.put("locationcode", locations.getJsonObject(0).getString(location));
+			queryInv.put(location, locations.getJsonObject(0).getString(location));
+			if (isFixedType(reqParams)) {
+				queryInv.put(sku, ((JsonObject) reqParams.getJsonObject("query")).getString(sku));
+			}
+
 		} else {
 			JsonArray queryItems = new JsonArray();
 			queryInv.put("$or", queryItems);
 
 			for (Object locationObj : locations) {
 				JsonObject reversed = (JsonObject) locationObj;
-				queryItems.add(new JsonObject().put("locationcode", reversed.getString(location)));
+				JsonObject item = new JsonObject();
+				item.put(location, reversed.getString(location));
+				if (isFixedType(reqParams)) {
+					item.put(sku, reqParams.getJsonObject("query").getString(sku));
+				}
+
+				queryItems.add(item);
+
 			}
 		}
 
@@ -367,10 +451,23 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		return facilityAddress;
 	}
 
+	private String getSheftsGoodsRelAddress() {
+		String facilitySer = this.appActivity.getService().getRealServiceName();
+		String facilityAddress = this.appActivity.getAppInstContext().getAccount() + "." + facilitySer + "."
+				+ InvBusiOpenContant.SHEFTSRELATIONCOMPONTENNAME + "." + InvBusiOpenContant.SHEFTSLOCATIONSADDRESS;
+		return facilityAddress;
+	}
+
 	private JsonObject getLocationGoodsRelCond(JsonObject params) {
 		JsonObject queryLocationGoodsRelCondObject = new JsonObject();
 		queryLocationGoodsRelCondObject.put(sku, params.getString(sku));
 		return queryLocationGoodsRelCondObject;
+	}
+
+	private JsonObject getSheftGoodsRelCond(JsonObject params) {
+		JsonObject cond = new JsonObject();
+		cond.put("type", "1");// 标识=散货
+		return cond;
 	}
 
 	/**

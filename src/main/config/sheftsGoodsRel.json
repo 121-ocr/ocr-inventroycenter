@@ -1,0 +1,41 @@
+[
+	{
+		"sheftscode": "SH09-09",
+		"warehousecode": "WIN001",
+		"type": "1",
+		"allotLocations": 
+		[
+			{
+				"locationcode": "SH1-6-2-10",
+				"packageunit": "箱",
+				"warehousecode": "WIN001"
+			},
+
+			{
+				"locationcode": "SH1-6-2-11",
+				"packageunit": "袋",
+				"warehousecode": "WIN001"
+			}
+		]
+	},
+
+	{
+		"sheftscode": "09-10",
+		"warehousecode": "WIN001",
+		"type": "2",
+		"allotLocations": 
+		[
+			{
+				"locationcode": "SH1-6-2-12",
+				"packageunit": "箱",
+				"warehousecode": "WIN001"
+			},
+
+			{
+				"locationcode": "SH1-6-2-13",
+				"packageunit": "袋",
+				"warehousecode": "WIN001"
+			}
+		]
+	}
+]
