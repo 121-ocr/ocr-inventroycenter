@@ -86,7 +86,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 	// 如果步骤2有数据，根据key[批次+sku+仓位+仓库]得到最终[对应现存量、预留量、满载量]
 	// 如果步骤2没有数据，该仓位前面没有对应存储物料
 	// ------------
-	private void getLocationsBySku(OtoCloudBusMessage<JsonObject> mgs, JsonObject bo,
+	public void getLocationsBySku(OtoCloudBusMessage<JsonObject> mgs, JsonObject bo,
 			Handler<AsyncResult<JsonArray>> next) {
 
 		List<Future> futures = new ArrayList<Future>();

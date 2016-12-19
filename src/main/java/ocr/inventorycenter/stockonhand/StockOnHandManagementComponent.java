@@ -77,6 +77,9 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 		StockOnHandQueryBySkuHandler stockOnHandQueryBySkuHandler = new StockOnHandQueryBySkuHandler(this);
 		ret.add(stockOnHandQueryBySkuHandler);
 		
+		AutoMarchLocationByOnHandHandler autoMarchLocationByOnHandHandler = new AutoMarchLocationByOnHandHandler(this);
+		ret.add(autoMarchLocationByOnHandHandler);
+		
 		
 		return ret;
 	}
