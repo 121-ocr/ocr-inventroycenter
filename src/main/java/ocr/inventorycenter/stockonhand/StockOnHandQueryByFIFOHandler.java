@@ -82,6 +82,7 @@ public class StockOnHandQueryByFIFOHandler extends ActionHandlerImpl<JsonObject>
 				.add("locationcode"));
 		
 		params.put("sort",  new JsonObject()
+								.put("shelf_life", 1)
 								.put("invbatchcode", 1)
 								.put("onhandnum", 1));
 		
@@ -108,6 +109,10 @@ public class StockOnHandQueryByFIFOHandler extends ActionHandlerImpl<JsonObject>
 							JsonObject stockOnHandItem = (JsonObject)item;
 							
 							Double onhandnum = stockOnHandItem.getDouble("onhandnum");
+							if(onhandnum <= 0.00){
+								continue;
+							}
+							
 							JsonObject _idFeilds = stockOnHandItem.getJsonObject("_id");
 							
 							//否则，计算累加量

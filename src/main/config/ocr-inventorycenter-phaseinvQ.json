@@ -10,7 +10,7 @@
     		    "code": "N0001",
             	"name": "海淀分店"
     		},
-			"restocking_warehose": {
+			"restocking_warehouse": {
 	            "code": "WH001",
 	            "name": "北京总仓"
             },
@@ -235,7 +235,7 @@
     		    "code": "N0002",
             	"name": "朝阳分店"
     		},
-			"restocking_warehose": {
+			"restocking_warehouse": {
 	            "code": "WH001",
 	            "name": "北京总仓"
             },

@@ -37,16 +37,16 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 		JsonArray sos = msg.body();
 
 		for (Object so : sos) {
-			if (stockOnHandNullVal((JsonObject)so) != null && !stockOnHandNullVal((JsonObject)so).equals("")) {
-				msg.fail(100, "如下数据不能为空值："+stockOnHandNullVal((JsonObject)so));
+			if (stockOnHandNullVal((JsonObject) so) != null && !stockOnHandNullVal((JsonObject) so).equals("")) {
+				msg.fail(100, "如下数据不能为空值：" + stockOnHandNullVal((JsonObject) so));
 				return;
 			}
-		}		
+		}
 
 		// 现存量维度=商品SKU+商品租户id+批次号+货位编码+仓库编码+存量+冗余字段 {主键+租户id+货位集合+仓库集合+商品集合}
 		JsonArray settingInfo = getParams(msg);
-		appActivity.getAppDatasource().getMongoClient_oto().save(appActivity.getDBTableName(appActivity.getBizObjectType()),
-				settingInfo, result -> {
+		appActivity.getAppDatasource().getMongoClient_oto()
+				.save(appActivity.getDBTableName(appActivity.getBizObjectType()), settingInfo, result -> {
 					if (result.succeeded()) {
 						msg.reply(result.result());
 					} else {
@@ -63,27 +63,56 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 
 		JsonArray settingInfos = msg.body();
 		for (Object temp : settingInfos) {
-			JsonObject settingInfo = (JsonObject)temp;
-			//settingInfo.put(StockOnHandConstant.bo_id, "");
+			JsonObject settingInfo = (JsonObject) temp;
+			// settingInfo.put(StockOnHandConstant.bo_id, "");
 			settingInfo.put(StockOnHandConstant.account, this.appActivity.getAppInstContext().getAccount());
-/*			settingInfo.put(StockOnHandConstant.locations, settingInfo.getValue("locations"));
-			settingInfo.put(StockOnHandConstant.warehouses, settingInfo.getValue("warehouses"));
-			settingInfo.put(StockOnHandConstant.goods, settingInfo.getValue("goods"));
-			settingInfo.put(StockOnHandConstant.sku, settingInfo.getString("sku"));
-			settingInfo.put(StockOnHandConstant.goodaccount, settingInfo.getString("goodaccount"));
-			settingInfo.put(StockOnHandConstant.invbatchcode, settingInfo.getString("invbatchcode"));
-			settingInfo.put(StockOnHandConstant.locationcode, settingInfo.getString("locationcode"));
-			settingInfo.put(StockOnHandConstant.warehousecode, settingInfo.getString("warehousecode"));
-			settingInfo.put(StockOnHandConstant.onhandnum, settingInfo.getString("onhandnum"));*/
-			
+			/*
+			 * settingInfo.put(StockOnHandConstant.locations,
+			 * settingInfo.getValue("locations"));
+			 * settingInfo.put(StockOnHandConstant.warehouses,
+			 * settingInfo.getValue("warehouses"));
+			 * settingInfo.put(StockOnHandConstant.goods,
+			 * settingInfo.getValue("goods"));
+			 * settingInfo.put(StockOnHandConstant.sku,
+			 * settingInfo.getString("sku"));
+			 * settingInfo.put(StockOnHandConstant.goodaccount,
+			 * settingInfo.getString("goodaccount"));
+			 * settingInfo.put(StockOnHandConstant.invbatchcode,
+			 * settingInfo.getString("invbatchcode"));
+			 * settingInfo.put(StockOnHandConstant.locationcode,
+			 * settingInfo.getString("locationcode"));
+			 * settingInfo.put(StockOnHandConstant.warehousecode,
+			 * settingInfo.getString("warehousecode"));
+			 * settingInfo.put(StockOnHandConstant.onhandnum,
+			 * settingInfo.getString("onhandnum"));
+			 */
+
 		}
-		
+
 		return settingInfos;
 	}
 
 	private String stockOnHandNullVal(JsonObject so) {
 		StringBuffer errors = new StringBuffer();
-		
+
+		if (!so.containsKey(StockOnHandConstant.status)) {
+			errors.append("状态");
+		}
+
+		if (!so.containsKey(StockOnHandConstant.biz_data_type)) {
+			errors.append("来源单据类型");
+		}
+
+		if (!so.containsKey(StockOnHandConstant.bo_id)) {
+			errors.append("来源单据ID");
+		}
+
+//		Object locations = so.getValue(StockOnHandConstant.locationcode);
+//
+//		if (null == locations || locations.equals("")) {
+//			errors.append("货位");
+//		}
+
 		Object warehouses = so.getValue(StockOnHandConstant.warehouses);
 
 		if (null == warehouses || warehouses.equals("")) {
@@ -94,19 +123,19 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 		if (null == sku || sku.equals("")) {
 			errors.append("sku");
 		}
-		
-		String goodaccount = so.getString(StockOnHandConstant.goodaccount); 
+
+		String goodaccount = so.getString(StockOnHandConstant.goodaccount);
 		if (null == goodaccount || goodaccount.equals("")) {
 			errors.append("商品所属货主");
 		}
-		
-		Object goods = so.getValue(StockOnHandConstant.goods); 
+
+		Object goods = so.getValue(StockOnHandConstant.goods);
 
 		if (null == goods || goods.equals("")) {
 			errors.append("商品信息");
 		}
-		
-		if(!so.containsKey(StockOnHandConstant.onhandnum)){
+
+		if (!so.containsKey(StockOnHandConstant.onhandnum)) {
 			errors.append("现存量");
 		}
 

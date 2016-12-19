@@ -121,8 +121,8 @@ public class StockOutBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
 		// TODO 如果没有boid，则调用单据号生成规则生成一个单据号
 		// 交易单据一般要记录协作方
 		String boId = bo.getString("bo_id");
-		String partnerAcct = bo.getJsonObject("channel").getString("account");
-		this.recordFactData(appActivity.getBizObjectType(), bo, boId, actor, partnerAcct, null, result -> {
+		//String partnerAcct = bo.getJsonObject("channel").getString("link_account");
+		this.recordFactData(appActivity.getBizObjectType(), bo, boId, actor, null, result -> {
 			if (result.succeeded()) {
 				returnFuture.complete();
 			} else {
