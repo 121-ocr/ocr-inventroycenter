@@ -66,21 +66,25 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 	 * db.bs_stockonhand_3.aggregate(
 		   [
 		      {
-		          $match : { warehousecode: "WH001", sku: "WINE001SP0001SP0001", invbatchcode: "1"}
+		          $match : { "warehousecode": "WH001", "sku": "WINE001SP0001SP0001", "status": {"$in": ["IN","OUT","RES"]}}
 		      },
 		      {
 		        $group : {
-		           _id : { warehousecode: "$warehousecode", sku: "$sku", invbatchcode: "$invbatchcode", locationcode: "$locationcode" },
-		           onhandnum: { $sum: "$onhandnum" }
+		           _id : { "warehousecode": "$warehousecode", "sku": "$sku", "invbatchcode": "$invbatchcode", "shelf_life": "$shelf_life", "locationcode": "$locationcode"},
+		           shelf_life: {$first: "$shelf_life" },
+		           invbatchcode: {$first: "$invbatchcode" },
+		           onhandnum: {$sum: "$onhandnum" }
 		        }
 		      },
 		      {
 		        $sort: {
+		          shelf_life: 1,
+		          invbatchcode: 1,
 		          onhandnum: 1 
 		        }
 		      }
 		   ]
-		)
+		)	
 	 * @param params
 	 * @param next
 	 */
@@ -176,13 +180,16 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 					}
 					final String goodsAddress = _goodsAddress;
 					
-					List<Integer> removedItems = new ArrayList<Integer>();
+					//List<Integer> removedItems = new ArrayList<Integer>();
+					
+					JsonArray retArray = new JsonArray();
 					
 					for(int i=0; i<skSize; i++){
 						JsonObject stockOnHandItem = stockOnHandRet.getJsonObject(i);
 						if(stockOnHandItem.getDouble("onhandnum").compareTo(new Double("0.00")) == 0){
-							removedItems.add(i);
-						}else{						
+							//removedItems.add(i);
+						}else{	
+							retArray.add(stockOnHandItem);
 							if(needGoods){
 							
 								Future<JsonObject> returnFuture = Future.future();
@@ -210,17 +217,17 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 							}
 						}
 					}	
-					if(removedItems.size() > 0){
+/*					if(removedItems.size() > 0){
 						for(Integer idx: removedItems){
 							stockOnHandRet.remove(idx.intValue());
 						}
-					}
+					}*/
 					if(needGoods){
 						CompositeFuture.join(futures).setHandler(ar -> {
-							future.complete(stockOnHandRet);
+							future.complete(retArray);
 						});
 					}else{
-						future.complete(stockOnHandRet);
+						future.complete(retArray);
 					}
 				}else{				
 					future.complete(stockOnHandRet);    

@@ -109,6 +109,10 @@ public class StockOnHandQueryByFIFOHandler extends ActionHandlerImpl<JsonObject>
 							JsonObject stockOnHandItem = (JsonObject)item;
 							
 							Double onhandnum = stockOnHandItem.getDouble("onhandnum");
+							if(onhandnum <= 0.00){
+								continue;
+							}
+							
 							JsonObject _idFeilds = stockOnHandItem.getJsonObject("_id");
 							
 							//否则，计算累加量
