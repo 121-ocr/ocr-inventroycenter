@@ -89,7 +89,7 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 	 * @param future
 	 */
 	protected void afterProcess(JsonObject bo, Future<JsonObject> future) {
-		String from_account = this.appActivity.getAppInstContext().getAccount();
+		
 		JsonArray paramList = new JsonArray();
 		for (Object detail : bo.getJsonArray("detail")) {
 			JsonObject param = new JsonObject();
@@ -103,7 +103,9 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 			param.put(PharseInvConstant.ONHANDNUM, detailO.getValue(PharseInvConstant.NSNUM));
 			param.put(PharseInvConstant.GOODACCOUNT,
 					detailO.getJsonObject(PharseInvConstant.GOODS).getString("account"));
-
+			param.put("status", "in");
+			param.put("biz_data_type", PharseInvConstant.ComponentBizObjectTypeConstant);
+			param.put("bo_id", detailO.getString("bo_id"));
 			paramList.add(param);
 		}
 
