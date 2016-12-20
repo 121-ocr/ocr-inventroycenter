@@ -66,7 +66,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> event) {
 
-		getLocationsBySku(event, event.body(), ret -> {
+		getLocationsBySku( event.body(), ret -> {
 
 			if (ret.succeeded()) {
 				event.reply(ret.result());
@@ -86,9 +86,11 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 	// 如果步骤2有数据，根据key[批次+sku+仓位+仓库]得到最终[对应现存量、预留量、满载量]
 	// 如果步骤2没有数据，该仓位前面没有对应存储物料
 	// ------------
-	public void getLocationsBySku(OtoCloudBusMessage<JsonObject> mgs, JsonObject bo,
+	public void getLocationsBySku(JsonObject bo,
 			Handler<AsyncResult<JsonArray>> next) {
 
+		Future<JsonArray> res = Future.future();
+		res.setHandler(next);
 		List<Future> futures = new ArrayList<Future>();
 
 		JsonObject resultObjects = new JsonObject();
@@ -182,9 +184,15 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 					}
 
 				}
+				res.complete(sort2(resultArray));
+			}else{
+				Throwable err = ar.cause();
+				String errMsg = err.getMessage();
+				appActivity.getLogger().error(errMsg, err);
+				res.fail(err);
 			}
-			;
-			mgs.reply(sort2(resultArray));
+		
+			
 		});
 	}
 

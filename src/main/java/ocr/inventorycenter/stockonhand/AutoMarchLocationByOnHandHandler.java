@@ -22,8 +22,8 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 	// 查询方法中间变量
 	public static final String ADDRESS = "automatch_location";
 
-	private static final String NYNUM2 = "nynum";
-	private static final String ONHANDNUM2 = "onhandnum";
+	private static final String NYNUM2 = "nsnum";
+	private static final String ONHANDNUM2 = "plusnum";
 	private static final String LOCATIONCODE = "locationcode";
 
 	public AutoMarchLocationByOnHandHandler(AppActivityImpl appActivity) {
@@ -41,15 +41,14 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 	public void handle(OtoCloudBusMessage<JsonObject> event) {
 
 		StockOnHandQueryBySkuHandler hander = new StockOnHandQueryBySkuHandler(this.appActivity);
-		hander.getLocationsBySku(event, event.body(), next -> {
-			if (next.succeeded()) {
-				
+		hander.getLocationsBySku( event.body(), next -> {
+			
+			if (next.succeeded()) {			
 				JsonArray locations = next.result();
 				if (locations == null || locations.size() == 0) {
 					event.reply(new JsonArray());
 					return;
 				}
-
 				JsonArray marchLos = getLocations(event, locations);
 				event.reply(marchLos);
 			} else {
@@ -61,9 +60,11 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 
 	}
 
-	private JsonArray getLocations(OtoCloudBusMessage<JsonObject> event, JsonArray loactions) {
+	private JsonArray getLocations(OtoCloudBusMessage<JsonObject> msg, JsonArray loactions) {
 		JsonArray resultlocations = new JsonArray();
-		Double nynum = event.body().getDouble(NYNUM2);
+
+		Double nynum = getnsnum(msg);
+		
 		Double sum = 0.0;
 		for (Object r : loactions) {
 			JsonObject loaction = (JsonObject) r;
@@ -80,6 +81,12 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 			setResultsLocations(resultlocations, loaction);
 		}
 		return resultlocations;
+	}
+
+	private Double getnsnum(OtoCloudBusMessage<JsonObject> event) {
+		String nynumsrt =  ((JsonObject) event.body().getJsonObject("query")).getString(NYNUM2);
+		Double nynum =Double.parseDouble(nynumsrt);
+		return nynum;
 	}
 
 	private void setResultsLocations(JsonArray resultlocations, JsonObject loaction) {
