@@ -40,8 +40,10 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> event) {
 
+		JsonObject params = event.body();
+		
 		StockOnHandQueryBySkuHandler hander = new StockOnHandQueryBySkuHandler(this.appActivity);
-		hander.getLocationsBySku( event.body(), next -> {
+		hander.getLocationsBySku(params, next -> {
 			
 			if (next.succeeded()) {			
 				JsonArray locations = next.result();
@@ -49,7 +51,7 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 					event.reply(new JsonArray());
 					return;
 				}
-				JsonArray marchLos = getLocations(event, locations);
+				JsonArray marchLos = getLocations(params, locations);
 				event.reply(marchLos);
 			} else {
 				Throwable errThrowable = next.cause();
@@ -60,10 +62,10 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 
 	}
 
-	private JsonArray getLocations(OtoCloudBusMessage<JsonObject> msg, JsonArray loactions) {
+	private JsonArray getLocations(JsonObject params, JsonArray loactions) {
 		JsonArray resultlocations = new JsonArray();
 
-		Double nynum = getnsnum(msg);
+		Double nynum = getnsnum(params);
 		
 		Double sum = 0.0;
 		for (Object r : loactions) {
@@ -83,9 +85,9 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 		return resultlocations;
 	}
 
-	private Double getnsnum(OtoCloudBusMessage<JsonObject> event) {
-		String nynumsrt =  ((JsonObject) event.body().getJsonObject("query")).getString(NYNUM2);
-		Double nynum =Double.parseDouble(nynumsrt);
+	private Double getnsnum(JsonObject params) {
+		Double nynum =  params.getJsonObject("query").getDouble(NYNUM2);
+		//Double nynum =Double.parseDouble(nynumsrt);
 		return nynum;
 	}
 

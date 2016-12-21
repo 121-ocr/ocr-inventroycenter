@@ -100,10 +100,10 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 					detailO.getJsonObject(PharseInvConstant.GOODS).getString(PharseInvConstant.PRODUCT_SKU_CODE));
 			param.put(PharseInvConstant.INVBATCHCODE, detailO.getString(PharseInvConstant.BATCH_CODE));
 			param.put(PharseInvConstant.WAREHOUSECODE, bo.getJsonObject(PharseInvConstant.WAREHOUSE).getString("code"));
-			param.put(PharseInvConstant.ONHANDNUM, detailO.getValue(PharseInvConstant.NSNUM));
+			param.put(PharseInvConstant.ONHANDNUM, detailO.getDouble(PharseInvConstant.NSNUM));
 			param.put(PharseInvConstant.GOODACCOUNT,
 					detailO.getJsonObject(PharseInvConstant.GOODS).getString("account"));
-			param.put("status", "in");
+			param.put("status", "IN");
 			param.put("biz_data_type", PharseInvConstant.ComponentBizObjectTypeConstant);
 			param.put("bo_id", detailO.getString("bo_id"));
 			paramList.add(param);
