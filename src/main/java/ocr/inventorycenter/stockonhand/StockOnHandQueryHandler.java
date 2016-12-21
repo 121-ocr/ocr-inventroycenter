@@ -4,6 +4,8 @@ package ocr.inventorycenter.stockonhand;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hazelcast.nio.tcp.NewClientReadHandler;
+
 import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
@@ -104,13 +106,25 @@ public class StockOnHandQueryHandler extends ActionHandlerImpl<JsonObject> {
 			if(query.containsKey("goodaccount")){
 				_goodsAccount = query.getString("goodaccount");
 			}
-			if(status != null && status.size() > 0)
+			if(status != null && status.size() > 0){
 				query.put("status", new JsonObject().put("$in", status));
+			}
+			else {
+				query.put("status", new JsonObject().put("$in", new JsonArray()
+																	.add("IN")
+																	.add("OUT")
+																	.add("RES")));
+			}
 		}else{
-			if(status != null && status.size() > 0)
+			if(status != null && status.size() > 0){
 				query = new JsonObject().put("status", new JsonObject().put("$in", status));
-			else 
-				query = new JsonObject();
+			}
+			else {
+				query = new JsonObject().put("status", new JsonObject().put("$in", new JsonArray()
+																						.add("IN")
+																						.add("OUT")
+																						.add("RES")));
+			}
 			
 		}
 		final String goodsAccount = _goodsAccount;
