@@ -22,8 +22,8 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 	// 查询方法中间变量
 	public static final String ADDRESS = "automatch_location";
 
-	private static final String NYNUM2 = "nsnum";
-	private static final String ONHANDNUM2 = "plusnum";
+	private static final String NSNUM2 = "nsnum";
+	private static final String PLUSUM2 = "plusnum";
 	private static final String LOCATIONCODE = "locationcode";
 
 	public AutoMarchLocationByOnHandHandler(AppActivityImpl appActivity) {
@@ -65,36 +65,40 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 	private JsonArray getLocations(JsonObject params, JsonArray loactions) {
 		JsonArray resultlocations = new JsonArray();
 
-		Double nynum = getnsnum(params);
+		Double nsnum = getnsnum(params);
 		
-		Double sum = 0.0;
+		//拣货剩余量
+		Double plusnum = nsnum;
 		for (Object r : loactions) {
 			JsonObject loaction = (JsonObject) r;
-			Double onhandnum = loaction.getDouble(ONHANDNUM2);
-			if (nynum.compareTo(onhandnum) <= 0) {// 现存量大于拣货数量
+			Double locationPlusnum = loaction.getDouble(PLUSUM2); //货位剩余量
+			if (plusnum.compareTo(locationPlusnum) <= 0) {// 货位剩余量大于拣货剩余量
+				loaction.put("nsnum", plusnum);
 				setResultsLocations(resultlocations, loaction);
 				break;
 			}
-			if (nynum.compareTo(sum) <= 0) { // 已经够拣货数量
+			
+			loaction.put("nsnum", locationPlusnum);
+			setResultsLocations(resultlocations, loaction);
+			
+			plusnum = plusnum - locationPlusnum;
+			if(plusnum <= 0.0){
 				break;
 			}
-
-			sum = sum + onhandnum;
-			setResultsLocations(resultlocations, loaction);
 		}
 		return resultlocations;
 	}
 
 	private Double getnsnum(JsonObject params) {
-		Double nynum =  params.getJsonObject("query").getDouble(NYNUM2);
+		Double nsnum =  params.getJsonObject("query").getDouble(NSNUM2);
 		//Double nynum =Double.parseDouble(nynumsrt);
-		return nynum;
+		return nsnum;
 	}
 
 	private void setResultsLocations(JsonArray resultlocations, JsonObject loaction) {
-		JsonObject lo = new JsonObject();
-		lo.put(LOCATIONCODE, loaction.getString(LOCATIONCODE));
-		resultlocations.add(lo);
+		//JsonObject lo = new JsonObject();
+		//lo.put(LOCATIONCODE, loaction.getString(LOCATIONCODE));
+		resultlocations.add(loaction);
 
 	}
 

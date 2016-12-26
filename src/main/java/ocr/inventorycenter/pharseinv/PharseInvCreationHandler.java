@@ -1,5 +1,10 @@
 package ocr.inventorycenter.pharseinv;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
@@ -78,8 +83,8 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 	 * @return 批次号
 	 */
 	private String generatorBatchCode(JsonObject detailO, String inv_date) {
-		String code = detailO.getString(PharseInvConstant.EXPDATE) + "-" + inv_date;
-		return code.replace("-", "/");
+		String code = detailO.getString(PharseInvConstant.EXPDATE) + inv_date;
+		return code.replace("-", "").replace("/", "");
 	}
 
 	/**
@@ -90,14 +95,19 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 	 */
 	protected void afterProcess(JsonObject bo, Future<JsonObject> future) {
 
-		JsonArray paramList = new JsonArray();
+		JsonArray onHandList = new JsonArray();
+		Map<String, JsonObject> commonPriceInfos = new HashMap<String, JsonObject>();
+		
 		for (Object detail : bo.getJsonArray("detail")) {
 			JsonObject param = new JsonObject();
 			JsonObject detailO = (JsonObject) detail;
+			
+			String sku = detailO.getJsonObject(PharseInvConstant.GOODS).getString(PharseInvConstant.PRODUCT_SKU_CODE);			
+			
 			param.put(PharseInvConstant.WAREHOUSES, bo.getJsonObject(PharseInvConstant.WAREHOUSE));
 			param.put(PharseInvConstant.GOODS, detailO.getJsonObject(PharseInvConstant.GOODS));
-			param.put(PharseInvConstant.SKU,
-					detailO.getJsonObject(PharseInvConstant.GOODS).getString(PharseInvConstant.PRODUCT_SKU_CODE));
+			param.put(PharseInvConstant.SKU, sku);
+			param.put("locationcode", detailO.getString("locations"));
 			param.put(PharseInvConstant.INVBATCHCODE, detailO.getString(PharseInvConstant.BATCH_CODE));
 			param.put(PharseInvConstant.WAREHOUSECODE, bo.getJsonObject(PharseInvConstant.WAREHOUSE).getString("code"));
 			param.put(PharseInvConstant.ONHANDNUM, detailO.getDouble(PharseInvConstant.NSNUM));
@@ -108,17 +118,51 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 			param.put("status", "IN");
 			param.put("biz_data_type", PharseInvConstant.ComponentBizObjectTypeConstant);
 			param.put("bo_id", detailO.getString("bo_id"));
-			paramList.add(param);
+			onHandList.add(param);
+			
+			if(commonPriceInfos.containsKey(sku)){
+				break;
+			}else{
+				JsonObject commonPriceInfo = new JsonObject();
+				
+				commonPriceInfo.put(PharseInvConstant.GOODS, detailO.getJsonObject(PharseInvConstant.GOODS));
+				commonPriceInfo.put(PharseInvConstant.INVBATCHCODE, detailO.getString(PharseInvConstant.BATCH_CODE));
+				commonPriceInfo.put("supply_price", detailO.getJsonObject("supply_price"));
+				commonPriceInfo.put("retail_price", new JsonObject());
+				
+				commonPriceInfos.put(sku, commonPriceInfo);
+			}		
+			
 		}
-
+		
 		// 增加现存量，调用现存量的接口
-		this.appActivity.getEventBus().send(getOnhandAddr(), paramList, invRet -> {
+		this.appActivity.getEventBus().send(getOnhandAddr(), onHandList, invRet -> {
 			if (invRet.succeeded()) {
-				future.complete(bo);
+				//future.complete(bo);
 			} else {
-				future.fail(invRet.cause());
+				Throwable errThrowable = invRet.cause();
+				String errMsgString = errThrowable.getMessage();
+				appActivity.getLogger().error(errMsgString, errThrowable);
+
 			}
 		});
+		
+		List<JsonObject> mapValuesList = new ArrayList<JsonObject>(commonPriceInfos.values());
+		JsonArray commonPriceArray = new JsonArray(mapValuesList);	
+		
+		// 增加公共供货价
+		this.appActivity.getEventBus().send(getPriceSrvAddr(), commonPriceArray, ret -> {
+			if (ret.succeeded()) {
+				//future.complete(bo);
+			} else {
+				Throwable errThrowable = ret.cause();
+				String errMsgString = errThrowable.getMessage();
+				appActivity.getLogger().error(errMsgString, errThrowable);
+
+			}
+		});
+		
+		future.complete(bo);
 
 	}
 
@@ -127,6 +171,12 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 				+ this.appActivity.getAppService().getRealServiceName() + ".stockonhand-mgr.batchcreate";
 
 	}
+	
+	private String getPriceSrvAddr(){
+		String priceSrvName = this.appActivity.getDependencies().getJsonObject("channel_service").getString("service_name","");
+		return this.appActivity.getAppInstContext().getAccount() + "." + priceSrvName + "." + "pricepolicy-mgr.batch_create";							
+	}
+	
 
 	/**
 	 * {@inheritDoc}
