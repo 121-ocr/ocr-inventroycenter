@@ -38,7 +38,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 	public static final String locationArray = "locationArray";
 	public static final String reversedArray = "reversedArray";
 	// 前台传递参数：
-	public static final String sku = "sku";
+	public static final String SKU = "sku";
 	public static final String warehouse = "warehouse";
 	// results 结果集合：
 	public static final String results = "results";
@@ -145,7 +145,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 							// 现存量没有数据，那么就是此货位目前为空
 							if (onhands == null || onhands.size() == 0) {
 								JsonObject resultObject = new JsonObject();
-								resultObject.put(sku, ""); // 没有放任何sku
+								resultObject.put(SKU, ""); // 没有放任何sku
 								resultObject.put(batchcode, ""); // 批次空
 								resultObject.put(location, locationvalue); // 仓位
 								resultObject.put(locationnum, locationnumvalue);// 仓位满载数量
@@ -166,7 +166,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 								}
 								JsonObject resultObject = new JsonObject();
 								resultObject.put(packageunit, locationObj.getString(packageunit));// 单位
-								resultObject.put(sku, onhandObject2.getString(sku)); // 目前存放的sku
+								resultObject.put(SKU, onhandObject2.getString(SKU)); // 目前存放的sku
 								resultObject.put(batchcode, onhandObject2.getString(batchcode)); // 批次号
 								resultObject.put(location, locationvalue); // 仓位
 								resultObject.put(warehousecode, locationObj.getString(warehousecode));
@@ -286,7 +286,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 	 */
 	private Double getReserved(JsonObject onhands, JsonArray reverseds) {
 
-		String onhandkey = onhands.getString(sku) + onhands.getString(batchcode) + onhands.getString(location);
+		String onhandkey = onhands.getString(SKU) + onhands.getString(batchcode) + onhands.getString(location);
 
 		Double reversennum = 0.0;
 
@@ -296,7 +296,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		for (Object reversedObj : reverseds) {
 			JsonObject reversed2 = (JsonObject) reversedObj;
 			JsonObject reversed = (JsonObject) reversed2.getValue("_id");
-			String reversekey = reversed.getString(sku) + reversed.getString(batchcode) + reversed.getString(location);
+			String reversekey = reversed.getString(SKU) + reversed.getString(batchcode) + reversed.getString(location);
 			if (onhandkey.equals(reversekey)) {
 				Double reversennum2 = reversed.getDouble(resevednum);
 				if (reversennum2 == null) {
@@ -395,7 +395,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		if (locations.size() == 1) {
 			queryInv.put(location, locations.getJsonObject(0).getString(location));
 			if (isFixedType(reqParams)) {
-				queryInv.put(sku, ((JsonObject) reqParams.getJsonObject("query")).getString(sku));
+				queryInv.put(SKU, ((JsonObject) reqParams.getJsonObject("query")).getString(SKU));
 				queryInv.put(warehousecode, ((JsonObject) reqParams.getJsonObject("query")).getString(warehousecode));
 			}
 
@@ -409,7 +409,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 				item.put(location, reversed.getString(location));
 				item.put(warehousecode, reqParams.getJsonObject("query").getString(warehousecode));
 				if (isFixedType(reqParams)) {
-					item.put(sku, reqParams.getJsonObject("query").getString(sku));
+					item.put(SKU, reqParams.getJsonObject("query").getString(SKU));
 				}
 
 				queryItems.add(item);
