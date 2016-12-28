@@ -98,6 +98,8 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 		JsonArray onHandList = new JsonArray();
 		Map<String, JsonObject> commonPriceInfos = new HashMap<String, JsonObject>();
 		
+		String boId = bo.getString("bo_id");
+		
 		for (Object detail : bo.getJsonArray("detail")) {
 			JsonObject param = new JsonObject();
 			JsonObject detailO = (JsonObject) detail;
@@ -117,7 +119,7 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 			param.put("shelf_life", detailO.getString(PharseInvConstant.EXPDATE));
 			param.put("status", "IN");
 			param.put("biz_data_type", PharseInvConstant.ComponentBizObjectTypeConstant);
-			param.put("bo_id", detailO.getString("bo_id"));
+			param.put("bo_id", boId);
 			onHandList.add(param);
 			
 			if(commonPriceInfos.containsKey(sku)){
