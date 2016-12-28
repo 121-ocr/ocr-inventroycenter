@@ -94,9 +94,14 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		List<Future> futures = new ArrayList<Future>();
 
 		JsonObject resultObjects = new JsonObject();
+		
+		JsonObject query = bo.getJsonObject("query");
+		String sku = query.getString("sku");
+		String whCode = query.getString("warehousecode");
+		Boolean fixedType = query.getString("type").equals(FIXEDTYPE) ? true : false;
 
-		resultObjects.put("sku", ((JsonObject) bo.getJsonObject("query")).getString("sku"));
-		resultObjects.put("warehouse", bo.getString("warehouse"));
+		resultObjects.put("sku", sku);
+		resultObjects.put("warehouse", whCode);
 		JsonArray resultArray = new JsonArray();
 
 		// 由于需要等到步骤二、三都执行完后再执行合并数据逻辑，故需要定义两个future
@@ -118,7 +123,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 		// 步骤一,批量产品仓位对应关系
 
-		getLocations(bo, resultObjects, nextFuture);
+		getLocations(fixedType, sku, whCode, resultObjects, nextFuture);
 
 		CompositeFuture.join(futures).setHandler(ar -> { // 合并所有for循环结果，返回外面
 			CompositeFutureImpl comFutures = (CompositeFutureImpl) ar;
@@ -196,26 +201,24 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		});
 	}
 
-	private void getLocations(JsonObject bo, JsonObject resultObjects, Future<Void> nextFuture) {
+	private void getLocations(Boolean fixedType, String sku, String whCode, JsonObject resultObjects, Future<Void> nextFuture) {
 
-		if (isFixedType(bo)) { // 固定货位，根据货位和商品对应关系寻找货位
-			getLocationByGoods(bo, resultObjects, nextFuture);
+		if (fixedType) { // 固定货位，根据货位和商品对应关系寻找货位
+			getLocationByGoods(sku, whCode, resultObjects, nextFuture);
+
+		}else{// 自由货位，根据货架标识（=散货），获取下面所有的货位。
+			getLocationByShift(sku, whCode, resultObjects, nextFuture);
 
 		}
-		if (isFreeType(bo)) {// 自由货位，根据货架标识（=散货），获取下面所有的货位。
-			getLocationByShift(bo, resultObjects, nextFuture);
-
-		}
-
 	}
 
-	private boolean isFreeType(JsonObject bo) {
+/*	private boolean isFreeType(JsonObject bo) {
 		return ((JsonObject) bo.getJsonObject("query")).getString("type").equals(FREETYPE);
-	}
+	}*/
 
-	private void getLocationByShift(JsonObject params, JsonObject resultObjects, Future<Void> nextFuture) {
+	private void getLocationByShift(String sku, String whCode, JsonObject resultObjects, Future<Void> nextFuture) {
 
-		this.appActivity.getEventBus().send(getSheftsGoodsRelAddress(), getSheftGoodsRelCond(params), facilityRes -> {
+		this.appActivity.getEventBus().send(getSheftsGoodsRelAddress(), getSheftGoodsRelCond(sku, whCode), facilityRes -> {
 			if (facilityRes.succeeded()) {
 				JsonArray locations = (JsonArray) facilityRes.result().body();
 				resultObjects.put(locationArray, locations);
@@ -393,6 +396,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 			queryInv.put(location, locations.getJsonObject(0).getString(location));
 			if (isFixedType(reqParams)) {
 				queryInv.put(sku, ((JsonObject) reqParams.getJsonObject("query")).getString(sku));
+				queryInv.put(warehousecode, ((JsonObject) reqParams.getJsonObject("query")).getString(warehousecode));
 			}
 
 		} else {
@@ -403,6 +407,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 				JsonObject reversed = (JsonObject) locationObj;
 				JsonObject item = new JsonObject();
 				item.put(location, reversed.getString(location));
+				item.put(warehousecode, reqParams.getJsonObject("query").getString(warehousecode));
 				if (isFixedType(reqParams)) {
 					item.put(sku, reqParams.getJsonObject("query").getString(sku));
 				}
@@ -432,9 +437,9 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 	}
 
-	private void getLocationByGoods(JsonObject params, JsonObject resultObjects, Future<Void> nextFuture) {
+	private void getLocationByGoods(String sku, String whCode, JsonObject resultObjects, Future<Void> nextFuture) {
 
-		this.appActivity.getEventBus().send(getLocationGoodsRelAddress(), getLocationGoodsRelCond(params),
+		this.appActivity.getEventBus().send(getLocationGoodsRelAddress(), getLocationGoodsRelCond(sku, whCode),
 				facilityRes -> {
 					if (facilityRes.succeeded()) {
 						JsonArray locations = (JsonArray) facilityRes.result().body();
@@ -466,13 +471,14 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		return facilityAddress;
 	}
 
-	private JsonObject getLocationGoodsRelCond(JsonObject params) {
+	private JsonObject getLocationGoodsRelCond(String sku, String whCode) {
 		JsonObject queryLocationGoodsRelCondObject = new JsonObject();
-		queryLocationGoodsRelCondObject.put(sku, params.getString(sku));
+		queryLocationGoodsRelCondObject.put("sku", sku);
+		queryLocationGoodsRelCondObject.put("allotLocations.warehousecode", whCode);
 		return queryLocationGoodsRelCondObject;
 	}
 
-	private JsonObject getSheftGoodsRelCond(JsonObject params) {
+	private JsonObject getSheftGoodsRelCond(String sku, String whCode) {
 		JsonObject cond = new JsonObject();
 		cond.put("type", "1");// 标识=散货
 		return cond;

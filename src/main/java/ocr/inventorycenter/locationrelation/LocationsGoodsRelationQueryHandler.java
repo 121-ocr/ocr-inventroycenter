@@ -1,5 +1,7 @@
 package ocr.inventorycenter.locationrelation;
 
+import java.util.List;
+
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -37,18 +39,18 @@ public class LocationsGoodsRelationQueryHandler extends ActionHandlerImpl<JsonOb
 	// 处理器
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+		JsonObject query = msg.body();
 
 		appActivity.getAppDatasource().getMongoClient().find(appActivity.getDBTableName(appActivity.getBizObjectType()),
-				getQueryConditon(msg.body()), result -> {
-					if (result.succeeded()) {
-						JsonArray jsonArray = new JsonArray();
-						String fileContent = result.result().toString();
-						if (fileContent != null && !fileContent.isEmpty()) {
-							JsonArray t = new JsonArray(fileContent);
-							JsonObject tt = t.getJsonObject(0);
-							jsonArray = tt.getJsonArray("allotLocations");
+				query, result -> {
+					if (result.succeeded()) {						
+						List<JsonObject> rets = result.result();
+						if (rets != null && rets.size() > 0) {							
+							JsonObject tt = rets.get(0);
+							msg.reply(tt.getJsonArray("allotLocations"));
+						}else{
+							msg.fail(100, "无SKU货位关系");
 						}
-						msg.reply(jsonArray);
 
 					} else {
 						Throwable errThrowable = result.cause();
@@ -61,13 +63,13 @@ public class LocationsGoodsRelationQueryHandler extends ActionHandlerImpl<JsonOb
 
 	}
 
-	private JsonObject getQueryConditon(JsonObject so) {
+/*	private JsonObject getQueryConditon(JsonObject so) {
 		JsonObject query = new JsonObject();
 		if (so.containsKey(sku) && so.getString(sku) != null && !so.isEmpty()) {
 			query.put(sku, so.getString(sku));
 		}
 		return query;
-	}
+	}*/
 
 	/**
 	 * 此action的自描述元数据
