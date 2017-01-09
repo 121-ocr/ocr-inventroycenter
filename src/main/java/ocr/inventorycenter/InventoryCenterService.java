@@ -3,6 +3,7 @@ package ocr.inventorycenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import ocr.inventorycenter.invarea.InvAreaManagementComponent;
 import ocr.inventorycenter.invfacility.InvFacilityManagementComponent;
 import ocr.inventorycenter.invorg.InvOrgManagementComponent;
 import ocr.inventorycenter.locationrelation.LocationRelationManagementComponent;
@@ -51,6 +52,10 @@ public class InventoryCenterService extends AppServiceImpl {
 		InvFacilityManagementComponent invFacilityManagementComponent = new InvFacilityManagementComponent();
 		retActivities.add(invFacilityManagementComponent);
 
+		InvAreaManagementComponent InvAreaManagementComponent = new InvAreaManagementComponent();
+		retActivities.add(InvAreaManagementComponent);
+		
+		
 		LocationRelationManagementComponent locationRelationManagementComponent = new LocationRelationManagementComponent();
 		retActivities.add(locationRelationManagementComponent);
 

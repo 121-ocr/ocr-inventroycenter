@@ -47,10 +47,15 @@ public class InvFacilityManagementComponent extends AppActivityImpl {
 
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
 
+		
 		InvFacilityQueryHandler queryHandler = new InvFacilityQueryHandler(this);
 		ret.add(queryHandler);
-		
-		
+		InvFacilityCreateHandler createHandler = new InvFacilityCreateHandler(this);
+		ret.add(createHandler);
+		InvFacilityUpdateHandler updateHandler = new InvFacilityUpdateHandler(this);
+		ret.add(updateHandler);
+		InvFacilityRemoveHandler removeHandler = new InvFacilityRemoveHandler(this);
+		ret.add(removeHandler);
 
 		return ret;
 	}

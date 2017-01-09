@@ -12,10 +12,10 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  */
 //业务活动功能处理器
-public class InvFacilityQueryHandler  extends SampleDocQueryHandler {
+public class InvFacilityRemoveHandler  extends SampleDocQueryHandler {
 	
 
-	public InvFacilityQueryHandler(AppActivityImpl appActivity) {
+	public InvFacilityRemoveHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 		// TODO Auto-generated constructor stub
 	}
