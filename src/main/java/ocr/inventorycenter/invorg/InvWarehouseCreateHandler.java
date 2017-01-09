@@ -10,7 +10,7 @@ import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
 /**
- * 库存中心：采购入库-查询
+ * 库存中心：仓库
  * 
  * @date 2016年11月20日
  * @author LCL
