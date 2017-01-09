@@ -1,0 +1,40 @@
+[
+	{
+		"code": "WH00401",
+		"type": 
+		{
+			"code": "1",
+			"name": "拣货区" //存货、退货区、散货区
+		},
+
+		"warehouse": 
+		{
+			"code": "WH004",
+			"name": "北京朝阳门店仓2",
+			"type": 
+			{
+				"code": "1",
+				"name": "仓库"
+			},
+
+			"character": 
+			{
+				"code": "1",
+				"name": "VMI仓"
+			},
+
+			"address": 
+			{
+				"region": 
+				{
+					"code": "110105",
+					"full_name": "北京市朝阳区"
+				},
+
+				"address_detail": "XXX街道"
+			},
+
+			"account": "4"
+		}
+	}
+]
