@@ -123,7 +123,7 @@ public class PharseInvCreationHandler extends SampleBillBaseHandler {
 			onHandList.add(param);
 			
 			if(commonPriceInfos.containsKey(sku)){
-				break;
+				continue;
 			}else{
 				JsonObject commonPriceInfo = new JsonObject();
 				
