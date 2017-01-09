@@ -1,4 +1,4 @@
-package ocr.inventorycenter.invfacility;
+package ocr.inventorycenter.invarea;
 
 
 import io.vertx.core.json.JsonObject;
@@ -12,10 +12,10 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  */
 //业务活动功能处理器
-public class InvFacilityQueryHandler  extends SampleDocQueryHandler {
+public class InvAreaRemoveHandler  extends SampleDocQueryHandler {
 	
 
-	public InvFacilityQueryHandler(AppActivityImpl appActivity) {
+	public InvAreaRemoveHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 		// TODO Auto-generated constructor stub
 	}
@@ -43,7 +43,7 @@ public class InvFacilityQueryHandler  extends SampleDocQueryHandler {
 	@Override
 	public String getEventAddress() {
 		// TODO Auto-generated method stub
-		return InvFacilityConstant.QUERY_ADDRESS;
+		return InvAreaConstant.QUERY_ADDRESS;
 	}
 	
 }

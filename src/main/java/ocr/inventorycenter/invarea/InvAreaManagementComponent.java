@@ -1,4 +1,4 @@
-package ocr.inventorycenter.invfacility;
+package ocr.inventorycenter.invarea;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,23 +10,23 @@ import otocloud.framework.core.OtoCloudEventDescriptor;
 import otocloud.framework.core.OtoCloudEventHandlerRegistry;
 
 /**
- * 仓库设施管理：货架、货位档案
+ * 仓库设施管理：货区管理
  * 
  * @date 2016年11月20日
  * @author LCL
  */
-public class InvFacilityManagementComponent extends AppActivityImpl {
+public class InvAreaManagementComponent extends AppActivityImpl {
 
 	// 业务活动组件名
 	@Override
 	public String getName() {
-		return InvBusiOpenContant.FACILITYCOMPONTENNAME;
+		return InvBusiOpenContant.AREACOMPONTENNAME;
 	}
 
 	// 业务活动组件要处理的核心业务对象
 	@Override
 	public String getBizObjectType() {
-		return "ba_invfacility";
+		return "ba_invarea";
 	}
 
 	// 发布此业务活动关联的业务角色
@@ -47,14 +47,13 @@ public class InvFacilityManagementComponent extends AppActivityImpl {
 
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
 
-		
-		InvFacilityQueryHandler queryHandler = new InvFacilityQueryHandler(this);
+		InvAreaQueryHandler queryHandler = new InvAreaQueryHandler(this);
 		ret.add(queryHandler);
-		InvFacilityCreateHandler createHandler = new InvFacilityCreateHandler(this);
+		InvAreaCreateHandler createHandler = new InvAreaCreateHandler(this);
 		ret.add(createHandler);
-		InvFacilityUpdateHandler updateHandler = new InvFacilityUpdateHandler(this);
+		InvAreaUpdateHandler updateHandler = new InvAreaUpdateHandler(this);
 		ret.add(updateHandler);
-		InvFacilityRemoveHandler removeHandler = new InvFacilityRemoveHandler(this);
+		InvAreaRemoveHandler removeHandler = new InvAreaRemoveHandler(this);
 		ret.add(removeHandler);
 
 		return ret;
