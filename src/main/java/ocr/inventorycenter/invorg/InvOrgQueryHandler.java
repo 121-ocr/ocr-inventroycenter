@@ -3,6 +3,7 @@ package ocr.inventorycenter.invorg;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import otocloud.common.ActionURI;
+import otocloud.framework.app.common.PagingOptions;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
@@ -34,21 +35,20 @@ public class InvOrgQueryHandler extends ActionHandlerImpl<JsonObject> {
 	// 处理器
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+		
+		JsonObject queryParams = msg.body();
+	    PagingOptions pagingObj = PagingOptions.buildPagingOptions(queryParams);        
+	    this.queryBizDataList(appActivity.getBizObjectType(), pagingObj, null, findRet -> {
+	        if (findRet.succeeded()) {
+	            msg.reply(findRet.result());
+	        } else {
+				Throwable errThrowable = findRet.cause();
+				String errMsgString = errThrowable.getMessage();
+				appActivity.getLogger().error(errMsgString, errThrowable);
+				msg.fail(100, errMsgString);		
+	        }
 
-		JsonObject query = msg.body();
-
-		appActivity.getAppDatasource().getMongoClient()
-				.find(appActivity.getDBTableName(this.appActivity.getBizObjectType()), query, findRet -> {
-					if (findRet.succeeded()) {
-						msg.reply(findRet.result());
-					} else {
-						Throwable err = findRet.cause();
-						String errMsg = err.getMessage();
-						appActivity.getLogger().error(errMsg, err);
-						msg.fail(500, errMsg);
-					}
-
-				});
+	    });
 
 	}
 

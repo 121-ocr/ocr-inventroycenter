@@ -2,7 +2,7 @@ package ocr.inventorycenter.invorg;
 
 
 import io.vertx.core.http.HttpMethod;
-import ocr.common.handler.SampleDocBaseHandler;
+import ocr.common.handler.SampleSingleDocBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
@@ -16,7 +16,7 @@ import otocloud.framework.core.HandlerDescriptor;
  * @author LCL
  */
 //业务活动功能处理器
-public class InvWarehouseCreateHandler  extends SampleDocBaseHandler {
+public class InvWarehouseCreateHandler  extends SampleSingleDocBaseHandler {
 	
 	public InvWarehouseCreateHandler(AppActivityImpl appActivity) {
 		super(appActivity);
