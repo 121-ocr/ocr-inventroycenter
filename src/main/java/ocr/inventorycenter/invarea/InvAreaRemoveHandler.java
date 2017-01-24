@@ -2,7 +2,7 @@ package ocr.inventorycenter.invarea;
 
 
 import io.vertx.core.json.JsonObject;
-import ocr.common.handler.SampleDocQueryHandler;
+import ocr.common.handler.SampleSingleDocBaseHandler;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.OtoCloudBusMessage;
 /**
@@ -12,7 +12,7 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  */
 //业务活动功能处理器
-public class InvAreaRemoveHandler  extends SampleDocQueryHandler {
+public class InvAreaRemoveHandler  extends SampleSingleDocBaseHandler {
 	
 
 	public InvAreaRemoveHandler(AppActivityImpl appActivity) {

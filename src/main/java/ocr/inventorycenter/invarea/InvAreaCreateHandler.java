@@ -2,7 +2,7 @@ package ocr.inventorycenter.invarea;
 
 
 import io.vertx.core.http.HttpMethod;
-import ocr.common.handler.SampleDocBaseHandler;
+import ocr.common.handler.SampleSingleDocBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
@@ -16,7 +16,7 @@ import otocloud.framework.core.HandlerDescriptor;
  * @author LCL
  */
 //业务活动功能处理器
-public class InvAreaCreateHandler  extends SampleDocBaseHandler {
+public class InvAreaCreateHandler  extends SampleSingleDocBaseHandler {
 	
 	public InvAreaCreateHandler(AppActivityImpl appActivity) {
 		super(appActivity);
@@ -30,9 +30,6 @@ public class InvAreaCreateHandler  extends SampleDocBaseHandler {
 		return InvAreaConstant.CREATE_ADDRESS;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public ActionDescriptor getActionDesc() {
 

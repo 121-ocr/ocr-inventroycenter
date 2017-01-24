@@ -54,6 +54,11 @@ public class InvOrgManagementComponent extends AppActivityImpl {
 
 		InvWarehouseCreateHandler createHandler = new InvWarehouseCreateHandler(this);
 		ret.add(createHandler);
+		
+		InvWarehouseQueryHandler queryHandler2 = new InvWarehouseQueryHandler(this);
+		ret.add(queryHandler2);
+		
+		
 		InvWarehouseUpdateHandler updateHandler = new InvWarehouseUpdateHandler(this);
 		ret.add(updateHandler);
 		InvWarehouseRemoveHandler removeHandler = new InvWarehouseRemoveHandler(this);

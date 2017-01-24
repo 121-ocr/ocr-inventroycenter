@@ -1,27 +1,27 @@
-package ocr.inventorycenter.invarea;
+package ocr.inventorycenter.invorg;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
-import ocr.common.handler.SampleSingleDocQueryHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.common.PagingOptions;
 import otocloud.framework.app.function.ActionDescriptor;
+import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
 import otocloud.framework.core.OtoCloudBusMessage;
 
 /**
- * 库存中心：库区-查询
+ * 库存组织规划：对象（仓库档案）-查询
  * 
  * @date 2016年11月20日
  * @author LCL
  */
 // 业务活动功能处理器
-public class InvAreaQueryHandler extends SampleSingleDocQueryHandler {
+public class InvWarehouseQueryHandler extends ActionHandlerImpl<JsonObject> {
 
-	public static final String ADDRESS = "querylist";
+	public static final String ADDRESS = "query";
 
-	public InvAreaQueryHandler(AppActivityImpl appActivity) {
+	public InvWarehouseQueryHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 
 	}
@@ -35,21 +35,20 @@ public class InvAreaQueryHandler extends SampleSingleDocQueryHandler {
 	// 处理器
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
-
+		
 		JsonObject queryParams = msg.body();
-		PagingOptions pagingObj = PagingOptions.buildPagingOptions(queryParams);
-		this.queryBizDataList(appActivity.getBizObjectType(), pagingObj, null, findRet -> {
-			if (findRet.succeeded()) {
-				msg.reply(findRet.result());
-				
-			} else {
+	    PagingOptions pagingObj = PagingOptions.buildPagingOptions(queryParams);        
+	    this.queryBizDataList(appActivity.getBizObjectType(), pagingObj, null, findRet -> {
+	        if (findRet.succeeded()) {
+	            msg.reply(findRet.result());
+	        } else {
 				Throwable errThrowable = findRet.cause();
 				String errMsgString = errThrowable.getMessage();
 				appActivity.getLogger().error(errMsgString, errThrowable);
-				msg.fail(100, errMsgString);
-			}
+				msg.fail(100, errMsgString);		
+	        }
 
-		});
+	    });
 
 	}
 
@@ -67,4 +66,5 @@ public class InvAreaQueryHandler extends SampleSingleDocQueryHandler {
 
 		return actionDescriptor;
 	}
+
 }
