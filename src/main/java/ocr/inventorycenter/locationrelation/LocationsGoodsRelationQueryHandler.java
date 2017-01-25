@@ -1,29 +1,25 @@
 package ocr.inventorycenter.locationrelation;
 
-import java.util.List;
-
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import orc.common.busi.open.inventorycenter.InvBusiOpenContant;
+import ocr.common.handler.SampleSingleDocQueryHandler;
 import otocloud.common.ActionURI;
+import otocloud.framework.app.common.PagingOptions;
 import otocloud.framework.app.function.ActionDescriptor;
-import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
 import otocloud.framework.core.OtoCloudBusMessage;
 
 /**
- * 库存中心：货位查询根据sku条件
+ * 货位商品关系档案
  * 
  * @date 2016年11月20日
  * @author LCL
  */
 // 业务活动功能处理器
-public class LocationsGoodsRelationQueryHandler extends ActionHandlerImpl<JsonObject> {
+public class LocationsGoodsRelationQueryHandler extends SampleSingleDocQueryHandler {
 
-	public static final String ADDRESS = InvBusiOpenContant.LOCATIONSADDRESS;
-	private static final String sku = "sku";
+	public static final String ADDRESS = "querylist";
 
 	public LocationsGoodsRelationQueryHandler(AppActivityImpl appActivity) {
 		super(appActivity);
@@ -39,37 +35,23 @@ public class LocationsGoodsRelationQueryHandler extends ActionHandlerImpl<JsonOb
 	// 处理器
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
-		JsonObject query = msg.body();
 
-		appActivity.getAppDatasource().getMongoClient().find(appActivity.getDBTableName(appActivity.getBizObjectType()),
-				query, result -> {
-					if (result.succeeded()) {						
-						List<JsonObject> rets = result.result();
-						if (rets != null && rets.size() > 0) {							
-							JsonObject tt = rets.get(0);
-							msg.reply(tt.getJsonArray("allotLocations"));
-						}else{
-							msg.fail(100, "无SKU货位关系");
-						}
+		JsonObject queryParams = msg.body();
+		PagingOptions pagingObj = PagingOptions.buildPagingOptions(queryParams);
+		this.queryBizDataList(appActivity.getBizObjectType(), pagingObj, null, findRet -> {
+			if (findRet.succeeded()) {
+				msg.reply(findRet.result());
+				
+			} else {
+				Throwable errThrowable = findRet.cause();
+				String errMsgString = errThrowable.getMessage();
+				appActivity.getLogger().error(errMsgString, errThrowable);
+				msg.fail(100, errMsgString);
+			}
 
-					} else {
-						Throwable errThrowable = result.cause();
-						String errMsgString = errThrowable.getMessage();
-						appActivity.getLogger().error(errMsgString, errThrowable);
-						msg.fail(100, errMsgString);
-
-					}
-				});
+		});
 
 	}
-
-/*	private JsonObject getQueryConditon(JsonObject so) {
-		JsonObject query = new JsonObject();
-		if (so.containsKey(sku) && so.getString(sku) != null && !so.isEmpty()) {
-			query.put(sku, so.getString(sku));
-		}
-		return query;
-	}*/
 
 	/**
 	 * 此action的自描述元数据
@@ -85,5 +67,4 @@ public class LocationsGoodsRelationQueryHandler extends ActionHandlerImpl<JsonOb
 
 		return actionDescriptor;
 	}
-
 }

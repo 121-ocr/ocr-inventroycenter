@@ -10,7 +10,7 @@ import otocloud.framework.core.OtoCloudEventDescriptor;
 import otocloud.framework.core.OtoCloudEventHandlerRegistry;
 
 /**
- * 仓库设施管理：货区、货架、货位档案
+ * 货位商品关系档案
  * 
  * @date 2016年11月20日
  * @author LCL
@@ -47,7 +47,7 @@ public class LocationRelationManagementComponent extends AppActivityImpl {
 
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
 
-		LocationsGoodsRelationQueryHandler locationsGoodsRelationQueryHandler = new LocationsGoodsRelationQueryHandler(
+		GetNameLocationsGoodsRelationQueryHandler locationsGoodsRelationQueryHandler = new GetNameLocationsGoodsRelationQueryHandler(
 				this);
 		ret.add(locationsGoodsRelationQueryHandler);
 

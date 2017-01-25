@@ -1,4 +1,4 @@
-package ocr.inventorycenter.invorg;
+package ocr.inventorycenter.locationrelation;
 
 
 import io.vertx.core.json.JsonObject;
@@ -6,16 +6,16 @@ import ocr.common.handler.SampleSingleDocBaseHandler;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.OtoCloudBusMessage;
 /**
- * 库存中心：仓库
+ * 货位商品关系档案
  * 
  * @date 2016年11月20日
  * @author LCL
  */
 //业务活动功能处理器
-public class InvWarehouseRemoveHandler  extends SampleSingleDocBaseHandler {
+public class LocationsGoodsRelationRemoveHandler  extends SampleSingleDocBaseHandler {
 	
 
-	public InvWarehouseRemoveHandler(AppActivityImpl appActivity) {
+	public LocationsGoodsRelationRemoveHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 		// TODO Auto-generated constructor stub
 	}
@@ -43,7 +43,7 @@ public class InvWarehouseRemoveHandler  extends SampleSingleDocBaseHandler {
 	@Override
 	public String getEventAddress() {
 		// TODO Auto-generated method stub
-		return InvWarehouseConstant.REMOVE_ADDRESS;
+		return LocationsGoodsRelationConstant.REMOVE_ADDRESS;
 	}
 	
 }

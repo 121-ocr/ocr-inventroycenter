@@ -43,7 +43,7 @@ public class InvAreaRemoveHandler  extends SampleSingleDocBaseHandler {
 	@Override
 	public String getEventAddress() {
 		// TODO Auto-generated method stub
-		return InvAreaConstant.QUERY_ADDRESS;
+		return InvAreaConstant.REMOVE_ADDRESS;
 	}
 	
 }

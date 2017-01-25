@@ -10,10 +10,13 @@ public class InvAreaConstant {
 	// 查询地址
 	public static final String QUERY_ADDRESS = "query";
 
+	// 查询地址
+	public static final String REMOVE_ADDRESS = "remove";
+
 	// 创建状态
 	public static final String CREATE_STATUS = "created";
-	
+
 	// 创建状态
-    public static final String UPDATE_STATUS = "updated";
+	public static final String UPDATE_STATUS = "updated";
 
 }
