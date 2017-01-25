@@ -1,4 +1,4 @@
-package ocr.inventorycenter.invarea;
+package ocr.inventorycenter.unit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +15,18 @@ import otocloud.framework.core.OtoCloudEventHandlerRegistry;
  * @date 2016年11月20日
  * @author LCL
  */
-public class InvAreaManagementComponent extends AppActivityImpl {
+public class InvUnitManagementComponent extends AppActivityImpl {
 
 	// 业务活动组件名
 	@Override
 	public String getName() {
-		return InvBusiOpenContant.AREACOMPONTENNAME;
+		return InvBusiOpenContant.UNITCOMPONTENNAME;
 	}
 
 	// 业务活动组件要处理的核心业务对象
 	@Override
 	public String getBizObjectType() {
-		return "ba_invarea";
+		return "ba_invunit";
 	}
 
 	// 发布此业务活动关联的业务角色
@@ -46,18 +46,9 @@ public class InvAreaManagementComponent extends AppActivityImpl {
 	public List<OtoCloudEventHandlerRegistry> registerEventHandlers() {
 
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
-		
-		GetInvAreaNameHandler getInvAreaNameHandler = new GetInvAreaNameHandler(this);
-		ret.add(getInvAreaNameHandler);
-		
-		InvAreaQueryHandler queryHandler = new InvAreaQueryHandler(this);
+
+		InvUnitQueryHandler queryHandler = new InvUnitQueryHandler(this);
 		ret.add(queryHandler);
-		InvAreaCreateHandler createHandler = new InvAreaCreateHandler(this);
-		ret.add(createHandler);
-		InvAreaUpdateHandler updateHandler = new InvAreaUpdateHandler(this);
-		ret.add(updateHandler);
-		InvAreaRemoveHandler removeHandler = new InvAreaRemoveHandler(this);
-		ret.add(removeHandler);
 
 		return ret;
 	}

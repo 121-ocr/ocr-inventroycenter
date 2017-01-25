@@ -10,10 +10,9 @@ import otocloud.framework.core.OtoCloudEventDescriptor;
 import otocloud.framework.core.OtoCloudEventHandlerRegistry;
 
 /**
- * 仓库设施管理：货架、货位档案
- * 
- * @date 2016年11月20日
+ * 货架
  * @author LCL
+ *
  */
 public class InvFacilityManagementComponent extends AppActivityImpl {
 

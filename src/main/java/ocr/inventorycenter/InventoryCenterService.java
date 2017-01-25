@@ -12,6 +12,7 @@ import ocr.inventorycenter.sheftsrelation.SheftsRelationManagementComponent;
 import ocr.inventorycenter.stockonhand.StockOnHandManagementComponent;
 import ocr.inventorycenter.stockout.StockOutManagementComponent;
 import ocr.inventorycenter.stockreserved.StockReservedManagementComponent;
+import ocr.inventorycenter.unit.InvUnitManagementComponent;
 import otocloud.framework.app.engine.AppServiceImpl;
 import otocloud.framework.app.engine.WebServer;
 import otocloud.framework.app.function.AppActivity;
@@ -70,6 +71,11 @@ public class InventoryCenterService extends AppServiceImpl {
 
 		SheftsRelationManagementComponent sheftsRelationManagementComponent = new SheftsRelationManagementComponent();
 		retActivities.add(sheftsRelationManagementComponent);
+		
+		InvUnitManagementComponent invUnitManagementComponent = new InvUnitManagementComponent();
+		retActivities.add(invUnitManagementComponent);
+		
+		
 
 		return retActivities;
 	}

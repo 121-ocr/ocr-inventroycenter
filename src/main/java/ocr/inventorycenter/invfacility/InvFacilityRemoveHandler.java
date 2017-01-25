@@ -2,17 +2,16 @@ package ocr.inventorycenter.invfacility;
 
 
 import io.vertx.core.json.JsonObject;
-import ocr.common.handler.SampleDocQueryHandler;
+import ocr.common.handler.SampleSingleDocBaseHandler;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.OtoCloudBusMessage;
 /**
- * 库存中心：库区-查询
- * 
- * @date 2016年11月20日
+ * 货架
  * @author LCL
+ *
  */
 //业务活动功能处理器
-public class InvFacilityRemoveHandler  extends SampleDocQueryHandler {
+public class InvFacilityRemoveHandler  extends SampleSingleDocBaseHandler {
 	
 
 	public InvFacilityRemoveHandler(AppActivityImpl appActivity) {

@@ -1,0 +1,26 @@
+[
+	{
+		"code": "X",
+		"name": "箱",
+		"engname": "Xiang"
+
+	},
+	{
+		"code": "G",
+		"name": "个",
+		"engname": "Ge"
+
+	},
+	{
+		"code": "J",
+		"name": "件",
+		"engname": "Jian"
+
+	},
+	{
+		"code": "T",
+		"name": "桶",
+		"engname": "Tong"
+
+	}
+]
