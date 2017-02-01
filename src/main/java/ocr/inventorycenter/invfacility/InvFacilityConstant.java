@@ -18,6 +18,10 @@ public class InvFacilityConstant {
 
 	// 查询地址
 	public static final String REMOVE_ADDRESS = "remove";
+	
+	
+	public static final String REMOVE_STATUS = "remove";
+
 
 	// 创建状态
 	public static final String CREATE_STATUS = "created";
