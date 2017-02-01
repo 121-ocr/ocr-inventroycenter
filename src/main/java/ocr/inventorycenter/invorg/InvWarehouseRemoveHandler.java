@@ -32,7 +32,7 @@ public class InvWarehouseRemoveHandler  extends SampleSingleDocBaseHandler {
 		
 		JsonObject query = msg.body();
 
-		appActivity.getAppDatasource().getMongoClient().find(appActivity.getDBTableName(appActivity.getBizObjectType()),
+		appActivity.getAppDatasource().getMongoClient().removeDocument(appActivity.getDBTableName(appActivity.getBizObjectType()),
 				query,
 				result -> {
 					if (result.succeeded()) {
