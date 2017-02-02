@@ -36,9 +36,17 @@ public class GetInvAreaNameHandler extends SampleSingleDocQueryHandler {
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 
 		JsonObject query = msg.body();
+		JsonObject queryObj ;
+		if(query.getJsonObject("warehouse") != null){
+			JsonObject obj = query.getJsonObject("warehouse");
+			String jsonStr = "{\"warehouse._id\":\""+obj.getString("_id")+"\"}";
+			queryObj = new JsonObject(jsonStr);
+		}else{
+			queryObj = new JsonObject();
+		}
 
 		appActivity.getAppDatasource().getMongoClient().find(appActivity.getDBTableName(appActivity.getBizObjectType()),
-				query, result -> {
+				queryObj, result -> {
 					if (result.succeeded()) {
 						msg.reply(result.result());
 					} else {
