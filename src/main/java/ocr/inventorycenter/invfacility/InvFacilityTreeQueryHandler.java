@@ -23,7 +23,7 @@ import otocloud.framework.core.OtoCloudBusMessage;
 // 业务活动功能处理器
 public class InvFacilityTreeQueryHandler extends SampleSingleDocQueryHandler {
 
-	public static final String ADDRESS = "findtree2";
+	public static final String ADDRESS = "findtree";
 
 	public InvFacilityTreeQueryHandler(AppActivityImpl appActivity) {
 		super(appActivity);
