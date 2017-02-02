@@ -56,6 +56,9 @@ public class PharseInvManagementComponent extends AppActivityImpl {
 		PharseInvRemoveHandler removeHandler = new PharseInvRemoveHandler(this);
 		ret.add(removeHandler);
 		
+		PharseInvUpdateHandler updateHandler = new PharseInvUpdateHandler(this);
+		ret.add(updateHandler);
+		
 		return ret;
 	}
 
