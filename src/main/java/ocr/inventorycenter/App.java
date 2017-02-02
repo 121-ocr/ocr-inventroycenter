@@ -4,13 +4,14 @@ import java.util.List;
 
 import otocloud.framework.app.engine.AppService;
 import otocloud.framework.app.engine.AppServiceEngineImpl;
+import otocloud.framework.app.engine.WebServer;
 import otocloud.framework.core.OtoCloudComponent;
 
 
 /**
- * 库存中心
- * @date 2016年11月20日
- * @author LCL
+ * TODO: DOCUMENT ME!
+ * @date 2016年11月26日
+ * @author lijing@yonyou.com
  */
 public class App extends AppServiceEngineImpl
 {
@@ -22,10 +23,10 @@ public class App extends AppServiceEngineImpl
 	}
 
 	//创建此APP统一的web入口服务
-/*	@Override
+	@Override
 	public WebServer createWebServer() {
 		return new MyWebServer();
-	}*/
+	}
 
 	//创建APP全局组件
 	@Override
@@ -35,7 +36,7 @@ public class App extends AppServiceEngineImpl
 	
 	
     public static void main( String[] args )
-    {   	
+    {
     	App app = new App();
 
     	AppServiceEngineImpl.internalMain("log4j2.xml",

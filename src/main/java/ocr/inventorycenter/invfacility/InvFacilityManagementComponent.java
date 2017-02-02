@@ -11,6 +11,7 @@ import otocloud.framework.core.OtoCloudEventHandlerRegistry;
 
 /**
  * 货架
+ * 
  * @author LCL
  *
  */
@@ -46,7 +47,6 @@ public class InvFacilityManagementComponent extends AppActivityImpl {
 
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
 
-		
 		InvFacilityQueryHandler queryHandler = new InvFacilityQueryHandler(this);
 		ret.add(queryHandler);
 		InvFacilityCreateHandler createHandler = new InvFacilityCreateHandler(this);
@@ -55,6 +55,8 @@ public class InvFacilityManagementComponent extends AppActivityImpl {
 		ret.add(updateHandler);
 		InvFacilityRemoveHandler removeHandler = new InvFacilityRemoveHandler(this);
 		ret.add(removeHandler);
+		InvFacilityTreeQueryHandler invFacilityTreeQueryHandler = new InvFacilityTreeQueryHandler(this);
+		ret.add(invFacilityTreeQueryHandler);
 
 		return ret;
 	}
