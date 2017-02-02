@@ -47,9 +47,24 @@ public class LocationRelationManagementComponent extends AppActivityImpl {
 
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
 
-		GetNameLocationsGoodsRelationQueryHandler locationsGoodsRelationQueryHandler = new GetNameLocationsGoodsRelationQueryHandler(
+		GetNameLocationsGoodsRelationQueryHandler queryHandler = new GetNameLocationsGoodsRelationQueryHandler(this);
+		ret.add(queryHandler);
+
+		LocationsGoodsRelationCreateHandler locationsGoodsRelationCreateHandler = new LocationsGoodsRelationCreateHandler(
+				this);
+		ret.add(locationsGoodsRelationCreateHandler);
+
+		LocationsGoodsRelationQueryHandler locationsGoodsRelationQueryHandler = new LocationsGoodsRelationQueryHandler(
 				this);
 		ret.add(locationsGoodsRelationQueryHandler);
+
+		LocationsGoodsRelationRemoveHandler locationsGoodsRelationRemoveHandler = new LocationsGoodsRelationRemoveHandler(
+				this);
+		ret.add(locationsGoodsRelationRemoveHandler);
+
+		LocationsGoodsRelationUpdateHandler locationsGoodsRelationUpdateHandler = new LocationsGoodsRelationUpdateHandler(
+				this);
+		ret.add(locationsGoodsRelationUpdateHandler);
 
 		return ret;
 	}
