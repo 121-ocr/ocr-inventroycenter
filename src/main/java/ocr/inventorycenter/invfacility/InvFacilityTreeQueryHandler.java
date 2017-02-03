@@ -39,8 +39,14 @@ public class InvFacilityTreeQueryHandler extends SampleSingleDocQueryHandler {
 	// 处理器
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
-
+		
+		
+//		JsonObject query = msg.body();
+		
 		JsonObject query = msg.body();
+		if(query.containsKey("query")){
+			query = query.getJsonObject("query");
+		}
 
 		appActivity.getAppDatasource().getMongoClient().find(appActivity.getDBTableName(appActivity.getBizObjectType()),
 				query, result -> {
@@ -101,7 +107,7 @@ public class InvFacilityTreeQueryHandler extends SampleSingleDocQueryHandler {
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
 
-		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.GET);
+		ActionURI uri = new ActionURI(ADDRESS, HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
 
 		return actionDescriptor;
