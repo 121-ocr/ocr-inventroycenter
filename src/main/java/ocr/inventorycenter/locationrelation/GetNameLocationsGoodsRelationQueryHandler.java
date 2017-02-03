@@ -3,6 +3,7 @@ package ocr.inventorycenter.locationrelation;
 import java.util.List;
 
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import orc.common.busi.open.inventorycenter.InvBusiOpenContant;
 import otocloud.common.ActionURI;
@@ -48,7 +49,11 @@ public class GetNameLocationsGoodsRelationQueryHandler extends ActionHandlerImpl
 							JsonObject tt = rets.get(0);
 							msg.reply(tt.getJsonArray("allotLocations"));
 						}else{
-							msg.fail(100, "无SKU货位关系");
+							//JsonObject put = new JsonObject().put("exist_batch_price", true);
+							JsonObject put = new JsonObject();
+							JsonArray message = new JsonArray();
+							message.add(put);
+							msg.reply(message);
 						}
 
 					} else {

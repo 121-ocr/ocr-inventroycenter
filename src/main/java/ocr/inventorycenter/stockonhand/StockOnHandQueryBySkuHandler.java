@@ -66,7 +66,7 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> event) {
 
-		getLocationsBySku( event.body(), ret -> {
+		getLocationsBySku(event.body(), ret -> {
 
 			if (ret.succeeded()) {
 				event.reply(ret.result());
@@ -86,15 +86,14 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 	// 如果步骤2有数据，根据key[批次+sku+仓位+仓库]得到最终[对应现存量、预留量、满载量]
 	// 如果步骤2没有数据，该仓位前面没有对应存储物料
 	// ------------
-	public void getLocationsBySku(JsonObject bo,
-			Handler<AsyncResult<JsonArray>> next) {
+	public void getLocationsBySku(JsonObject bo, Handler<AsyncResult<JsonArray>> next) {
 
 		Future<JsonArray> res = Future.future();
 		res.setHandler(next);
 		List<Future> futures = new ArrayList<Future>();
 
 		JsonObject resultObjects = new JsonObject();
-		
+
 		JsonObject query = bo.getJsonObject("query");
 		String sku = query.getString("sku");
 		String whCode = query.getString("warehousecode");
@@ -174,10 +173,10 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 								resultObject.put(onhandnum, onhandObject.getDouble(onhandnum));// 现存量
 								resultObject.put(resevednum, 0.0);// 根据key维度，得到对应预留量
 								resultObject.put(plusnum, locationnumvalue - onhandObject.getDouble(onhandnum));// 剩余数量
-								//resultObject.put(sheftscode,locationObj.getString(sheftscode) );// hh
-								
-								
-							// resultObject.put(resevednum,
+								// resultObject.put(sheftscode,locationObj.getString(sheftscode)
+								// );// hh
+
+								// resultObject.put(resevednum,
 								// getReserved(onhandObject2, reverseds));//
 								// 根据key维度，得到对应预留量
 								resultArray.add(resultObject);
@@ -190,49 +189,51 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 
 				}
 				res.complete(sort2(resultArray));
-			}else{
+			} else {
 				Throwable err = ar.cause();
 				String errMsg = err.getMessage();
 				appActivity.getLogger().error(errMsg, err);
 				res.fail(err);
 			}
-		
-			
+
 		});
 	}
 
-	private void getLocations(Boolean fixedType, String sku, String whCode, JsonObject resultObjects, Future<Void> nextFuture) {
+	private void getLocations(Boolean fixedType, String sku, String whCode, JsonObject resultObjects,
+			Future<Void> nextFuture) {
 
 		if (fixedType) { // 固定货位，根据货位和商品对应关系寻找货位
 			getLocationByGoods(sku, whCode, resultObjects, nextFuture);
 
-		}else{// 自由货位，根据货架标识（=散货），获取下面所有的货位。
+		} else {// 自由货位，根据货架标识（=散货），获取下面所有的货位。
 			getLocationByShift(sku, whCode, resultObjects, nextFuture);
 
 		}
 	}
 
-/*	private boolean isFreeType(JsonObject bo) {
-		return ((JsonObject) bo.getJsonObject("query")).getString("type").equals(FREETYPE);
-	}*/
+	/*
+	 * private boolean isFreeType(JsonObject bo) { return ((JsonObject)
+	 * bo.getJsonObject("query")).getString("type").equals(FREETYPE); }
+	 */
 
 	private void getLocationByShift(String sku, String whCode, JsonObject resultObjects, Future<Void> nextFuture) {
 
-		this.appActivity.getEventBus().send(getSheftsGoodsRelAddress(), getSheftGoodsRelCond(sku, whCode), facilityRes -> {
-			if (facilityRes.succeeded()) {
-				JsonArray locations = (JsonArray) facilityRes.result().body();
-				resultObjects.put(locationArray, locations);
-				nextFuture.complete();
+		this.appActivity.getEventBus().send(getSheftsGoodsRelAddress(), getSheftGoodsRelCond(sku, whCode),
+				facilityRes -> {
+					if (facilityRes.succeeded()) {
+						JsonArray locations = (JsonArray) facilityRes.result().body();
+						resultObjects.put(locationArray, locations);
+						nextFuture.complete();
 
-			} else {
-				Throwable err = facilityRes.cause();
-				String errMsg = err.getMessage();
-				appActivity.getLogger().error(errMsg, err);
-				nextFuture.failed();
+					} else {
+						Throwable err = facilityRes.cause();
+						String errMsg = err.getMessage();
+						appActivity.getLogger().error(errMsg, err);
+						nextFuture.failed();
 
-			}
+					}
 
-		});
+				});
 
 	}
 
@@ -442,9 +443,15 @@ public class StockOnHandQueryBySkuHandler extends ActionHandlerImpl<JsonObject> 
 		this.appActivity.getEventBus().send(getLocationGoodsRelAddress(), getLocationGoodsRelCond(sku, whCode),
 				facilityRes -> {
 					if (facilityRes.succeeded()) {
-						JsonArray locations = (JsonArray) facilityRes.result().body();
-						resultObjects.put(locationArray, locations);
-						nextFuture.complete();
+						Object body = facilityRes.result().body();
+						if (body != null) {
+							JsonArray locations = (JsonArray) body;
+							resultObjects.put(locationArray, locations);
+							nextFuture.complete();
+						} else {
+							nextFuture.complete();
+
+						}
 
 					} else {
 						Throwable err = facilityRes.cause();

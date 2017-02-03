@@ -8,6 +8,7 @@ import ocr.inventorycenter.invfacility.InvFacilityManagementComponent;
 import ocr.inventorycenter.invorg.InvOrgManagementComponent;
 import ocr.inventorycenter.locationrelation.LocationRelationManagementComponent;
 import ocr.inventorycenter.pharseinv.PharseInvManagementComponent;
+import ocr.inventorycenter.pharseorder.PharseOrderManagementComponent;
 import ocr.inventorycenter.sheftsrelation.SheftsRelationManagementComponent;
 import ocr.inventorycenter.stockonhand.StockOnHandManagementComponent;
 import ocr.inventorycenter.stockout.StockOutManagementComponent;
@@ -55,8 +56,7 @@ public class InventoryCenterService extends AppServiceImpl {
 
 		InvAreaManagementComponent InvAreaManagementComponent = new InvAreaManagementComponent();
 		retActivities.add(InvAreaManagementComponent);
-		
-		
+
 		LocationRelationManagementComponent locationRelationManagementComponent = new LocationRelationManagementComponent();
 		retActivities.add(locationRelationManagementComponent);
 
@@ -71,11 +71,12 @@ public class InventoryCenterService extends AppServiceImpl {
 
 		SheftsRelationManagementComponent sheftsRelationManagementComponent = new SheftsRelationManagementComponent();
 		retActivities.add(sheftsRelationManagementComponent);
-		
+
 		InvUnitManagementComponent invUnitManagementComponent = new InvUnitManagementComponent();
 		retActivities.add(invUnitManagementComponent);
-		
-		
+
+		PharseOrderManagementComponent pharseOrderManagementComponent = new PharseOrderManagementComponent();
+		retActivities.add(pharseOrderManagementComponent);
 
 		return retActivities;
 	}
