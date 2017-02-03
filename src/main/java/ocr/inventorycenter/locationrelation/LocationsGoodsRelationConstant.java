@@ -22,5 +22,7 @@ public class LocationsGoodsRelationConstant {
 	
 	// 创建状态
     public static final String UPDATE_STATUS = "updated";
+    
+    public static final String REMOVE_STATUS = "remove";
 
 }
