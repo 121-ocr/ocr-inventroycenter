@@ -62,6 +62,17 @@
 	        					}
 							}
 						 }
+					 }, 
+					 "pharseorder-mgr": {
+			      		"options": {
+	        				"config" :  {
+	        				    "dependencies":{
+		        					"channel_service": {
+		        						"service_name": "ocr-channel-manager"
+		        					}
+	        					}
+							}
+						 }
 					 }
 				},
 				"component_deployment": []
