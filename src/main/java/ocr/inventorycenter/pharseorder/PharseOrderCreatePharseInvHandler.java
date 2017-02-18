@@ -9,8 +9,6 @@ import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import ocr.inventorycenter.pharseinv.PharseInvConstant;
-import otocloud.common.ActionContextTransfomer;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
@@ -83,7 +81,7 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 
 		Map<String, JsonArray> pharseinvsByWarehouses = new HashMap<String, JsonArray>();
 
-		Map<String, JsonObject> completionDetails = getPharseDetailView(completionPhaseInfo);
+		Map<Integer, JsonObject> completionDetails = getPharseDetailView(completionPhaseInfo);
 
 		for (Object so : pharseInvInfo) {
 			JsonObject bo = (JsonObject) so;
@@ -157,15 +155,15 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 		return completionHeadInfo;
 	}
 
-	private Map<String, JsonObject> getPharseDetailView(JsonObject completionPhaseInfo) {
+	private Map<Integer, JsonObject> getPharseDetailView(JsonObject completionPhaseInfo) {
 		// completionPhaseInfoView K= 表体主键 V=表体明细数据
-		Map<String, JsonObject> completionPhaseInfoView = new HashMap<String, JsonObject>();
+		Map<Integer, JsonObject> completionPhaseInfoView = new HashMap<Integer, JsonObject>();
 		JsonObject jsonObject = completionPhaseInfo.getJsonObject(PHARSEINFO);
 
 		JsonArray details = jsonObject.getJsonObject("bo").getJsonArray("detail");
 		for (Object item : details) {
 			JsonObject detail = (JsonObject) item;
-			String detailcode = detail.getString("detail_code");
+			Integer detailcode = detail.getInteger("detail_code");
 			completionPhaseInfoView.put(detailcode, detail);
 		}
 		return completionPhaseInfoView;
