@@ -25,6 +25,8 @@ import otocloud.framework.core.OtoCloudBusMessage;
 // 业务活动功能处理器
 public class PharseOrderCreationHandler extends SampleBillBaseHandler {
 
+	private static final String DETAIL_CODE = "detail_code";
+
 	public PharseOrderCreationHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 
@@ -50,25 +52,16 @@ public class PharseOrderCreationHandler extends SampleBillBaseHandler {
 		JsonArray replacedDetails = new JsonArray();
 		JsonArray details = bo.getJsonArray("detail");
 
-		Integer maxCode = 0; // 找出最大的序号
-		for (Object detailObj : details) {
-			JsonObject detail = (JsonObject) detailObj;
-			Integer detailcode = detail.getInteger("detail_code");
-			if (detailcode != null) {
-				if (detailcode.compareTo(maxCode) > 0) {
-					maxCode = detailcode;
-				}
-			}
+		Integer maxCode = getMaxCode(details);
 
-		}
 		int i = 1;
 		for (Object detailObj : details) {
 			JsonObject detail = (JsonObject) detailObj;
-			String detailcode = detail.getString("detail_code");
+			String detailcode = detail.getString(DETAIL_CODE);
 			if (null == detailcode || detailcode.isEmpty()) {
 				JsonObject newDetail = new JsonObject();
 				newDetail = detail.copy();
-				newDetail.put("detail_code", maxCode + i);
+				newDetail.put(DETAIL_CODE, maxCode + i);
 				replacedDetails.add(newDetail);
 				i++;
 				continue;
@@ -83,6 +76,27 @@ public class PharseOrderCreationHandler extends SampleBillBaseHandler {
 		}
 
 		future.complete(bo);
+	}
+
+	private Integer getMaxCode(JsonArray details) {
+		
+		Integer maxCode = 0; // 找出最大的序号
+		if (details == null || details.size() == 0) {
+			return maxCode;
+		}
+
+		for (Object detailObj : details) {
+			JsonObject detail = (JsonObject) detailObj;
+			String detailcode = detail.getString(DETAIL_CODE);
+			if (detailcode != null&&!detailcode.equals("")) {
+				Integer idetailcode = Integer.valueOf(detailcode);
+				if (idetailcode.compareTo(maxCode) > 0) {
+					maxCode = idetailcode;
+				}
+			}
+
+		}
+		return maxCode;
 	}
 
 	/**
