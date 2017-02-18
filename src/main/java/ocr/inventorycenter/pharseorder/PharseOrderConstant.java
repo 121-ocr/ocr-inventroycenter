@@ -19,10 +19,13 @@ public class PharseOrderConstant {
 	public static String ModifyAddressConstant = "modify";
 	public static String QueryAddressConstant = "query";
 	public static String RemoveAddressConstant = "remove";
-
+	public static String CreatePharseInvAddressConstant = "batch_createPharseInv";
+	
 	// -----------------状态变化
 	public static String CreatedStatus = "created"; // 创建完毕
-
+	public static String InvStatus = "invwarehouse"; //入库完毕
+	
+	
 	public static final String GOODACCOUNT = "goodaccount";
 	public static final String NSNUM = "nsnum";
 	public static final String ONHANDNUM = "onhandnum";

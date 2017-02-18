@@ -59,6 +59,10 @@ public class PharseInvManagementComponent extends AppActivityImpl {
 		PharseInvUpdateHandler updateHandler = new PharseInvUpdateHandler(this);
 		ret.add(updateHandler);
 		
+		PharseInvBatchCreateHandler batchCreateHandler = new PharseInvBatchCreateHandler(this);
+		ret.add(batchCreateHandler);
+		
+		
 		return ret;
 	}
 
