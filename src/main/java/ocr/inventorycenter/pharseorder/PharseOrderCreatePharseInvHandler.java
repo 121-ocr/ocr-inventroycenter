@@ -85,7 +85,7 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 
 		for (Object so : pharseInvInfo) {
 			JsonObject bo = (JsonObject) so;
-			String detailcode = bo.getString("invref_detailcode");
+			Integer detailcode = bo.getInteger("invref_detailcode");
 			JsonObject wWarehouse = bo.getJsonObject("invref_warehouse");
 			String warehouseCode = wWarehouse.getString("code");
 			String key = warehouseCode;
