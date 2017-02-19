@@ -13,6 +13,7 @@ import ocr.inventorycenter.sheftsrelation.SheftsRelationManagementComponent;
 import ocr.inventorycenter.stockonhand.StockOnHandManagementComponent;
 import ocr.inventorycenter.stockout.StockOutManagementComponent;
 import ocr.inventorycenter.stockreserved.StockReservedManagementComponent;
+import ocr.inventorycenter.suppliers.SuppliersManagementComponent;
 import ocr.inventorycenter.unit.InvUnitManagementComponent;
 import otocloud.framework.app.engine.AppServiceImpl;
 import otocloud.framework.app.engine.WebServer;
@@ -77,6 +78,9 @@ public class InventoryCenterService extends AppServiceImpl {
 
 		PharseOrderManagementComponent pharseOrderManagementComponent = new PharseOrderManagementComponent();
 		retActivities.add(pharseOrderManagementComponent);
+		
+		SuppliersManagementComponent suppliersManagementComponet = new SuppliersManagementComponent();
+		retActivities.add(suppliersManagementComponet);
 
 		return retActivities;
 	}
