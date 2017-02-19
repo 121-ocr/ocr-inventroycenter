@@ -1,0 +1,27 @@
+[//供应商基本档案
+{
+   "code": "WH001",
+   "name": "美国加利公司",   
+   "shortname": "加利",
+   "mcode": "助记码JL",
+   "legalperson": "法人：Jone",
+   "developdate":"发展日期：2017年2月18日",
+   "contactinfo": {//联系信息
+   		"address": "美国西雅图89号",
+   		"email": "kl@123.com",
+   		"linkman": "tracy",
+   		"phone":"133443400000",
+   		"fax":"erere"
+   },
+   "accountinfo": {//账号信息
+   		"taxnumber": "税号xxxx",
+   		"depositbank": "开户银行",
+   		"bankaccount": "银行账号"
+   },
+    "creditinfo": {//信用信息
+   		"credittype": "供应商分类：优质供应商/中级供应商",
+   		"grade": "供应商等级：价格等级1级/价格等级2级/价格等级3级"
+   }
+   
+}
+]

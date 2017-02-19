@@ -1,0 +1,61 @@
+[//调拨订单
+{
+   "billno": "WH001",
+   "busidate": "业务日期",   
+   "outorg": "调出组织",
+   "outwarehouses" : {
+	    "code" : "WH001",
+	    "name" : "北京总仓"
+    },
+   "inorg": "调入组织",
+   "inwarehouses" : {
+	    "code" : "WH001",
+	    "name" : "北京总仓"
+    },
+   "note":"",
+   "detail": {
+       "num":9999,//数量
+   	   "goods" : {
+       "account" : "3",
+        "product_sku_code" : "WINE001SP0001SP0002",
+        "title" : "拉菲尚品波尔多干红葡萄酒750ml",
+        "sales_catelogs" : [ 
+            {
+                "code" : "GC0301",
+                "name" : "红酒",
+                "inner_code" : "GC0301"
+            }
+        ],
+        "product_sku" : {
+            "bar_code" : "",
+            "product_specifications" : [ 
+                {
+                    "specification_code" : "SP0001",
+                    "specification_name" : "颜色",
+                    "specification_value" : "洋红"
+                }, 
+                {
+                    "specification_code" : "SP0002",
+                    "specification_name" : "容量",
+                    "specification_value" : "750ml"
+                }
+            ],
+            "product_spu" : {
+                "spu_code" : "WINE001",
+                "base_unit" : "瓶",
+                "brand" : {
+                    "code" : "BR0001",
+                    "name" : "科特勒",
+                    "manufacturer" : {
+                        "code" : "BR0001",
+                        "name" : "法国科特勒酒庄"
+                    }
+                },
+                "desc" : ""
+            }
+        }
+    }
+   }
+   
+}
+]
