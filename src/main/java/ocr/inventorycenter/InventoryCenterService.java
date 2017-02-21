@@ -3,6 +3,7 @@ package ocr.inventorycenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import ocr.inventorycenter.allocateorders.AllocateordersManagementComponent;
 import ocr.inventorycenter.invarea.InvAreaManagementComponent;
 import ocr.inventorycenter.invfacility.InvFacilityManagementComponent;
 import ocr.inventorycenter.invorg.InvOrgManagementComponent;
@@ -81,6 +82,10 @@ public class InventoryCenterService extends AppServiceImpl {
 		
 		SuppliersManagementComponent suppliersManagementComponet = new SuppliersManagementComponent();
 		retActivities.add(suppliersManagementComponet);
+		
+		AllocateordersManagementComponent allocateordersManagementComponent = new AllocateordersManagementComponent();
+		retActivities.add(allocateordersManagementComponent);
+				
 
 		return retActivities;
 	}
