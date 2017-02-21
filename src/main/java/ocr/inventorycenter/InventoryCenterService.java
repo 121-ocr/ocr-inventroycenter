@@ -5,6 +5,7 @@ import java.util.List;
 
 import ocr.inventorycenter.allocateorders.AllocateordersManagementComponent;
 import ocr.inventorycenter.invarea.InvAreaManagementComponent;
+import ocr.inventorycenter.inventorycheck.InventorycheckManagementComponent;
 import ocr.inventorycenter.invfacility.InvFacilityManagementComponent;
 import ocr.inventorycenter.invorg.InvOrgManagementComponent;
 import ocr.inventorycenter.locationrelation.LocationRelationManagementComponent;
@@ -85,6 +86,9 @@ public class InventoryCenterService extends AppServiceImpl {
 		
 		AllocateordersManagementComponent allocateordersManagementComponent = new AllocateordersManagementComponent();
 		retActivities.add(allocateordersManagementComponent);
+		
+		InventorycheckManagementComponent invcheckManagementComponet = new InventorycheckManagementComponent();
+		retActivities.add(invcheckManagementComponet);
 				
 
 		return retActivities;
