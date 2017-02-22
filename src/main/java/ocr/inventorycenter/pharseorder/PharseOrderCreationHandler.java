@@ -1,7 +1,5 @@
 package ocr.inventorycenter.pharseorder;
 
-import java.util.UUID;
-
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;

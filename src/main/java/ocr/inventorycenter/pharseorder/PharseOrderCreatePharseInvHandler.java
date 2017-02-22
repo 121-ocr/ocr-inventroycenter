@@ -82,13 +82,16 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 		Map<String, JsonArray> pharseinvsByWarehouses = new HashMap<String, JsonArray>();
 
 		Map<Integer, JsonObject> completionDetails = getPharseDetailView(completionPhaseInfo);
-
+		Map<String,JsonObject> warehouses = new HashMap<String, JsonObject>();
+		
 		for (Object so : pharseInvInfo) {
 			JsonObject bo = (JsonObject) so;
-			Integer detailcode = bo.getInteger("invref_detailcode");
+			String detailcodeString = bo.getString("invref_detailcode");
+			Integer detailcode = Integer.getInteger(detailcodeString);
 			JsonObject wWarehouse = bo.getJsonObject("invref_warehouse");
 			String warehouseCode = wWarehouse.getString("code");
 			String key = warehouseCode;
+			warehouses.put(key, wWarehouse);
 			if (pharseinvsByWarehouses.containsKey(key)) {
 				JsonObject jsonObject = completionDetails.get(detailcode);
 				jsonObject.put("nynum", bo.getFloat("invref_nynum"));
@@ -118,16 +121,13 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 		JsonObject pharseInvHead = getPharseHeadInfo(completionPhaseInfo);
 		
 		for (Entry<String, JsonArray> pharseinvsByWarehouse : pharseinvsByWarehouses.entrySet()) {
-//			JsonArray value2 = pharseinvsByWarehouse.getValue();	
-//			pharseInvHead.put("detail", value2);
-//			JsonObject jsonObject = pharseInvHead.getJsonObject(PHARSEINFO);
-			Integer idNum = 1;
-		
-			JsonObject pharseInv = new JsonObject();
-			pharseInv.put("bo_id", "jijijijijijijijijiji");
-			pharseInv.put("deliver_nation", "test");
+			String key = pharseinvsByWarehouse.getKey();
+			pharseInvHead.put("warehouse", warehouses.get(key));
+					
+			JsonArray details = pharseinvsByWarehouse.getValue();	
+			pharseInvHead.put("detail", details);
 			
-			pharseInvs.add(pharseInv);
+			pharseInvs.add(pharseInvHead);
 		}
 		
 		DeliveryOptions options = new DeliveryOptions();
@@ -149,10 +149,10 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 	}
 
 	private JsonObject getPharseHeadInfo(JsonObject completionPhaseInfo) {
-
 		JsonObject completionHeadInfo = completionPhaseInfo.copy();
-		completionHeadInfo.remove("detail");
-		return completionHeadInfo;
+		JsonObject phraseOjb = completionHeadInfo.getJsonObject("pharseinfo").getJsonObject("bo");
+		phraseOjb.remove("detail");
+		return phraseOjb;
 	}
 
 	private Map<Integer, JsonObject> getPharseDetailView(JsonObject completionPhaseInfo) {
@@ -163,7 +163,8 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 		JsonArray details = jsonObject.getJsonObject("bo").getJsonArray("detail");
 		for (Object item : details) {
 			JsonObject detail = (JsonObject) item;
-			Integer detailcode = detail.getInteger("detail_code");
+			String detailcodeStr = detail.getString("detail_code");
+			Integer detailcode = Integer.getInteger(detailcodeStr);
 			completionPhaseInfoView.put(detailcode, detail);
 		}
 		return completionPhaseInfoView;
