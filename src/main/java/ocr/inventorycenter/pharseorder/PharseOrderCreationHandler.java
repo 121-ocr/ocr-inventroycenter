@@ -55,8 +55,8 @@ public class PharseOrderCreationHandler extends SampleBillBaseHandler {
 		int i = 1;
 		for (Object detailObj : details) {
 			JsonObject detail = (JsonObject) detailObj;
-			String detailcode = detail.getString(DETAIL_CODE);
-			if (null == detailcode || detailcode.isEmpty()) {
+			Integer detailcode = detail.getInteger(DETAIL_CODE);
+			if (detailcode.compareTo(-1)==0) {
 				JsonObject newDetail = new JsonObject();
 				newDetail = detail.copy();
 				newDetail.put(DETAIL_CODE, maxCode + i);
@@ -85,9 +85,9 @@ public class PharseOrderCreationHandler extends SampleBillBaseHandler {
 
 		for (Object detailObj : details) {
 			JsonObject detail = (JsonObject) detailObj;
-			String detailcode = detail.getString(DETAIL_CODE);
-			if (detailcode != null&&!detailcode.equals("")) {
-				Integer idetailcode = Integer.valueOf(detailcode);
+			Integer idetailcode = detail.getInteger(DETAIL_CODE);
+			if (idetailcode != null) {
+				
 				if (idetailcode.compareTo(maxCode) > 0) {
 					maxCode = idetailcode;
 				}

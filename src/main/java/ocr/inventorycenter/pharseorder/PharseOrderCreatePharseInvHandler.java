@@ -79,57 +79,10 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 	private void createPharseInvs(JsonArray pharseInvInfo, JsonObject completionPhaseInfo,
 			OtoCloudBusMessage<JsonArray> msg) {
 
-		Map<String, JsonArray> pharseinvsByWarehouses = new HashMap<String, JsonArray>();
-
-		Map<Integer, JsonObject> completionDetails = getPharseDetailView(completionPhaseInfo);
-		Map<String,JsonObject> warehouses = new HashMap<String, JsonObject>();
-		
-		for (Object so : pharseInvInfo) {
-			JsonObject bo = (JsonObject) so;
-			String detailcodeString = bo.getString("invref_detailcode");
-			Integer detailcode = Integer.getInteger(detailcodeString);
-			JsonObject wWarehouse = bo.getJsonObject("invref_warehouse");
-			String warehouseCode = wWarehouse.getString("code");
-			String key = warehouseCode;
-			warehouses.put(key, wWarehouse);
-			if (pharseinvsByWarehouses.containsKey(key)) {
-				JsonObject jsonObject = completionDetails.get(detailcode);
-				jsonObject.put("nynum", bo.getFloat("invref_nynum"));
-				jsonObject.put("nsnum", bo.getFloat("invref_nsnum"));
-				jsonObject.put("unqualifiednum", bo.getFloat("invref_unqualifiednum"));
-				jsonObject.put("locations", bo.getJsonObject("invref_location"));
-				jsonObject.put("resid", bo.getString("invref_detailcode"));
-				JsonArray stockDetails = pharseinvsByWarehouses.get(key);
-				stockDetails.add(jsonObject);
-				pharseinvsByWarehouses.put(key, stockDetails);
-			} else {
-				JsonArray stockDetails = new JsonArray();
-				JsonObject jsonObject = completionDetails.get(detailcode);
-				jsonObject.put("nynum", bo.getFloat("invref_nynum"));
-				jsonObject.put("nsnum", bo.getFloat("invref_nsnum"));
-				jsonObject.put("unqualifiednum", bo.getFloat("invref_unqualifiednum"));
-				jsonObject.put("locations", bo.getJsonObject("invref_location"));
-				jsonObject.put("resid", bo.getString("invref_detailcode"));
-				stockDetails.add(jsonObject);
-
-				pharseinvsByWarehouses.put(key, stockDetails);
-			}
-
-		}
-
 		JsonArray pharseInvs = new JsonArray();
-		JsonObject pharseInvHead = getPharseHeadInfo(completionPhaseInfo);
-		
-		for (Entry<String, JsonArray> pharseinvsByWarehouse : pharseinvsByWarehouses.entrySet()) {
-			String key = pharseinvsByWarehouse.getKey();
-			pharseInvHead.put("warehouse", warehouses.get(key));
-					
-			JsonArray details = pharseinvsByWarehouse.getValue();	
-			pharseInvHead.put("detail", details);
-			
-			pharseInvs.add(pharseInvHead);
-		}
-		
+
+		convertPhraseInvs(pharseInvInfo, completionPhaseInfo, pharseInvs);
+
 		DeliveryOptions options = new DeliveryOptions();
 		options.setHeaders(msg.headers());
 		this.appActivity.getEventBus().send(getPharseOrderAddress(), pharseInvs, facilityRes -> {
@@ -148,6 +101,56 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 		});
 	}
 
+	private void convertPhraseInvs(JsonArray pharseInvInfo, JsonObject completionPhaseInfo, JsonArray pharseInvs) {
+		Map<String, JsonArray> pharseinvsByWarehouses = new HashMap<String, JsonArray>();
+
+		Map<Integer, JsonObject> completionDetails = getPharseDetailView(completionPhaseInfo);
+		Map<String, JsonObject> warehouses = new HashMap<String, JsonObject>();
+
+		for (Object so : pharseInvInfo) {
+			JsonObject bo = (JsonObject) so;
+			Integer detailcode = bo.getInteger("invref_detailcode");
+			JsonObject wWarehouse = bo.getJsonObject("invref_warehouse");
+			String warehouseCode = wWarehouse.getString("code");
+			String key = warehouseCode;
+			warehouses.put(key, wWarehouse);
+			if (pharseinvsByWarehouses.containsKey(key)) {
+				JsonObject jsonObject = completionDetails.get(detailcode);
+				jsonObject.put("nynum", bo.getInteger("invref_nynum"));
+				jsonObject.put("nsnum", bo.getInteger("invref_nsnum"));
+				jsonObject.put("unqualifiednum", bo.getInteger("invref_unqualifiednum"));
+				jsonObject.put("locations", bo.getJsonObject("invref_location"));
+				jsonObject.put("resbid", bo.getInteger("invref_detailcode"));
+				JsonArray stockDetails = pharseinvsByWarehouses.get(key);
+				stockDetails.add(jsonObject);
+				pharseinvsByWarehouses.put(key, stockDetails);
+			} else {
+				JsonArray stockDetails = new JsonArray();
+				JsonObject jsonObject = completionDetails.get(detailcode);
+				jsonObject.put("nynum", bo.getInteger("invref_nynum"));
+				jsonObject.put("nsnum", bo.getInteger("invref_nsnum"));
+				jsonObject.put("unqualifiednum", bo.getInteger("invref_unqualifiednum"));
+				jsonObject.put("locations", bo.getJsonObject("invref_location"));
+				jsonObject.put("resbid", bo.getInteger("invref_detailcode"));
+				stockDetails.add(jsonObject);
+				pharseinvsByWarehouses.put(key, stockDetails);
+			}
+
+		}
+
+		for (Entry<String, JsonArray> pharseinvsByWarehouse : pharseinvsByWarehouses.entrySet()) {
+			JsonObject pharseInvHead = getPharseHeadInfo(completionPhaseInfo);
+
+			String key = pharseinvsByWarehouse.getKey();
+			pharseInvHead.put("warehouse", warehouses.get(key));
+
+			JsonArray details = pharseinvsByWarehouse.getValue();
+			pharseInvHead.put("detail", details);
+
+			pharseInvs.add(pharseInvHead);
+		}
+	}
+
 	private JsonObject getPharseHeadInfo(JsonObject completionPhaseInfo) {
 		JsonObject completionHeadInfo = completionPhaseInfo.copy();
 		JsonObject phraseOjb = completionHeadInfo.getJsonObject("pharseinfo").getJsonObject("bo");
@@ -163,15 +166,16 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 		JsonArray details = jsonObject.getJsonObject("bo").getJsonArray("detail");
 		for (Object item : details) {
 			JsonObject detail = (JsonObject) item;
-			String detailcodeStr = detail.getString("detail_code");
-			Integer detailcode = Integer.getInteger(detailcodeStr);
+			JsonObject goods = detail.getJsonObject("goods");
+			goods.remove("_id");
+			Integer detailcode = detail.getInteger("detail_code");
 			completionPhaseInfoView.put(detailcode, detail);
 		}
 		return completionPhaseInfoView;
 	}
 
 	private String getPharseOrderAddress() {
-		
+
 		String server = this.appActivity.getService().getRealServiceName();
 		String address = this.appActivity.getAppInstContext().getAccount() + "." + server + "." + "pharseinv-mgr" + "."
 				+ "batch_create";
