@@ -1,4 +1,4 @@
-package ocr.inventorycenter.inventorycheck;
+package ocr.inventorycenter.allocateorders;
 
 
 import io.vertx.core.Future;
@@ -9,22 +9,20 @@ import ocr.common.DoubleUtil;
 import ocr.common.handler.SampleSingleDocBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
-import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
 /**
- * 库存盘点确认操作
+ * 库存调拨确认操作
  * 
  * @date 2016年11月20日
  * @author LCL
  */
 //业务活动功能处理器
-public class InventorycheckConfirmHandler extends SampleSingleDocBaseHandler{
+public class AllocateordersConfirmHandler extends SampleSingleDocBaseHandler{
 	
-	public InventorycheckConfirmHandler(AppActivityImpl appActivity) {
+	public AllocateordersConfirmHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 	}
 
@@ -33,7 +31,7 @@ public class InventorycheckConfirmHandler extends SampleSingleDocBaseHandler{
 	 */
 	@Override 
 	public String getEventAddress() {
-		return InventorycheckConstant.CONFIRM_ADDRESS;
+		return AllocateordersConstant.CONFIRM_ADDRESS;
 	}
 
 	@Override
@@ -47,7 +45,7 @@ public class InventorycheckConfirmHandler extends SampleSingleDocBaseHandler{
 		handlerDescriptor.setRestApiURI(uri);
 
 		// 状态变化定义
-		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, InventorycheckConstant.CREATE_STATUS, InventorycheckConstant.CONFIRM_STATUS);
+		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, AllocateordersConstant.CREATE_STATUS, AllocateordersConstant.CONFIRM_STATUS);
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
 
@@ -55,12 +53,13 @@ public class InventorycheckConfirmHandler extends SampleSingleDocBaseHandler{
 	}
 
 	/**
-	 * 更新现存量
+	 * 生成出入存量记录
 	 * @param bo
 	 * @param future
 	 */
+	@Override
 	protected void afterProcess(JsonObject bos, Future<JsonObject> future) {
-		//根据盘点出来的盈亏，更新现存量
+		//调拨出库单做减库存，调拨入库单做加库存
 		JsonArray invOnhand = getInvOnhandObject(bos);
 		createInvOnhand(invOnhand, future);
 	}
@@ -71,35 +70,44 @@ public class InventorycheckConfirmHandler extends SampleSingleDocBaseHandler{
 	 * @param replenishment
 	 * @return
 	 */
-	private JsonArray getInvOnhandObject(JsonObject invCheck) {
+	private JsonArray getInvOnhandObject(JsonObject allocateorder) {
 		JsonArray paramList = new JsonArray();
-		for (Object detail : invCheck.getJsonArray("details")) {
-			JsonObject param = new JsonObject();
-			JsonObject detailO = (JsonObject) detail;
-			param.put("warehouses", invCheck.getJsonObject("warehouses"));
-			param.put("goods", detailO.getJsonObject("goods"));
-			param.put("sku", detailO.getJsonObject("goods").getString("product_sku_code"));
-			param.put("invbatchcode", detailO.getString("invbatchcode"));
-			param.put("warehousecode", invCheck.getJsonObject("warehouses").getString("code"));
-			//计算盈亏
-			Double booknum = detailO.getDouble("booknum");//账面
-			Double realnum = detailO.getDouble("realnum");//实际
-			Double loss = DoubleUtil.sub(realnum, booknum);
-			if(loss.compareTo(0.0) > 0){
-				param.put("status", "in");
-			}else if(loss.compareTo(0.0) < 0){
-				param.put("status", "out");
-			}else{
-				continue;
+		for (int i = 0; i < 2; i++) {
+			JsonObject warehouses = null;
+			String warehouses_code = null;
+			if( i == 0){
+				//调拨出
+				warehouses = allocateorder.getJsonObject("outwarehouses");
+				warehouses_code = allocateorder.getJsonObject("outwarehouses").getString("code");
+			}else if(i == 1){
+				//调拨入
+				warehouses = allocateorder.getJsonObject("inwarehouses");
+				warehouses_code = allocateorder.getJsonObject("inwarehouses").getString("code");
 			}			
-			param.put("biz_data_type", this.appActivity.getBizObjectType());
-			param.put("bo_id", invCheck.getString("bo_id"));
-			param.put("goodaccount", detailO.getJsonObject("goods").getString("account"));
-		
-			param.put("onhandnum", loss);
+			for (Object detail : allocateorder.getJsonArray("details")) {
+				JsonObject param = new JsonObject();
+				JsonObject detailO = (JsonObject) detail;
+				param.put("warehouses", warehouses);
+				param.put("goods", detailO.getJsonObject("goods"));
+				param.put("sku", detailO.getJsonObject("goods").getString("product_sku_code"));
+				param.put("invbatchcode", detailO.getString("invbatchcode"));
+				param.put("warehousecode", warehouses_code);
+
+				if(i == 0){
+					param.put("status", "out");
+				}else if(i == 1){
+					param.put("status", "in");
+				}
+				
+				param.put("biz_data_type", this.appActivity.getBizObjectType());
+				param.put("bo_id", allocateorder.getString("bo_id"));
+				param.put("goodaccount", detailO.getJsonObject("goods").getString("account"));
 			
-			paramList.add(param);
-		}
+				param.put("onhandnum", detailO.getDouble("num"));
+				
+				paramList.add(param);
+			}
+		}		
 		return paramList;
 	}
 	
@@ -113,7 +121,7 @@ public class InventorycheckConfirmHandler extends SampleSingleDocBaseHandler{
 		String from_account = this.appActivity.getAppInstContext().getAccount();
 		// 按照分页条件查询收货通知
 		String onHandAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
-				+ ".stockonhand-mgr.batchcreate";
+				+ ".istockonhand-mgr.batchcreate";
 		this.appActivity.getEventBus().send(onHandAddress, invOnhand, invRet -> {
 			if (invRet.succeeded()) {
 				invOnhandFuture.complete();

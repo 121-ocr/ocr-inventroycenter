@@ -58,6 +58,8 @@ public class InventorycheckManagementComponent extends AppActivityImpl {
 		ret.add(updateHandler);
 		InventorycheckRemoveHandler removeHandler = new InventorycheckRemoveHandler(this);
 		ret.add(removeHandler);
+		InventorycheckConfirmHandler confirmHandler = new InventorycheckConfirmHandler(this);
+		ret.add(confirmHandler);
 
 		return ret;
 	}

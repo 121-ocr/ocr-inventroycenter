@@ -58,6 +58,8 @@ public class AllocateordersManagementComponent extends AppActivityImpl {
 		ret.add(updateHandler);
 		AllocateordersRemoveHandler removeHandler = new AllocateordersRemoveHandler(this);
 		ret.add(removeHandler);
+		AllocateordersConfirmHandler confirmHandler = new AllocateordersConfirmHandler(this);
+		ret.add(confirmHandler);
 
 		return ret;
 	}
