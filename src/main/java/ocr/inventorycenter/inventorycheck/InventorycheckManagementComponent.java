@@ -10,7 +10,7 @@ import otocloud.framework.core.OtoCloudEventDescriptor;
 import otocloud.framework.core.OtoCloudEventHandlerRegistry;
 
 /**
- * 仓库设施管理：货区管理
+ * 库存盘点
  * 
  * @date 2016年11月20日
  * @author LCL
