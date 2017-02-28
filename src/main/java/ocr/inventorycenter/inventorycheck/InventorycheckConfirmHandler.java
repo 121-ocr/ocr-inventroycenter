@@ -62,9 +62,7 @@ public class InventorycheckConfirmHandler extends SampleSingleDocBaseHandler{
 	protected void afterProcess(JsonObject bos, Future<JsonObject> future) {
 		//根据盘点出来的盈亏，更新现存量
 		JsonArray invOnhand = getInvOnhandObject(bos);
-		Future<JsonObject> invOnhandFuture = Future.future();
-		createInvOnhand(invOnhand, invOnhandFuture);
-		future.complete(bos);		
+		createInvOnhand(invOnhand, future);
 	}
 	
 	/**
@@ -113,10 +111,10 @@ public class InventorycheckConfirmHandler extends SampleSingleDocBaseHandler{
 	 */
 	private void createInvOnhand(JsonArray invOnhand, Future<JsonObject> invOnhandFuture) {
 		String from_account = this.appActivity.getAppInstContext().getAccount();
-		String invSrvName = this.appActivity.getDependencies().getJsonObject("inventorycenter_service")
-				.getString("service_name", "");
-		String getWarehouseAddress = from_account + "." + invSrvName + "." + "stockonhand-mgr.batchcreate";
-		this.appActivity.getEventBus().send(getWarehouseAddress, invOnhand, invRet -> {
+		// 按照分页条件查询收货通知
+		String onHandAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
+				+ ".inventorycheck-mgr.batchcreate";
+		this.appActivity.getEventBus().send(onHandAddress, invOnhand, invRet -> {
 			if (invRet.succeeded()) {
 				invOnhandFuture.complete();
 			} else {
