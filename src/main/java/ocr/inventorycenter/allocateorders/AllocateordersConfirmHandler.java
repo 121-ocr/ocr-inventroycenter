@@ -84,7 +84,7 @@ public class AllocateordersConfirmHandler extends SampleSingleDocBaseHandler{
 				warehouses = allocateorder.getJsonObject("inwarehouses");
 				warehouses_code = allocateorder.getJsonObject("inwarehouses").getString("code");
 			}			
-			for (Object detail : allocateorder.getJsonArray("details")) {
+			for (Object detail : allocateorder.getJsonArray("detail")) {
 				JsonObject param = new JsonObject();
 				JsonObject detailO = (JsonObject) detail;
 				param.put("warehouses", warehouses);

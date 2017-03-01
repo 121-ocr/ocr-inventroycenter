@@ -73,7 +73,7 @@ public class InventorycheckConfirmHandler extends SampleSingleDocBaseHandler{
 	 */
 	private JsonArray getInvOnhandObject(JsonObject invCheck) {
 		JsonArray paramList = new JsonArray();
-		for (Object detail : invCheck.getJsonArray("details")) {
+		for (Object detail : invCheck.getJsonArray("detail")) {
 			JsonObject param = new JsonObject();
 			JsonObject detailO = (JsonObject) detail;
 			param.put("warehouses", invCheck.getJsonObject("warehouses"));
@@ -96,7 +96,7 @@ public class InventorycheckConfirmHandler extends SampleSingleDocBaseHandler{
 			param.put("bo_id", invCheck.getString("bo_id"));
 			param.put("goodaccount", detailO.getJsonObject("goods").getString("account"));
 		
-			param.put("onhandnum", loss);
+			param.put("onhandnum", Math.abs(loss));
 			
 			paramList.add(param);
 		}
