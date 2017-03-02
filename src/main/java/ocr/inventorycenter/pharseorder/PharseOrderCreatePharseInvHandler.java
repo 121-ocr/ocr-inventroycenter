@@ -9,6 +9,7 @@ import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import ocr.common.ModuleContants;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
@@ -100,6 +101,7 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 
 		});
 	}
+	
 
 	private void convertPhraseInvs(JsonArray pharseInvInfo, JsonObject completionPhaseInfo, JsonArray pharseInvs) {
 		Map<String, JsonArray> pharseinvsByWarehouses = new HashMap<String, JsonArray>();
@@ -120,6 +122,8 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 				jsonObject.put("nsnum", bo.getInteger("invref_nsnum"));
 				jsonObject.put("unqualifiednum", bo.getInteger("invref_unqualifiednum"));
 				jsonObject.put("locations", bo.getJsonObject("invref_location"));
+				jsonObject.put("restype", ModuleContants.PO);
+				jsonObject.put("resid", bo.getString("invref_boid"));
 				jsonObject.put("resbid", bo.getInteger("invref_detailcode"));
 				JsonArray stockDetails = pharseinvsByWarehouses.get(key);
 				stockDetails.add(jsonObject);
@@ -131,6 +135,8 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 				jsonObject.put("nsnum", bo.getInteger("invref_nsnum"));
 				jsonObject.put("unqualifiednum", bo.getInteger("invref_unqualifiednum"));
 				jsonObject.put("locations", bo.getJsonObject("invref_location"));
+				jsonObject.put("restype", ModuleContants.PO);
+				jsonObject.put("resid", bo.getString("invref_boid"));
 				jsonObject.put("resbid", bo.getInteger("invref_detailcode"));
 				stockDetails.add(jsonObject);
 				pharseinvsByWarehouses.put(key, stockDetails);

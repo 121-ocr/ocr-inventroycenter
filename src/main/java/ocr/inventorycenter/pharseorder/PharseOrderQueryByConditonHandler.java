@@ -21,6 +21,8 @@ import otocloud.framework.core.OtoCloudBusMessage;
 // 业务活动功能处理器
 public class PharseOrderQueryByConditonHandler extends CDOHandlerImpl<JsonObject> {
 
+	private static final String IS_CREATED_PHARSE_INV = "is_createdPharseInv";
+
 	public static final String ADDRESS = "querybyconditon";
 
 	public PharseOrderQueryByConditonHandler(AppActivityImpl appActivity) {
@@ -39,17 +41,69 @@ public class PharseOrderQueryByConditonHandler extends CDOHandlerImpl<JsonObject
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 
-		JsonObject params = msg.body();
-		queryByConditions(params, ret -> {
-			if (ret.succeeded()) {
-				msg.reply(ret.result());
-			} else {
-				Throwable errThrowable = ret.cause();
-				String errMsgString = errThrowable.getMessage();
-				msg.fail(100, errMsgString);
-			}
+		Future<Void> nextFuture = Future.future(); // 规定步骤1、2之间的顺序
+
+		JsonObject results = new JsonObject();
+		// 步骤一、查询是否已经生成过采购入库单
+		isCreatedInv(msg, results, nextFuture);
+
+		// 步骤二，与步骤一串行的 ，第一步根据结果处理,补全采购订单数据
+		nextFuture.setHandler(nextHandler -> {
+			queryAllPhrase(msg, results);
 		});
 
+	}
+
+	private void queryAllPhrase(OtoCloudBusMessage<JsonObject> msg, JsonObject results) {
+
+		JsonObject result = new JsonObject();
+
+		if (!results.getBoolean(IS_CREATED_PHARSE_INV)) {
+			JsonObject params = msg.body();
+			queryByConditions(params, ret -> {
+				if (ret.succeeded()) {
+					result.put("result", ret.result());
+					msg.reply(result);
+				} else {
+					Throwable errThrowable = ret.cause();
+					String errMsgString = errThrowable.getMessage();
+					msg.fail(100, errMsgString);
+				}
+			});
+		} else {
+			msg.reply(null);
+		}
+
+	}
+
+	private void isCreatedInv(OtoCloudBusMessage<JsonObject> msg, JsonObject results, Future<Void> nextFuture) {
+
+		this.appActivity.getEventBus().send(getPharseOrderAddress(), msg.body(), facilityRes -> {
+			if (facilityRes.succeeded()) {
+				JsonObject body = (JsonObject) facilityRes.result().body();
+				boolean rs = body.getBoolean("result");
+				if (rs) {
+					results.put(IS_CREATED_PHARSE_INV, true);
+				} else {
+					results.put(IS_CREATED_PHARSE_INV, false);
+				}
+				nextFuture.complete();
+			} else {
+				Throwable errThrowable = facilityRes.cause();
+				String errMsgString = errThrowable.getMessage();
+				appActivity.getLogger().error(errMsgString, errThrowable);
+				nextFuture.failed();
+			}
+
+		});
+
+	}
+
+	private String getPharseOrderAddress() {
+		String server = this.appActivity.getService().getRealServiceName();
+		String address = this.appActivity.getAppInstContext().getAccount() + "." + server + "." + "pharseinv-mgr" + "."
+				+ "queryByRes";
+		return address;
 	}
 
 	public void queryByConditions(JsonObject params, Handler<AsyncResult<JsonObject>> next) {
@@ -62,7 +116,7 @@ public class PharseOrderQueryByConditonHandler extends CDOHandlerImpl<JsonObject
 		String boId = queryParams.getString("bo_id");
 
 		this.queryLatestFactData(appActivity.getBizObjectType(), boId, null, null, findRet -> {
-			if (findRet.succeeded()) {			
+			if (findRet.succeeded()) {
 				future.complete(findRet.result());
 			} else {
 				Throwable errThrowable = findRet.cause();
