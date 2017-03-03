@@ -61,7 +61,7 @@ public class AllocateordersConfirmHandler extends SampleSingleDocBaseHandler{
 	protected void afterProcess(JsonObject bos, Future<JsonObject> future) {
 		//调拨出库单做减库存，调拨入库单做加库存
 		JsonArray invOnhand = getInvOnhandObject(bos);
-		createInvOnhand(invOnhand, future);
+		createInvOnhand(bos, invOnhand, future);
 	}
 	
 	/**
@@ -113,18 +113,19 @@ public class AllocateordersConfirmHandler extends SampleSingleDocBaseHandler{
 	
 	/**
 	 * 保存现存量
+	 * @param bos 
 	 * 
 	 * @param prices
 	 * @param invOnhandFuture
 	 */
-	private void createInvOnhand(JsonArray invOnhand, Future<JsonObject> invOnhandFuture) {
+	private void createInvOnhand(JsonObject bos, JsonArray invOnhand, Future<JsonObject> invOnhandFuture) {
 		String from_account = this.appActivity.getAppInstContext().getAccount();
 		// 按照分页条件查询收货通知
 		String onHandAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
 				+ ".istockonhand-mgr.batchcreate";
 		this.appActivity.getEventBus().send(onHandAddress, invOnhand, invRet -> {
 			if (invRet.succeeded()) {
-				invOnhandFuture.complete();
+				invOnhandFuture.complete(bos);
 			} else {
 				Throwable errThrowable = invRet.cause();
 				String errMsgString = errThrowable.getMessage();
