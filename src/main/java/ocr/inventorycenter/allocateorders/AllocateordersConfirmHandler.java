@@ -59,8 +59,8 @@ public class AllocateordersConfirmHandler extends SampleBillBaseHandler{
 	@Override
 	protected void afterProcess(JsonObject bos, Future<JsonObject> future) {
 		//调拨出库单做减库存，调拨入库单做加库存
-		//JsonArray invOnhand = getInvOnhandObject(bos);
-		//createInvOnhand(invOnhand, future);
+		JsonArray invOnhand = getInvOnhandObject(bos);
+		createInvOnhand(invOnhand, future);
 	}
 	
 	/**
