@@ -2,6 +2,7 @@ package ocr.inventorycenter.allocateorders;
 
 
 import io.vertx.core.http.HttpMethod;
+import ocr.common.handler.SampleBillBaseHandler;
 import ocr.common.handler.SampleSingleDocBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
@@ -16,7 +17,7 @@ import otocloud.framework.core.HandlerDescriptor;
  * @author LCL
  */
 //业务活动功能处理器
-public class AllocateordersCreateHandler  extends SampleSingleDocBaseHandler {
+public class AllocateordersCreateHandler  extends SampleBillBaseHandler {
 	
 	public AllocateordersCreateHandler(AppActivityImpl appActivity) {
 		super(appActivity);
