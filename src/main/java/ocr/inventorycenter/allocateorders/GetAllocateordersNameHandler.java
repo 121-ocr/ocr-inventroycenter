@@ -2,6 +2,7 @@ package ocr.inventorycenter.allocateorders;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import ocr.common.handler.SampleBillBaseQueryHandler;
 import ocr.common.handler.SampleSingleDocQueryHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
@@ -16,7 +17,7 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  */
 // 业务活动功能处理器
-public class GetAllocateordersNameHandler extends SampleSingleDocQueryHandler {
+public class GetAllocateordersNameHandler extends SampleBillBaseQueryHandler {
 
 	public static final String ADDRESS = "queryAll";
 

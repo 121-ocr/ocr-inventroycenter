@@ -2,6 +2,7 @@ package ocr.inventorycenter.allocateorders;
 
 
 import io.vertx.core.http.HttpMethod;
+import ocr.common.handler.SampleBillBaseHandler;
 import ocr.common.handler.SampleSingleDocBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
@@ -16,7 +17,7 @@ import otocloud.framework.core.HandlerDescriptor;
  * @author LCL
  */
 //业务活动功能处理器
-public class AllocateordersUpdateHandler  extends SampleSingleDocBaseHandler {
+public class AllocateordersUpdateHandler  extends SampleBillBaseHandler {
 	
 	public AllocateordersUpdateHandler(AppActivityImpl appActivity) {
 		super(appActivity);
@@ -44,9 +45,10 @@ public class AllocateordersUpdateHandler  extends SampleSingleDocBaseHandler {
 		handlerDescriptor.setRestApiURI(uri);
 
 		// 状态变化定义
-		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, null, AllocateordersConstant.UPDATE_STATUS);
+		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, "created", "created");
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
+
 
 		return actionDescriptor;
 	}

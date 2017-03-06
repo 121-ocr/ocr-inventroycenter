@@ -3,7 +3,9 @@ package ocr.inventorycenter.allocateorders;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import ocr.common.handler.SampleBillBaseHandler;
 import ocr.common.handler.SampleSingleDocBaseHandler;
+import ocr.inventorycenter.stockreserved.StockReservedConstant;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
@@ -18,7 +20,7 @@ import otocloud.framework.core.OtoCloudBusMessage;
  * @author LCL
  */
 //业务活动功能处理器
-public class AllocateordersRemoveHandler  extends SampleSingleDocBaseHandler {
+public class AllocateordersRemoveHandler  extends SampleBillBaseHandler {
 	
 
 	public AllocateordersRemoveHandler(AppActivityImpl appActivity) {
@@ -26,25 +28,7 @@ public class AllocateordersRemoveHandler  extends SampleSingleDocBaseHandler {
 		// TODO Auto-generated constructor stub
 	}
 
-	// 处理器
-	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
-		
-		JsonObject query = msg.body();
-
-		appActivity.getAppDatasource().getMongoClient().removeDocument(appActivity.getDBTableName(appActivity.getBizObjectType()),
-				query,
-				result -> {
-					if (result.succeeded()) {
-						msg.reply("ok");
-					} else {
-						Throwable errThrowable = result.cause();
-						String errMsgString = errThrowable.getMessage();
-						appActivity.getLogger().error(errMsgString, errThrowable);
-						msg.fail(100, errMsgString);
-					}
-				});
-	}
+	
 
 	@Override
 	public String getEventAddress() {
@@ -52,18 +36,19 @@ public class AllocateordersRemoveHandler  extends SampleSingleDocBaseHandler {
 		return AllocateordersConstant.REMOVE_ADDRESS;
 	}
 	
+	
 	@Override
 	public ActionDescriptor getActionDesc() {
 
 		ActionDescriptor actionDescriptor = super.getActionDesc();
 		HandlerDescriptor handlerDescriptor = actionDescriptor.getHandlerDescriptor();
 
-		// 外部访问url定义
-		ActionURI uri = new ActionURI(getEventAddress(), HttpMethod.POST);
+		ActionURI uri = new ActionURI(AllocateordersConstant.REMOVE_ADDRESS, HttpMethod.POST);
 		handlerDescriptor.setRestApiURI(uri);
 
-		// 状态变化定义
-		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, null, AllocateordersConstant.REMOVE_STATUS);
+		// 状态变化定义，注意，这个目前是还创建态，因为这个解除不是删除，而是增加一条负数据
+		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT,
+				AllocateordersConstant.CREATE_STATUS, AllocateordersConstant.CREATE_STATUS);
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
 

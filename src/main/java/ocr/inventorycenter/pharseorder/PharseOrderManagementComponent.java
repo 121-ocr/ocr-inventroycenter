@@ -66,6 +66,11 @@ public class PharseOrderManagementComponent extends AppActivityImpl {
 				this);
 		ret.add(pharseOrderCreatePharseInvHandler);
 
+		PharseOrderQueryNoPharseInvHandler pharseOrderQueryNoPharseInvHandler = new PharseOrderQueryNoPharseInvHandler(
+				this);
+		ret.add(pharseOrderQueryNoPharseInvHandler);
+		
+		
 		return ret;
 	}
 

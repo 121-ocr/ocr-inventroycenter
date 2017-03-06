@@ -1,0 +1,51 @@
+{ 
+    "_id" : "5891f7dbfdd10c306c3d39a5", 
+    "invbatchcode" : "2001010120161229", 
+    "supply_price" : {
+    }, 
+    "retail_price" : {
+    },
+    "commission_rate" :"佣金比例", 
+    "cost_price" :"成本价格,根据采购入sku+入库批自动计算", 
+    "channel_类别":"渠道商类别：一级，二级，三级",
+    "goods" : {
+        "product_sku_code" : "WINE001SP0001SP0002", 
+        "product_sku" : {
+            "bar_code" : "", 
+            "product_spu" : {
+                "spu_code" : "WINE001", 
+                "brand" : {
+                    "name" : "科特勒", 
+                    "code" : "BR0001", 
+                    "manufacturer" : {
+                        "name" : "法国科特勒酒庄", 
+                        "code" : "BR0001"
+                    }
+                }, 
+                "base_unit" : "瓶", 
+                "desc" : ""
+            }, 
+            "product_specifications" : [
+                {
+                    "specification_name" : "颜色", 
+                    "specification_value" : "洋红", 
+                    "specification_code" : "SP0001"
+                }, 
+                {
+                    "specification_name" : "容量", 
+                    "specification_value" : "750ml", 
+                    "specification_code" : "SP0002"
+                }
+            ]
+        }, 
+        "sales_catelogs" : [
+            {
+                "name" : "红酒", 
+                "inner_code" : "GC0301", 
+                "code" : "GC0301"
+            }
+        ], 
+        "title" : "拉菲尚品波尔多干红葡萄酒750ml", 
+        "account" : "3"
+    }
+}
