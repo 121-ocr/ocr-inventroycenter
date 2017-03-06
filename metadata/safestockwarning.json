@@ -1,0 +1,81 @@
+//库存预警
+{	
+    "account" : "3",
+    "sku" : "WINE001SP0001SP0002",
+    "goodaccount" : "3",
+    "warehousecode" : "WH001",
+    "locationcode" : "1-6-2-10",
+    "invbatchcode" : "1",
+    "onhandnum" : 200,
+    "safenum": 300,//安全库存
+    "stockoutnum": 100,//缺货量
+    "isWarning": true,//是否预警
+    "warehouses" : {
+	    "code" : "WH001",
+	    "name" : "北京总仓",
+	    "type" : {
+	        "code" : "1",
+	        "name" : "仓库"
+	    },
+	    "character" : {
+	        "code" : "2",
+	        "name" : "供货仓"
+	    },
+	    "address" : {
+	        "region" : {
+	            "code" : "100200",
+	            "full_name" : "北京市朝阳区"
+	        },
+	        "address_detail" : "XXX街道"
+	    },
+	    "account" : "3"
+    },
+    "locations" : {
+        "currentnum" : "4",
+        "code" : "1-6-2-10",
+        "standfullnum" : "6",
+        "packunit" : "箱",
+        "ismixedLot" : 0
+    },
+    "goods" : {
+       "account" : "3",
+        "product_sku_code" : "WINE001SP0001SP0002",
+        "title" : "拉菲尚品波尔多干红葡萄酒750ml",
+        "sales_catelogs" : [ 
+            {
+                "code" : "GC0301",
+                "name" : "红酒",
+                "inner_code" : "GC0301"
+            }
+        ],
+        "product_sku" : {
+            "bar_code" : "",
+            "product_specifications" : [ 
+                {
+                    "specification_code" : "SP0001",
+                    "specification_name" : "颜色",
+                    "specification_value" : "洋红"
+                }, 
+                {
+                    "specification_code" : "SP0002",
+                    "specification_name" : "容量",
+                    "specification_value" : "750ml"
+                }
+            ],
+            "product_spu" : {
+                "spu_code" : "WINE001",
+                "base_unit" : "瓶",
+                "brand" : {
+                    "code" : "BR0001",
+                    "name" : "科特勒",
+                    "manufacturer" : {
+                        "code" : "BR0001",
+                        "name" : "法国科特勒酒庄"
+                    }
+                },
+                "desc" : ""
+            }
+        }
+    }
+}
+}
