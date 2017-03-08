@@ -12,6 +12,7 @@ import ocr.inventorycenter.locationrelation.LocationRelationManagementComponent;
 import ocr.inventorycenter.pharseinv.PharseInvManagementComponent;
 import ocr.inventorycenter.pharseorder.PharseOrderManagementComponent;
 import ocr.inventorycenter.sheftsrelation.SheftsRelationManagementComponent;
+import ocr.inventorycenter.shelfwarning.ShelfWarningComponent;
 import ocr.inventorycenter.stockonhand.StockOnHandManagementComponent;
 import ocr.inventorycenter.stockout.StockOutManagementComponent;
 import ocr.inventorycenter.stockreserved.StockReservedManagementComponent;
@@ -89,6 +90,9 @@ public class InventoryCenterService extends AppServiceImpl {
 		
 		InventorycheckManagementComponent invcheckManagementComponet = new InventorycheckManagementComponent();
 		retActivities.add(invcheckManagementComponet);
+		
+		ShelfWarningComponent shelfWarningComponent = new ShelfWarningComponent();
+		retActivities.add(shelfWarningComponent);
 				
 
 		return retActivities;

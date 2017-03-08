@@ -80,6 +80,9 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 		AutoMarchLocationByOnHandHandler autoMarchLocationByOnHandHandler = new AutoMarchLocationByOnHandHandler(this);
 		ret.add(autoMarchLocationByOnHandHandler);
 		
+		StockOnHandQuery4ShelfWarningHandler stockOnHandQuery4ShelfWarningHandler = new StockOnHandQuery4ShelfWarningHandler(this);
+		ret.add(stockOnHandQuery4ShelfWarningHandler);
+		
 		
 		return ret;
 	}

@@ -113,7 +113,6 @@ public class InventorycheckConfirmHandler extends SampleBillBaseHandler{
 	 */
 	private void createInvOnhand(JsonObject bos, JsonArray invOnhand, Future<JsonObject> invOnhandFuture) {
 		String from_account = this.appActivity.getAppInstContext().getAccount();
-		// 按照分页条件查询收货通知
 		String onHandAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
 				+ ".stockonhand-mgr.batchcreate";
 		this.appActivity.getEventBus().send(onHandAddress, invOnhand, invRet -> {
