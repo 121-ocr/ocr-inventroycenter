@@ -98,6 +98,7 @@ public class StockOnHandQuery4ShelfWarningHandler extends ActionHandlerImpl<Json
 		groupIds.put("sku", "$sku");	
 		groupIds.put("invbatchcode", "$invbatchcode");	
 		groupIds.put("shelf_life", "$shelf_life");
+		groupIds.put("goods", "$goods");
 
 		JsonObject matchObj = new JsonObject().put("$match", query);
 		

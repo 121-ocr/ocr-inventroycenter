@@ -97,7 +97,7 @@ public class InventorycheckConfirmHandler extends SampleBillBaseHandler{
 			param.put("bo_id", invCheck.getString("bo_id"));
 			param.put("goodaccount", detailO.getJsonObject("goods").getString("account"));
 		
-			param.put("onhandnum", Math.abs(loss));
+			param.put("onhandnum", loss);
 			
 			paramList.add(param);
 		}

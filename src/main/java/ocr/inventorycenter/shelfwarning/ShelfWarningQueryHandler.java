@@ -1,6 +1,13 @@
 package ocr.inventorycenter.shelfwarning;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
+
 import io.vertx.core.Future;
+import io.vertx.core.eventbus.impl.codecs.JsonArrayMessageCodec;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -14,11 +21,12 @@ import otocloud.framework.core.OtoCloudBusMessage;
 
 /**
  * TODO: 保质期预警
+ * 
  * @date 2016年12月10日
  * @author wanghw
  */
 public class ShelfWarningQueryHandler extends ActionHandlerImpl<JsonObject> {
-	
+
 	public ShelfWarningQueryHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 	}
@@ -38,19 +46,34 @@ public class ShelfWarningQueryHandler extends ActionHandlerImpl<JsonObject> {
 	public String getStatus() {
 		// TODO Auto-generated method stub
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * 查询现存量
 	 */
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(OtoCloudBusMessage<JsonObject> msg){
 		String from_account = this.appActivity.getAppInstContext().getAccount();
 		String onHandAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
 				+ ".stockonhand-mgr.query4shelfwarning";
 		this.appActivity.getEventBus().send(onHandAddress, null, invRet -> {
 			if (invRet.succeeded()) {
-				msg.reply(invRet.result());
+				JsonArray ret = (JsonArray) invRet.result().body();
+				for (Object onhand : ret) {
+					JsonObject _id = ((JsonObject) onhand).getJsonObject("_id");
+					String shelf_life = _id.getString("shelf_life");			
+					LocalDate shelf_date = LocalDate.parse(shelf_life);
+					LocalDate now_date = LocalDate.now();
+					long remain_days = shelf_date.toEpochDay() - now_date.toEpochDay();
+					_id.put("remain_day", remain_days);//剩余天数
+					//设置是否预警---如果已经过期，则报警
+					if(remain_days < 0){
+						_id.put("isWarning", "过期");
+					}else{
+						_id.put("isWarning", "未过期");
+					}
+				}
+				msg.reply(ret);
 			} else {
 				Throwable errThrowable = invRet.cause();
 				String errMsgString = errThrowable.getMessage();
@@ -59,7 +82,7 @@ public class ShelfWarningQueryHandler extends ActionHandlerImpl<JsonObject> {
 			}
 		});
 	}
-	
+
 	/**
 	 * 此action的自描述元数据
 	 */

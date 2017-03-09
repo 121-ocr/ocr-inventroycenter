@@ -5,6 +5,7 @@ import io.vertx.core.Future;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import ocr.common.DoubleUtil;
 import ocr.common.handler.SampleBillBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
@@ -94,8 +95,10 @@ public class AllocateordersConfirmHandler extends SampleBillBaseHandler{
 
 				if(i == 0){
 					param.put("status", "out");
+					param.put("onhandnum", DoubleUtil.sub(0.0, detailO.getDouble("num")));
 				}else if(i == 1){
 					param.put("status", "in");
+					param.put("onhandnum", detailO.getDouble("num"));
 				}
 				
 				param.put("biz_data_type", this.appActivity.getBizObjectType());
