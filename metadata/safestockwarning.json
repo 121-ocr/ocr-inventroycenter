@@ -4,12 +4,11 @@
     "sku" : "WINE001SP0001SP0002",
     "goodaccount" : "3",
     "warehousecode" : "WH001",
-    "locationcode" : "1-6-2-10",
     "invbatchcode" : "1",
     "onhandnum" : 200,
     "safenum": 300,//安全库存
     "stockoutnum": 100,//缺货量
-    "isWarning": true,//是否预警
+    "isWarning": "已缺货",//是否预警
     "warehouses" : {
 	    "code" : "WH001",
 	    "name" : "北京总仓",
@@ -29,13 +28,6 @@
 	        "address_detail" : "XXX街道"
 	    },
 	    "account" : "3"
-    },
-    "locations" : {
-        "currentnum" : "4",
-        "code" : "1-6-2-10",
-        "standfullnum" : "6",
-        "packunit" : "箱",
-        "ismixedLot" : 0
     },
     "goods" : {
        "account" : "3",

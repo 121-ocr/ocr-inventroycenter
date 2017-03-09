@@ -1,16 +1,10 @@
-//保质期预警
+//库存预警
 {	
     "account" : "3",
     "sku" : "WINE001SP0001SP0002",
-    "goodaccount" : "3",
     "warehousecode" : "WH001",
     "invbatchcode" : "1",
-    "onhandnum" : 200,
-    "product_date": "2017-03-06",//生产日期
-    "expiration_date": 1,//保质期（月）
-    "shelf_life": "2017-04-06",//出保日期
-    "remain_day": 30,//剩余天数
-    "isWarning": "已过期",//是否预警
+    "safenum": 300,//安全库存
     "warehouses" : {
 	    "code" : "WH001",
 	    "name" : "北京总仓",

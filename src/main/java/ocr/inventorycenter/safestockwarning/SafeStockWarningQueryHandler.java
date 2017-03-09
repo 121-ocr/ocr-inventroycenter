@@ -1,4 +1,4 @@
-package ocr.inventorycenter.shelfwarning;
+package ocr.inventorycenter.safestockwarning;
 
 import java.time.LocalDate;
 import io.vertx.core.http.HttpMethod;
@@ -12,14 +12,14 @@ import otocloud.framework.core.HandlerDescriptor;
 import otocloud.framework.core.OtoCloudBusMessage;
 
 /**
- * TODO: 保质期预警
+ * TODO: 安全库存预警
  * 
  * @date 2016年12月10日
  * @author wanghw
  */
-public class ShelfWarningQueryHandler extends ActionHandlerImpl<JsonObject> {
+public class SafeStockWarningQueryHandler extends ActionHandlerImpl<JsonObject> {
 
-	public ShelfWarningQueryHandler(AppActivityImpl appActivity) {
+	public SafeStockWarningQueryHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 	}
 
@@ -27,7 +27,7 @@ public class ShelfWarningQueryHandler extends ActionHandlerImpl<JsonObject> {
 	@Override
 	public String getEventAddress() {
 		// TODO Auto-generated method stub
-		return ShelfWarningConstant.QUERY_ADDRESS;
+		return SafeStockWarningConstant.QUERY_ADDRESS;
 	}
 
 	/**
