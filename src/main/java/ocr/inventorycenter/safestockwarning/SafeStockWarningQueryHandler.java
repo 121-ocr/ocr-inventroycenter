@@ -1,9 +1,12 @@
 package ocr.inventorycenter.safestockwarning;
 
-import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import ocr.common.DoubleUtil;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
@@ -41,31 +44,52 @@ public class SafeStockWarningQueryHandler extends ActionHandlerImpl<JsonObject> 
 	}
 
 	/**
-	 * 查询现存量
+	 * 先查询安全库存，再查现存量，然后计算缺货量
 	 */
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg){
+		
 		String from_account = this.appActivity.getAppInstContext().getAccount();
-		String onHandAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
-				+ ".stockonhand-mgr.query4shelfwarning";
-		this.appActivity.getEventBus().send(onHandAddress, null, invRet -> {
+		String safeStockAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
+				+ ".safestock.query";
+		this.appActivity.getEventBus().send(safeStockAddress, null, invRet -> {
 			if (invRet.succeeded()) {
-				JsonArray ret = (JsonArray) invRet.result().body();
-				for (Object onhand : ret) {
-					JsonObject _id = ((JsonObject) onhand).getJsonObject("_id");
-					String shelf_life = _id.getString("shelf_life");			
-					LocalDate shelf_date = LocalDate.parse(shelf_life);
-					LocalDate now_date = LocalDate.now();
-					long remain_days = shelf_date.toEpochDay() - now_date.toEpochDay();
-					_id.put("remain_day", remain_days);//剩余天数
-					//设置是否预警---如果已经过期，则报警
-					if(remain_days < 0){
-						_id.put("isWarning", "过期");
-					}else{
-						_id.put("isWarning", "未过期");
+				String onHandAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
+						+ ".stockonhand-mgr.query4safestockwarning";
+				this.appActivity.getEventBus().send(onHandAddress, null, ret -> {
+					if (invRet.succeeded()) {
+						JsonArray safeStockList = (JsonArray) invRet.result().body();
+						JsonArray onhandNumList = (JsonArray) ret.result().body();
+						Map<String, Double> key2OnhandNum = new HashMap<>();
+						onhandNumList.forEach(item->{
+							Double onhandNum = ((JsonObject) item).getDouble("onhandnum");
+							JsonObject _id = ((JsonObject) item).getJsonObject("_id");
+							String warehousecode = _id.getString("warehousecode");
+							String sku = _id.getString("sku");
+							key2OnhandNum.put(warehousecode+sku, onhandNum);
+						});
+						safeStockList.forEach(item->{
+							String warehousecode = ((JsonObject)item).getString("warehousecode");
+							String sku = ((JsonObject)item).getString("sku");
+							Double onhandNum = key2OnhandNum.get(warehousecode+sku);
+							((JsonObject)item).put("onhandnum", onhandNum);
+							Double safestockNum = ((JsonObject)item).getDouble("safenum");
+							if(DoubleUtil.sub(onhandNum, safestockNum) < 0){
+								((JsonObject)item).put("isWarning", "缺货");
+								((JsonObject)item).put("stockoutnum", Math.abs(DoubleUtil.sub(onhandNum, safestockNum)));
+							}else{
+								((JsonObject)item).put("isWarning", "未缺货");
+								((JsonObject)item).put("stockoutnum", 0.0);
+							}
+						});						
+						msg.reply(safeStockList);
+					} else {
+						Throwable errThrowable = ret.cause();
+						String errMsgString = errThrowable.getMessage();
+						appActivity.getLogger().error(errMsgString, errThrowable);
+						msg.reply(ret.cause());
 					}
-				}
-				msg.reply(ret);
+				});
 			} else {
 				Throwable errThrowable = invRet.cause();
 				String errMsgString = errThrowable.getMessage();

@@ -3,7 +3,6 @@
     "account" : "3",
     "sku" : "WINE001SP0001SP0002",
     "warehousecode" : "WH001",
-    "invbatchcode" : "1",
     "safenum": 300,//°²È«¿â´æ
     "warehouses" : {
 	    "code" : "WH001",

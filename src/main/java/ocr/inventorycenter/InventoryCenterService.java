@@ -11,6 +11,8 @@ import ocr.inventorycenter.invorg.InvOrgManagementComponent;
 import ocr.inventorycenter.locationrelation.LocationRelationManagementComponent;
 import ocr.inventorycenter.pharseinv.PharseInvManagementComponent;
 import ocr.inventorycenter.pharseorder.PharseOrderManagementComponent;
+import ocr.inventorycenter.safestock.SafeStockComponent;
+import ocr.inventorycenter.safestockwarning.SafeStockWarningComponent;
 import ocr.inventorycenter.sheftsrelation.SheftsRelationManagementComponent;
 import ocr.inventorycenter.shelfwarning.ShelfWarningComponent;
 import ocr.inventorycenter.stockonhand.StockOnHandManagementComponent;
@@ -93,6 +95,12 @@ public class InventoryCenterService extends AppServiceImpl {
 		
 		ShelfWarningComponent shelfWarningComponent = new ShelfWarningComponent();
 		retActivities.add(shelfWarningComponent);
+		
+		SafeStockComponent safeStockComponent = new SafeStockComponent();
+		retActivities.add(safeStockComponent);
+		
+		SafeStockWarningComponent safeStockWarningComponent = new SafeStockWarningComponent();
+		retActivities.add(safeStockWarningComponent);
 				
 
 		return retActivities;

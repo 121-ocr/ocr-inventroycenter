@@ -1,4 +1,9 @@
 eclipse.preferences.version=1
+encoding//metadata/allocateorders.json=UTF-8
+encoding//metadata/inventorycheck\ .json=UTF-8
+encoding//metadata/stockonhand.json=UTF-8
+encoding//metadata/stockout.json=UTF-8
+encoding//metadata/vo.json=UTF-8
 encoding//src/main/config=UTF-8
 encoding//src/main/java=UTF-8
 encoding//src/main/resources=UTF-8

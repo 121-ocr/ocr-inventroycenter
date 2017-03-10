@@ -4,7 +4,6 @@
     "sku" : "WINE001SP0001SP0002",
     "goodaccount" : "3",
     "warehousecode" : "WH001",
-    "invbatchcode" : "1",
     "onhandnum" : 200,
     "safenum": 300,//安全库存
     "stockoutnum": 100,//缺货量

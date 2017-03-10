@@ -2,11 +2,7 @@ package ocr.inventorycenter.safestock;
 
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import ocr.common.handler.SampleBillBaseHandler;
-import ocr.common.handler.SampleDocBaseHandler;
-import ocr.common.handler.SampleDocQueryHandler;
 import ocr.common.handler.SampleSingleDocBaseHandler;
 import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
