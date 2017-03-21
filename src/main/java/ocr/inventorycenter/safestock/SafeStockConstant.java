@@ -30,4 +30,8 @@ public class SafeStockConstant {
 	public static String QueryAddressConstant = "query";
 	public static String RemoveAddressConstant = "remove";
 
+	// 创建状态
+	public static final String CREATE_STATUS = "created";
+	public static final String REMOVE_STATUS = "deleted";
+
 }

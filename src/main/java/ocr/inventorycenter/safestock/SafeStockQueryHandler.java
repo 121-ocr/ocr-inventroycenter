@@ -17,7 +17,7 @@ import otocloud.framework.core.HandlerDescriptor;
 //业务活动功能处理器
 public class SafeStockQueryHandler extends SampleSingleDocQueryHandler {
 	
-	public static final String ADDRESS = "query";
+	public static final String ADDRESS = SafeStockConstant.QueryAddressConstant;
 
 	public SafeStockQueryHandler(AppActivityImpl appActivity) {
 		super(appActivity);
