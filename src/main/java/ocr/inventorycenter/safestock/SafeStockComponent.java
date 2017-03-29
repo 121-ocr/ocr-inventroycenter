@@ -55,6 +55,8 @@ public class SafeStockComponent extends AppActivityImpl {
 		ret.add(safeStockRemoveHandler);
 		SafeStockQueryHandler safeStockQueryHandler = new SafeStockQueryHandler(this);
 		ret.add(safeStockQueryHandler);
+		SafeStockQuery4WarningHandler safeStockQuery4WarningHandler = new SafeStockQuery4WarningHandler(this);
+		ret.add(safeStockQuery4WarningHandler);
 		
 		return ret;
 	}
