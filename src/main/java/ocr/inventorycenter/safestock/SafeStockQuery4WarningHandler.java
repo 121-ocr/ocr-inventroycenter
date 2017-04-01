@@ -38,7 +38,7 @@ public class SafeStockQuery4WarningHandler extends SampleSingleDocQueryHandler {
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 
-		JsonObject query = msg.body();
+		JsonObject query = new JsonObject();
 
 		FindOptions findOptions = new FindOptions();
 

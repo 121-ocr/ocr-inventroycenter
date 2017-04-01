@@ -1,6 +1,7 @@
 package ocr.inventorycenter.safestockwarning;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.vertx.core.http.HttpMethod;
@@ -51,14 +52,15 @@ public class SafeStockWarningQueryHandler extends ActionHandlerImpl<JsonObject> 
 		
 		String from_account = this.appActivity.getAppInstContext().getAccount();
 		String safeStockAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
-				+ ".safestock.query";
+				+ ".safestock.query4warning";
 		this.appActivity.getEventBus().send(safeStockAddress, null, invRet -> {
 			if (invRet.succeeded()) {
 				String onHandAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
 						+ ".stockonhand-mgr.query4safestockwarning";
 				this.appActivity.getEventBus().send(onHandAddress, null, ret -> {
-					if (invRet.succeeded()) {
-						JsonArray safeStockList = (JsonArray) invRet.result().body();
+					if (ret.succeeded()) {
+						JsonObject result = (JsonObject) invRet.result().body();
+						JsonArray safeStockList = result.getJsonArray("result");
 						JsonArray onhandNumList = (JsonArray) ret.result().body();
 						Map<String, Double> key2OnhandNum = new HashMap<>();
 						onhandNumList.forEach(item->{
@@ -73,7 +75,7 @@ public class SafeStockWarningQueryHandler extends ActionHandlerImpl<JsonObject> 
 							String sku = ((JsonObject)item).getString("sku");
 							Double onhandNum = key2OnhandNum.get(warehousecode+sku);
 							((JsonObject)item).put("onhandnum", onhandNum);
-							Double safestockNum = ((JsonObject)item).getDouble("safenum");
+							Double safestockNum = Double.valueOf(((JsonObject)item).getString("safenum"));
 							if(DoubleUtil.sub(onhandNum, safestockNum) < 0){
 								((JsonObject)item).put("isWarning", "缺货");
 								((JsonObject)item).put("stockoutnum", Math.abs(DoubleUtil.sub(onhandNum, safestockNum)));
