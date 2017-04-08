@@ -75,8 +75,11 @@ public class SafeStockWarningQueryHandler extends ActionHandlerImpl<JsonObject> 
 							String sku = ((JsonObject)item).getString("sku");
 							Double onhandNum = key2OnhandNum.get(warehousecode+sku);
 							((JsonObject)item).put("onhandnum", onhandNum);
-							Double safestockNum = Double.valueOf(((JsonObject)item).getString("safenum"));
-							if(DoubleUtil.sub(onhandNum, safestockNum) < 0){
+							Double safestockNum = Double.valueOf(((JsonObject)item).getValue("safenum").toString());
+							if(onhandNum == null && safestockNum != null){
+								((JsonObject)item).put("isWarning", "缺货");
+								((JsonObject)item).put("stockoutnum", safestockNum);
+							}else if(DoubleUtil.sub(onhandNum, safestockNum) < 0){
 								((JsonObject)item).put("isWarning", "缺货");
 								((JsonObject)item).put("stockoutnum", Math.abs(DoubleUtil.sub(onhandNum, safestockNum)));
 							}else{
