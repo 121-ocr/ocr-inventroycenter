@@ -36,7 +36,7 @@ public class AllocateordersQueryHandler extends SampleBillBaseQueryHandler {
 		JsonObject fields = queryParams.getJsonObject("fields");
 		JsonObject queryCond = queryParams.getJsonObject("query");
 		JsonObject pagingInfo = queryParams.getJsonObject("paging");
-		this.queryLatestFactDataList(appActivity.getBizObjectType(), getStatus2(queryParams), fields, pagingInfo,
+		this.queryLatestFactDataList(null, appActivity.getBizObjectType(), getStatus2(queryParams), fields, pagingInfo,
 				queryCond, null, findRet -> {
 					if (findRet.succeeded()) {
 						msg.reply(findRet.result());

@@ -87,7 +87,7 @@ public class PharseInvBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
     		
     	//记录事实对象（业务数据），会根据ActionDescriptor定义的状态机自动进行状态变化，并发出状态变化业务事件
     	//自动查找数据源，自动进行分表处理
-    	this.recordFactData(appActivity.getBizObjectType(), pharseInvOjb, boId, actor, null, result->{
+    	this.recordFactData(null, appActivity.getBizObjectType(), pharseInvOjb, boId, actor, null, result->{
 			if (result.succeeded()) {
 				successed_count.total++;
 			} else {

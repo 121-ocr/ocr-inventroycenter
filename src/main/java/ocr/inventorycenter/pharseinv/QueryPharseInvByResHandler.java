@@ -44,7 +44,7 @@ public class QueryPharseInvByResHandler extends ActionHandlerImpl<JsonObject> {
 		FindOptions findOptions = new FindOptions();
 		findOptions.setFields(new JsonObject().put("_id", true));
 		JsonObject rs = new JsonObject();
-		this.queryLatestFactDataList(appActivity.getBizObjectType(), "created", null, query, null, findRet -> {
+		this.queryLatestFactDataList(null, appActivity.getBizObjectType(), "created", null, query, null, findRet -> {
 			if (findRet.succeeded()) {
 				List<JsonObject> retObj = findRet.result();
 				if (retObj != null && retObj.size() > 0) {

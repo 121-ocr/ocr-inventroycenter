@@ -36,9 +36,9 @@ public class InvWarehouseQueryHandler extends ActionHandlerImpl<JsonObject> {
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 		
-		JsonObject queryParams = msg.body();
+		JsonObject queryParams = msg.body().getJsonObject("content");
 	    PagingOptions pagingObj = PagingOptions.buildPagingOptions(queryParams);        
-	    this.queryBizDataList(appActivity.getBizObjectType(), pagingObj, null, findRet -> {
+	    this.queryBizDataList(null, appActivity.getBizObjectType(), pagingObj, null, findRet -> {
 	        if (findRet.succeeded()) {
 	            msg.reply(findRet.result());
 	        } else {

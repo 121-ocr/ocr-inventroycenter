@@ -38,7 +38,7 @@ public class LocationsGoodsRelationQueryHandler extends SampleSingleDocQueryHand
 
 		JsonObject queryParams = msg.body();
 		PagingOptions pagingObj = PagingOptions.buildPagingOptions(queryParams);
-		this.queryBizDataList(appActivity.getBizObjectType(), pagingObj, null, findRet -> {
+		this.queryBizDataList(null, appActivity.getBizObjectType(), pagingObj, null, findRet -> {
 			if (findRet.succeeded()) {
 				msg.reply(findRet.result());
 				

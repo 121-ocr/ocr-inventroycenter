@@ -122,7 +122,7 @@ public class StockOutBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
 		// 交易单据一般要记录协作方
 		String boId = bo.getString("bo_id");
 		//String partnerAcct = bo.getJsonObject("channel").getString("link_account");
-		this.recordFactData(appActivity.getBizObjectType(), bo, boId, actor, null, result -> {
+		this.recordFactData(null, appActivity.getBizObjectType(), bo, boId, actor, null, result -> {
 			if (result.succeeded()) {
 				returnFuture.complete();
 			} else {

@@ -30,7 +30,7 @@ public class SuppliersRemoveHandler  extends SampleSingleDocBaseHandler {
 	@Override
 	public void handle(OtoCloudBusMessage<JsonObject> msg) {
 		
-		JsonObject query = msg.body();
+		JsonObject query = msg.body().getJsonObject("content");    	
 
 		appActivity.getAppDatasource().getMongoClient().removeDocument(appActivity.getDBTableName(appActivity.getBizObjectType()),
 				query,
