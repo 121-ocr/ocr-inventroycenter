@@ -8,7 +8,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存中心：现存量查询，货位参照
@@ -38,9 +38,9 @@ public class AutoMarchLocationByOnHandHandler extends ActionHandlerImpl<JsonObje
 	}
 
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> event) {
+	public void handle(CommandMessage<JsonObject> event) {
 
-		JsonObject params = event.body();
+		JsonObject params = event.getContent();
 		
 		StockOnHandQueryBySkuHandler hander = new StockOnHandQueryBySkuHandler(this.appActivity);
 		hander.getLocationsBySku(params, next -> {

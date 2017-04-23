@@ -7,7 +7,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存中心：预留 --创建预留
@@ -39,7 +39,7 @@ public class StockReservedCreationHandler extends ActionHandlerImpl<JsonObject> 
 	// 步骤3、如果步骤2 ok 则成功预留。否则预留拣货失败（目前整单预留，不进行部分预留）
 	// -------------------
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 /*		JsonObject so = msg.body();
 		
 		String errString = stockOnHandNullVal(so);

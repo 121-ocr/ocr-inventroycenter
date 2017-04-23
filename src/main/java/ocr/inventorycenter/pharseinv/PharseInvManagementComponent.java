@@ -1,11 +1,9 @@
 package ocr.inventorycenter.pharseinv;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 import otocloud.framework.app.function.AppActivityImpl;
-import otocloud.framework.app.function.BizRoleDescriptor;
 import otocloud.framework.core.OtoCloudEventDescriptor;
 import otocloud.framework.core.OtoCloudEventHandlerRegistry;
 /**
@@ -28,11 +26,6 @@ public class PharseInvManagementComponent extends AppActivityImpl {
 		return PharseInvConstant.ComponentBizObjectTypeConstant;
 	}
 
-	//发布此业务活动关联的业务角色
-	@Override
-	public List<BizRoleDescriptor> exposeBizRolesDesc() {
-		return null;
-	}
 
 	//发布此业务活动对外暴露的业务事件
 	@Override

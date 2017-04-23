@@ -8,7 +8,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 /**
  * 库存中心：库区-修改
  * 
@@ -47,7 +47,7 @@ public class SuppliersUpdateHandler  extends ActionHandlerImpl<JsonObject> {
 	}
 
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 		JsonObject supplier = msg.body().getJsonObject("content");    	
 		Long supplier_acct = supplier.getLong("supplier_acct", -1L);
 		

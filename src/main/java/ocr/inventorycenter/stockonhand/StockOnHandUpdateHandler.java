@@ -9,7 +9,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存中心：现存量-更新
@@ -36,9 +36,9 @@ public class StockOnHandUpdateHandler extends ActionHandlerImpl<JsonObject> {
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
-		JsonObject so = msg.body();
+		JsonObject so = msg.getContent();
 
 		if (stockOnHandNullVal(so) != null && !stockOnHandNullVal(so).equals("")) {
 			msg.fail(100, "如下数据不能为空值：" + stockOnHandNullVal(so));

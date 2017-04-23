@@ -11,7 +11,7 @@ import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存中心：安全库存-创建
@@ -35,7 +35,7 @@ public class SafeStockCreationHandler extends SampleSingleDocBaseHandler {
 	}
 
 	@Override
-	protected void beforeProess(OtoCloudBusMessage<JsonObject> msg, Future<JsonObject> future) {
+	protected void beforeProess(CommandMessage<JsonObject> msg, Future<JsonObject> future) {
 		String err = safeStockNullVal(msg.body());
 		if (err.isEmpty()) {
 			future.complete(msg.body());

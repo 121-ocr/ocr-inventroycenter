@@ -11,7 +11,7 @@ import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 /**
  * 货位商品关系档案
  * 
@@ -29,9 +29,9 @@ public class LocationsGoodsRelationRemoveHandler  extends SampleSingleDocBaseHan
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 		
-		JsonObject query = msg.body();
+		JsonObject query = msg.getContent();
 
 		appActivity.getAppDatasource().getMongoClient().removeDocument(appActivity.getDBTableName(appActivity.getBizObjectType()),
 				query,

@@ -9,7 +9,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * TODO: 保质期预警
@@ -44,7 +44,7 @@ public class ShelfWarningQueryHandler extends ActionHandlerImpl<JsonObject> {
 	 * 查询现存量
 	 */
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg){
+	public void handle(CommandMessage<JsonObject> msg){
 		String from_account = this.appActivity.getAppInstContext().getAccount();
 		String onHandAddress = from_account + "." + this.appActivity.getService().getRealServiceName()
 				+ ".stockonhand-mgr.query4shelfwarning";

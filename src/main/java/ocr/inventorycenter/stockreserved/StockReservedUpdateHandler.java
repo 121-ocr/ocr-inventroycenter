@@ -9,7 +9,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 /**
  * 库存中心：现存量-更新
  * 
@@ -35,9 +35,9 @@ public class StockReservedUpdateHandler extends ActionHandlerImpl<JsonObject> {
 
 	//处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
-		JsonObject settingInfo = msg.body();
+		JsonObject settingInfo = msg.getContent();
 		JsonObject so = msg.body();
 		settingInfo.put(StockReservedConstant.bo_id, "");
 		settingInfo.put(StockReservedConstant.account, this.appActivity.getAppInstContext().getAccount());

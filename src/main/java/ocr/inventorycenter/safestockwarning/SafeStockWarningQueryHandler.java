@@ -13,7 +13,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * TODO: 安全库存预警
@@ -48,7 +48,7 @@ public class SafeStockWarningQueryHandler extends ActionHandlerImpl<JsonObject> 
 	 * 先查询安全库存，再查现存量，然后计算缺货量
 	 */
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg){
+	public void handle(CommandMessage<JsonObject> msg){
 		
 		String from_account = this.appActivity.getAppInstContext().getAccount();
 		String safeStockAddress = from_account + "." + this.appActivity.getService().getRealServiceName()

@@ -9,7 +9,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存中心：现存量-查询
@@ -35,7 +35,7 @@ public class StockReservedQueryHandler extends ActionHandlerImpl<JsonObject> {
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
 		FindOptions findOptions = new FindOptions();
 		// fields
@@ -49,7 +49,7 @@ public class StockReservedQueryHandler extends ActionHandlerImpl<JsonObject> {
 		findOptions.setFields(fields);
 
 		appActivity.getAppDatasource().getMongoClient().findWithOptions(
-				appActivity.getDBTableName(appActivity.getBizObjectType()), getQueryConditon(msg.body()), findOptions,
+				appActivity.getDBTableName(appActivity.getBizObjectType()), getQueryConditon(msg.getContent()), findOptions,
 				result -> {
 					if (result.succeeded()) {
 						String fileContent = result.result().toString();

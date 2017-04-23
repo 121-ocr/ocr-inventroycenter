@@ -22,7 +22,7 @@ import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 拣货出库单--（创建态-->拣货状）
@@ -71,11 +71,11 @@ public class StockOutBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
 	}
 	
 	@Override
-	public void handle(OtoCloudBusMessage<JsonArray> msg) {
+	public void handle(CommandMessage<JsonArray> msg) {
 
 		MultiMap headerMap = msg.headers();
 
-		JsonArray documents = msg.body();
+		JsonArray documents = msg.getContent();
 		// 当前操作人信息
 		JsonObject actor = ActionContextTransfomer.fromMessageHeaderToActor(headerMap);
 

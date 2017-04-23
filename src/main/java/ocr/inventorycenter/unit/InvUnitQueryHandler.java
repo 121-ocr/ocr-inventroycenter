@@ -9,7 +9,7 @@ import otocloud.common.OtoCloudDirectoryHelper;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存中心：库区-查询
@@ -35,7 +35,7 @@ public class InvUnitQueryHandler extends SampleSingleDocQueryHandler {
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 		
 		String menusFilePath = OtoCloudDirectoryHelper.getConfigDirectory() + "unit.json";		
 		

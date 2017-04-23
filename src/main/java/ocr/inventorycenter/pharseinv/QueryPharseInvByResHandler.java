@@ -10,7 +10,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 根据来源id,是否存在采购入库单id，要求方：采购订单
@@ -36,10 +36,10 @@ public class QueryPharseInvByResHandler extends ActionHandlerImpl<JsonObject> {
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
 		JsonObject query = new JsonObject();
-		query.put("bo.detail.resid", msg.body().getString("bo_id"));
+		query.put("bo.detail.resid", msg.getContent().getString("bo_id"));
 
 		FindOptions findOptions = new FindOptions();
 		findOptions.setFields(new JsonObject().put("_id", true));

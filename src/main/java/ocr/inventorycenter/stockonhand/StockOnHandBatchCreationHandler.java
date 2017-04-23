@@ -8,7 +8,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存中心：现存量-创建
@@ -33,8 +33,8 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonArray> msg) {
-		JsonArray sos = msg.body();
+	public void handle(CommandMessage<JsonArray> msg) {
+		JsonArray sos = msg.getContent();
 
 		for (Object so : sos) {
 			if (stockOnHandNullVal((JsonObject) so) != null && !stockOnHandNullVal((JsonObject) so).equals("")) {
@@ -59,9 +59,9 @@ public class StockOnHandBatchCreationHandler extends ActionHandlerImpl<JsonArray
 
 	}
 
-	private JsonArray getParams(OtoCloudBusMessage<JsonArray> msg) {
+	private JsonArray getParams(CommandMessage<JsonArray> msg) {
 
-		JsonArray settingInfos = msg.body();
+		JsonArray settingInfos = msg.getContent();
 		for (Object temp : settingInfos) {
 			JsonObject settingInfo = (JsonObject) temp;
 			// settingInfo.put(StockOnHandConstant.bo_id, "");

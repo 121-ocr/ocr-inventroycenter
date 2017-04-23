@@ -7,7 +7,7 @@ import io.vertx.core.json.JsonObject;
 import ocr.common.handler.SampleBillBaseQueryHandler;
 import ocr.inventorycenter.pharseorder.PharseOrderConstant;
 import otocloud.framework.app.function.AppActivityImpl;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 盘点单
@@ -30,9 +30,9 @@ public class AllocateordersQueryHandler extends SampleBillBaseQueryHandler {
 	}
 
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
-		JsonObject queryParams = msg.body();
+		JsonObject queryParams = msg.getQueryParams();
 		JsonObject fields = queryParams.getJsonObject("fields");
 		JsonObject queryCond = queryParams.getJsonObject("query");
 		JsonObject pagingInfo = queryParams.getJsonObject("paging");

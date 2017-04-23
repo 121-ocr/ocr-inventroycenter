@@ -10,7 +10,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.CDOHandlerImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 采购订单
@@ -39,7 +39,7 @@ public class PharseOrderQueryByConditonHandler extends CDOHandlerImpl<JsonObject
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
 		Future<Void> nextFuture = Future.future(); // 规定步骤1、2之间的顺序
 
@@ -54,7 +54,7 @@ public class PharseOrderQueryByConditonHandler extends CDOHandlerImpl<JsonObject
 
 	}
 
-	private void queryAllPhrase(OtoCloudBusMessage<JsonObject> msg, JsonObject results) {
+	private void queryAllPhrase(CommandMessage<JsonObject> msg, JsonObject results) {
 
 		JsonObject result = new JsonObject();
 
@@ -76,7 +76,7 @@ public class PharseOrderQueryByConditonHandler extends CDOHandlerImpl<JsonObject
 
 	}
 
-	private void isCreatedInv(OtoCloudBusMessage<JsonObject> msg, JsonObject results, Future<Void> nextFuture) {
+	private void isCreatedInv(CommandMessage<JsonObject> msg, JsonObject results, Future<Void> nextFuture) {
 
 		this.appActivity.getEventBus().send(getPharseOrderAddress(), msg.body(), facilityRes -> {
 			if (facilityRes.succeeded()) {

@@ -14,7 +14,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 public class StockReservedBatchCodeQueryHandler extends ActionHandlerImpl<JsonObject> {
 
@@ -32,9 +32,9 @@ public class StockReservedBatchCodeQueryHandler extends ActionHandlerImpl<JsonOb
 	}
 
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> event) {
+	public void handle(CommandMessage<JsonObject> event) {
 
-		queryFristBatchNum(event.body(), ret -> {
+		queryFristBatchNum(event.getContent(), ret -> {
 			if (ret.succeeded()) {
 				event.reply(ret.result());
 			} else {

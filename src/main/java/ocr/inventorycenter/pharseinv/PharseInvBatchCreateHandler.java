@@ -13,8 +13,8 @@ import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
+import otocloud.framework.core.CommandMessage;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
 
 /**
  * 生成采购入库
@@ -41,7 +41,7 @@ public class PharseInvBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
 
 	//处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonArray> msg) {
+	public void handle(CommandMessage<JsonArray> msg) {
 		
 		MultiMap headerMap = msg.headers();
 		
@@ -49,7 +49,7 @@ public class PharseInvBatchCreateHandler extends ActionHandlerImpl<JsonArray> {
     	JsonObject actor = ActionContextTransfomer.fromMessageHeaderToActor(headerMap);    	
 
 		
-		JsonArray datas = msg.body();
+		JsonArray datas = msg.getContent();
 		int size = datas.size();
 		if(size == 0){
 			msg.reply("ok");

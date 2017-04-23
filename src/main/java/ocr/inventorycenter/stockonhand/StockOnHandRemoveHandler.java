@@ -9,7 +9,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 /**
  * 库存中心：现存量-删除
  * 
@@ -39,10 +39,10 @@ public class StockOnHandRemoveHandler extends ActionHandlerImpl<JsonObject> {
 	 * {"data_type": "VENDOR/PURCHASECONTRACT/PURCHASEINVOICE", "required": 是否必选, "desc":"描述"}
 	 */
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 		
 		String acctId = this.appActivity.getAppInstContext().getAccount();
-		JsonObject settingInfo = msg.body();
+		JsonObject settingInfo = msg.getContent();
 		settingInfo.put("account", acctId);
 		appActivity.getAppDatasource().getMongoClient().removeDocumentsWithOptions(
 				appActivity.getDBTableName(appActivity.getBizObjectType()),

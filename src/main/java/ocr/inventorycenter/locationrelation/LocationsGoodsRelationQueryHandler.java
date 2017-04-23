@@ -8,7 +8,7 @@ import otocloud.framework.app.common.PagingOptions;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 货位商品关系档案
@@ -34,9 +34,9 @@ public class LocationsGoodsRelationQueryHandler extends SampleSingleDocQueryHand
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
-		JsonObject queryParams = msg.body();
+		JsonObject queryParams = msg.getContent();
 		PagingOptions pagingObj = PagingOptions.buildPagingOptions(queryParams);
 		this.queryBizDataList(null, appActivity.getBizObjectType(), pagingObj, null, findRet -> {
 			if (findRet.succeeded()) {

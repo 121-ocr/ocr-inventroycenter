@@ -12,7 +12,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 public class StockReservedNumQueryHandler extends ActionHandlerImpl<JsonObject>{
 	
@@ -31,9 +31,9 @@ public class StockReservedNumQueryHandler extends ActionHandlerImpl<JsonObject>{
 	
 	
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> event) {
+	public void handle(CommandMessage<JsonObject> event) {
 		
-		querySRNum(event.body(), ret->{
+		querySRNum(event.getContent(), ret->{
     	    if (ret.succeeded()) {
     	    	event.reply(ret.result()); 
     	    } else {

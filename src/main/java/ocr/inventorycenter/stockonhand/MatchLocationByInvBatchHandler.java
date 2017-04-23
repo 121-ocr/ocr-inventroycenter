@@ -11,7 +11,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存中心：现存量-查询：传入批次，匹配货位
@@ -36,9 +36,9 @@ public class MatchLocationByInvBatchHandler extends ActionHandlerImpl<JsonObject
 	}
 
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> event) {
+	public void handle(CommandMessage<JsonObject> event) {
 
-		getLocationsByRule(event.body(), ret -> {
+		getLocationsByRule(event.getContent(), ret -> {
 			
 			if (ret.succeeded()) {
 				event.reply(ret.result());

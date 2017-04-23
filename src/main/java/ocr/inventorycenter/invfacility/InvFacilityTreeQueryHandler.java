@@ -12,7 +12,7 @@ import otocloud.common.OtoCloudDirectoryHelper;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 货架货位
@@ -38,12 +38,12 @@ public class InvFacilityTreeQueryHandler extends SampleSingleDocQueryHandler {
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 		
 		
 //		JsonObject query = msg.body();
 		
-		JsonObject query = msg.body();
+		JsonObject query = msg.getContent();
 		if(query.containsKey("query")){
 			query = query.getJsonObject("query");
 		}

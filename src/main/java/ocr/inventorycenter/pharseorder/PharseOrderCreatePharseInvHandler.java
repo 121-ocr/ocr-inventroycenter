@@ -17,7 +17,7 @@ import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 生成采购入库
@@ -44,9 +44,9 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 	}
 
 	@Override
-	public void handle(OtoCloudBusMessage<JsonArray> msg) {
+	public void handle(CommandMessage<JsonArray> msg) {
 
-		JsonArray pharseInvInfo = msg.body();
+		JsonArray pharseInvInfo = msg.getContent();
 
 		JsonObject completionPhaseInfo = new JsonObject();
 
@@ -78,7 +78,7 @@ public class PharseOrderCreatePharseInvHandler extends ActionHandlerImpl<JsonArr
 	}
 
 	private void createPharseInvs(JsonArray pharseInvInfo, JsonObject completionPhaseInfo,
-			OtoCloudBusMessage<JsonArray> msg) {
+			CommandMessage<JsonArray> msg) {
 
 		JsonArray pharseInvs = new JsonArray();
 

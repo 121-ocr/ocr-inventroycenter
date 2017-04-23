@@ -12,7 +12,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 /**
  * 查询当前租户下所有的存货（按照仓库+商品汇总）
  * @author pcitc
@@ -34,8 +34,8 @@ public class StockOnHandQuery4SafeStockWarningHandler extends ActionHandlerImpl<
 	}
 	
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
-		JsonObject params = msg.body();
+	public void handle(CommandMessage<JsonObject> msg) {
+		JsonObject params = msg.getContent();
 		queryOnHand(params, ret->{
 			if (ret.succeeded()) {
 				msg.reply(ret.result());

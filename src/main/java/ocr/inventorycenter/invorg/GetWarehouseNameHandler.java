@@ -10,7 +10,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存组织规划：对象（仓库档案）-查询
@@ -36,9 +36,9 @@ public class GetWarehouseNameHandler extends ActionHandlerImpl<JsonObject> {
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
-		JsonObject query = msg.body();
+		JsonObject query = msg.getContent();
 		
 		FindOptions findOptions = new FindOptions();	
 		findOptions.setFields(new JsonObject().put("name", true));

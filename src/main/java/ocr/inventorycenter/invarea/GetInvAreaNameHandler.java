@@ -7,7 +7,7 @@ import otocloud.common.ActionURI;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存中心：库区-查询
@@ -33,9 +33,9 @@ public class GetInvAreaNameHandler extends SampleSingleDocQueryHandler {
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
-		JsonObject query = msg.body();
+		JsonObject query = msg.getContent();
 		JsonObject queryObj ;
 		if(query.getJsonObject("warehouse") != null){
 			JsonObject obj = query.getJsonObject("warehouse");

@@ -8,7 +8,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存组织规划：对象（仓库档案）-查询
@@ -34,9 +34,9 @@ public class InvWarehouseQueryHandler extends ActionHandlerImpl<JsonObject> {
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 		
-		JsonObject queryParams = msg.body().getJsonObject("content");
+		JsonObject queryParams = msg.getContent();
 	    PagingOptions pagingObj = PagingOptions.buildPagingOptions(queryParams);        
 	    this.queryBizDataList(null, appActivity.getBizObjectType(), pagingObj, null, findRet -> {
 	        if (findRet.succeeded()) {

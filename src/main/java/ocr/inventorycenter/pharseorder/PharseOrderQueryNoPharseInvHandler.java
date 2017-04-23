@@ -10,7 +10,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.CDOHandlerImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 采购入库按钮，查询所有未入库的采购订单表体数据
@@ -37,7 +37,7 @@ public class PharseOrderQueryNoPharseInvHandler extends CDOHandlerImpl<JsonObjec
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
 		JsonObject params = msg.body();
 		queryByConditions(msg, params, ret -> {
@@ -52,7 +52,7 @@ public class PharseOrderQueryNoPharseInvHandler extends CDOHandlerImpl<JsonObjec
 
 	}
 
-	public void queryByConditions(OtoCloudBusMessage<JsonObject> msg, JsonObject params,
+	public void queryByConditions(CommandMessage<JsonObject> msg, JsonObject params,
 			Handler<AsyncResult<JsonObject>> next) {
 
 		this.appActivity.getEventBus().send(getPharseOrderAddress(), params, facilityRes -> {

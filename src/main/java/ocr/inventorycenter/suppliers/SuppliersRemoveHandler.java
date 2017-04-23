@@ -10,7 +10,7 @@ import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 /**
  * 库存中心：库区-查询
  * 
@@ -28,9 +28,9 @@ public class SuppliersRemoveHandler  extends SampleSingleDocBaseHandler {
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 		
-		JsonObject query = msg.body().getJsonObject("content");    	
+		JsonObject query = msg.getContent();    	
 
 		appActivity.getAppDatasource().getMongoClient().removeDocument(appActivity.getDBTableName(appActivity.getBizObjectType()),
 				query,

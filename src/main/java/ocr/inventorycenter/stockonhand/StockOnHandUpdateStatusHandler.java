@@ -9,7 +9,7 @@ import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
 import otocloud.framework.core.HandlerDescriptor;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 库存中心：现存量-更新存量状态
@@ -36,9 +36,9 @@ public class StockOnHandUpdateStatusHandler extends ActionHandlerImpl<JsonObject
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 
-		JsonObject so = msg.body();
+		JsonObject so = msg.getContent();
 		
 		JsonObject query = new JsonObject().put("biz_data_type", so.getString("biz_data_type"))
 				.put("bo_id", so.getString("bo_id")).put("status", so.getString("from_status"));
