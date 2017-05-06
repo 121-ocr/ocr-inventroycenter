@@ -57,6 +57,9 @@ public class InvOrgManagementComponent extends AppActivityImpl {
 		ret.add(updateHandler);
 		InvWarehouseRemoveHandler removeHandler = new InvWarehouseRemoveHandler(this);
 		ret.add(removeHandler);
+		
+		WarehouseOwnerBizUnitGetHandler warehouseOwnerBizUnitGetHandler = new WarehouseOwnerBizUnitGetHandler(this);
+		ret.add(warehouseOwnerBizUnitGetHandler);
 
 		return ret;
 	}

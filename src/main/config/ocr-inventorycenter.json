@@ -80,6 +80,17 @@
 	        					}
 							}
 						 }
+					 },
+					 "invorg-mgr": {
+			      		"options": {
+	        				"config" :  {
+	        				    "dependencies":{
+		        					"otocloud-acct-org_service": {
+		        						"service_name": "otocloud-acct-org"
+		        					}
+	        					}
+							}
+						 }
 					 }
 				},
 				"component_deployment": []
