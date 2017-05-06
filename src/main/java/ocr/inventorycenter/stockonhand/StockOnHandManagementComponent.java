@@ -80,6 +80,9 @@ public class StockOnHandManagementComponent extends AppActivityImpl {
 		StockOnHandQuery4SafeStockWarningHandler stockOnHandQuery4SafeStockWarningHandler = new StockOnHandQuery4SafeStockWarningHandler(this);
 		ret.add(stockOnHandQuery4SafeStockWarningHandler);
 		
+		StockOnHandCommonQueryHandler stockOnHandCommonQueryHandler = new StockOnHandCommonQueryHandler(this);
+		ret.add(stockOnHandCommonQueryHandler);
+		
 		
 		return ret;
 	}
