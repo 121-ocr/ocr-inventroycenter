@@ -1,4 +1,4 @@
-package ocr.inventorycenter.invorg;
+package ocr.inventorycenter.warehouse;
 
 
 import io.vertx.core.http.HttpMethod;
@@ -18,10 +18,10 @@ import otocloud.framework.core.CommandMessage;
  * @author LCL
  */
 //业务活动功能处理器
-public class InvWarehouseRemoveHandler  extends SampleSingleDocBaseHandler {
+public class WarehouseRemoveHandler  extends SampleSingleDocBaseHandler {
 	
 
-	public InvWarehouseRemoveHandler(AppActivityImpl appActivity) {
+	public WarehouseRemoveHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 		// TODO Auto-generated constructor stub
 	}
@@ -49,7 +49,7 @@ public class InvWarehouseRemoveHandler  extends SampleSingleDocBaseHandler {
 	@Override
 	public String getEventAddress() {
 		// TODO Auto-generated method stub
-		return InvWarehouseConstant.REMOVE_ADDRESS;
+		return WarehouseConstant.REMOVE_ADDRESS;
 	}
 	
 	@Override
@@ -63,7 +63,7 @@ public class InvWarehouseRemoveHandler  extends SampleSingleDocBaseHandler {
 		handlerDescriptor.setRestApiURI(uri);
 
 		// 状态变化定义
-		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, null, InvWarehouseConstant.REMOVE_STATUS);
+		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, null, WarehouseConstant.REMOVE_STATUS);
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
 

@@ -1,4 +1,4 @@
-package ocr.inventorycenter.invorg;
+package ocr.inventorycenter.warehouse;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;

@@ -1,11 +1,9 @@
-package ocr.inventorycenter.invorg;
-
-import java.util.List;
+package ocr.inventorycenter.warehouse;
 
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.FindOptions;
 import otocloud.common.ActionURI;
+import otocloud.framework.app.common.PagingOptions;
 import otocloud.framework.app.function.ActionDescriptor;
 import otocloud.framework.app.function.ActionHandlerImpl;
 import otocloud.framework.app.function.AppActivityImpl;
@@ -19,11 +17,11 @@ import otocloud.framework.core.CommandMessage;
  * @author LCL
  */
 // 业务活动功能处理器
-public class GetWarehouseNameHandler extends ActionHandlerImpl<JsonObject> {
+public class WarehouseQueryHandler extends ActionHandlerImpl<JsonObject> {
 
-	public static final String ADDRESS = "query_name";
+	public static final String ADDRESS = "query";
 
-	public GetWarehouseNameHandler(AppActivityImpl appActivity) {
+	public WarehouseQueryHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 
 	}
@@ -37,30 +35,20 @@ public class GetWarehouseNameHandler extends ActionHandlerImpl<JsonObject> {
 	// 处理器
 	@Override
 	public void handle(CommandMessage<JsonObject> msg) {
-
-		JsonObject query = msg.getContent();
 		
-		FindOptions findOptions = new FindOptions();	
-		findOptions.setFields(new JsonObject().put("name", true));
+		JsonObject queryParams = msg.getContent();
+	    PagingOptions pagingObj = PagingOptions.buildPagingOptions(queryParams);        
+	    this.queryBizDataList(null, appActivity.getBizObjectType(), pagingObj, null, findRet -> {
+	        if (findRet.succeeded()) {
+	            msg.reply(findRet.result());
+	        } else {
+				Throwable errThrowable = findRet.cause();
+				String errMsgString = errThrowable.getMessage();
+				appActivity.getLogger().error(errMsgString, errThrowable);
+				msg.fail(100, errMsgString);		
+	        }
 
-		appActivity.getAppDatasource().getMongoClient()
-				.findWithOptions(appActivity.getDBTableName(this.appActivity.getBizObjectType()), query, findOptions, findRet -> {
-					if (findRet.succeeded()) {
-						List<JsonObject> retObj = findRet.result();
-						if(retObj != null && retObj.size() > 0)
-						{
-							msg.reply(retObj.get(0));
-						}else{
-							msg.reply(null);
-						}
-					} else {
-						Throwable err = findRet.cause();
-						String errMsg = err.getMessage();
-						appActivity.getLogger().error(errMsg, err);
-						msg.fail(500, errMsg);
-					}
-
-				});
+	    });
 
 	}
 

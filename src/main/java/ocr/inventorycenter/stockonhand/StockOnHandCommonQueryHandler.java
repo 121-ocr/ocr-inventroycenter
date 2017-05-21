@@ -3,7 +3,7 @@ package ocr.inventorycenter.stockonhand;
 import io.vertx.core.json.JsonObject;
 import ocr.common.handler.SampleDocQueryHandler;
 import otocloud.framework.app.function.AppActivityImpl;
-import otocloud.framework.core.OtoCloudBusMessage;
+import otocloud.framework.core.CommandMessage;
 
 /**
  * 为收银系统提供的查询商品的方法
@@ -20,9 +20,9 @@ public class StockOnHandCommonQueryHandler extends SampleDocQueryHandler {
 
 	// 处理器
 	@Override
-	public void handle(OtoCloudBusMessage<JsonObject> msg) {
+	public void handle(CommandMessage<JsonObject> msg) {
 		
-		JsonObject query = msg.body();
+		JsonObject query = msg.getContent();
 
 		appActivity.getAppDatasource().getMongoClient().find(appActivity.getDBTableName(appActivity.getBizObjectType()),
 				query,

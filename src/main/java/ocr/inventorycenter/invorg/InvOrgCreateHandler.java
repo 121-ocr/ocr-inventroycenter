@@ -10,15 +10,17 @@ import otocloud.framework.app.function.BizRootType;
 import otocloud.framework.app.function.BizStateSwitchDesc;
 import otocloud.framework.core.HandlerDescriptor;
 /**
- * 库存中心：仓库
+ * 库存中心：库存组织
  * 
  * @date 2016年11月20日
  * @author LCL
  */
 //业务活动功能处理器
-public class InvWarehouseCreateHandler  extends SampleSingleDocBaseHandler {
+public class InvOrgCreateHandler  extends SampleSingleDocBaseHandler {
 	
-	public InvWarehouseCreateHandler(AppActivityImpl appActivity) {
+	public static final String ADDRESS = "create";
+	
+	public InvOrgCreateHandler(AppActivityImpl appActivity) {
 		super(appActivity);
 	}
 
@@ -27,7 +29,7 @@ public class InvWarehouseCreateHandler  extends SampleSingleDocBaseHandler {
 	 */
 	@Override 
 	public String getEventAddress() {
-		return InvWarehouseConstant.CREATE_ADDRESS;
+		return ADDRESS;
 	}
 
 	/**
@@ -44,7 +46,7 @@ public class InvWarehouseCreateHandler  extends SampleSingleDocBaseHandler {
 		handlerDescriptor.setRestApiURI(uri);
 
 		// 状态变化定义
-		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, null, InvWarehouseConstant.CREATE_STATUS);
+		BizStateSwitchDesc bizStateSwitchDesc = new BizStateSwitchDesc(BizRootType.BIZ_OBJECT, null, ADDRESS);
 		bizStateSwitchDesc.setWebExpose(true); // 是否向web端发布事件
 		actionDescriptor.setBizStateSwitch(bizStateSwitchDesc);
 

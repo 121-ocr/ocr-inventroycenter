@@ -1,6 +1,6 @@
-package ocr.inventorycenter.invorg;
+package ocr.inventorycenter.warehouse;
 
-public class InvWarehouseConstant {
+public class WarehouseConstant {
 
 	// 创建地址
 	public static final String CREATE_ADDRESS = "create";

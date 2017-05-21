@@ -81,7 +81,7 @@
 							}
 						 }
 					 },
-					 "invorg-mgr": {
+					 "warehouse-mgr": {
 			      		"options": {
 	        				"config" :  {
 	        				    "dependencies":{

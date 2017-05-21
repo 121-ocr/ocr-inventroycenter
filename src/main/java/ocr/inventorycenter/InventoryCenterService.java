@@ -7,7 +7,7 @@ import ocr.inventorycenter.allocateorders.AllocateordersManagementComponent;
 import ocr.inventorycenter.invarea.InvAreaManagementComponent;
 import ocr.inventorycenter.inventorycheck.InventorycheckManagementComponent;
 import ocr.inventorycenter.invfacility.InvFacilityManagementComponent;
-import ocr.inventorycenter.invorg.InvOrgManagementComponent;
+import ocr.inventorycenter.invorg.InvOrgComponent;
 import ocr.inventorycenter.locationrelation.LocationRelationManagementComponent;
 import ocr.inventorycenter.pharseinv.PharseInvManagementComponent;
 import ocr.inventorycenter.pharseorder.PharseOrderManagementComponent;
@@ -20,6 +20,7 @@ import ocr.inventorycenter.stockout.StockOutManagementComponent;
 import ocr.inventorycenter.stockreserved.StockReservedManagementComponent;
 import ocr.inventorycenter.suppliers.SuppliersManagementComponent;
 import ocr.inventorycenter.unit.InvUnitManagementComponent;
+import ocr.inventorycenter.warehouse.WarehouseComponent;
 import otocloud.framework.app.engine.AppServiceImpl;
 import otocloud.framework.app.engine.WebServer;
 import otocloud.framework.app.function.AppActivity;
@@ -54,7 +55,7 @@ public class InventoryCenterService extends AppServiceImpl {
 		PharseInvManagementComponent pharseInvCom = new PharseInvManagementComponent();
 		retActivities.add(pharseInvCom);
 
-		InvOrgManagementComponent invOrgManagementComponent = new InvOrgManagementComponent();
+		WarehouseComponent invOrgManagementComponent = new WarehouseComponent();
 		retActivities.add(invOrgManagementComponent);
 
 		InvFacilityManagementComponent invFacilityManagementComponent = new InvFacilityManagementComponent();
@@ -101,6 +102,9 @@ public class InventoryCenterService extends AppServiceImpl {
 		
 		SafeStockWarningComponent safeStockWarningComponent = new SafeStockWarningComponent();
 		retActivities.add(safeStockWarningComponent);
+		
+		InvOrgComponent invOrgComponent = new InvOrgComponent();
+		retActivities.add(invOrgComponent);
 				
 
 		return retActivities;

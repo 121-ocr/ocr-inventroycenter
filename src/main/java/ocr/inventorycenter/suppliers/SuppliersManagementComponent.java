@@ -52,6 +52,9 @@ public class SuppliersManagementComponent extends AppActivityImpl {
 		ret.add(updateHandler);
 		SuppliersRemoveHandler removeHandler = new SuppliersRemoveHandler(this);
 		ret.add(removeHandler);
+		
+		SuppliersQueryNoPagingHandler suppliersQueryNoPagingHandler = new SuppliersQueryNoPagingHandler(this);
+		ret.add(suppliersQueryNoPagingHandler);
 
 		return ret;
 	}

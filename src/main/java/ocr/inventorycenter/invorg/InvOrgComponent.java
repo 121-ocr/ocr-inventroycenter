@@ -8,12 +8,12 @@ import otocloud.framework.core.OtoCloudEventDescriptor;
 import otocloud.framework.core.OtoCloudEventHandlerRegistry;
 
 /**
- * 库存组织规划：（仓库档案）
+ * 库存组织
  * 
  * @date 2016年11月20日
  * @author LCL
  */
-public class InvOrgManagementComponent extends AppActivityImpl {
+public class InvOrgComponent extends AppActivityImpl {
 
 	// 业务活动组件名
 	@Override
@@ -24,7 +24,7 @@ public class InvOrgManagementComponent extends AppActivityImpl {
 	// 业务活动组件要处理的核心业务对象
 	@Override
 	public String getBizObjectType() {
-		return "ba_warehouses";
+		return "ba_invorg";
 	}
 
 
@@ -40,26 +40,12 @@ public class InvOrgManagementComponent extends AppActivityImpl {
 
 		List<OtoCloudEventHandlerRegistry> ret = new ArrayList<OtoCloudEventHandlerRegistry>();
 
-		InvOrgQueryHandler queryHandler = new InvOrgQueryHandler(this);
-		ret.add(queryHandler);
-		
-		GetWarehouseNameHandler getWarehouseNameHandler = new GetWarehouseNameHandler(this);
-		ret.add(getWarehouseNameHandler);
-
-		InvWarehouseCreateHandler createHandler = new InvWarehouseCreateHandler(this);
+		InvOrgCreateHandler createHandler = new InvOrgCreateHandler(this);
 		ret.add(createHandler);
 		
-		InvWarehouseQueryHandler queryHandler2 = new InvWarehouseQueryHandler(this);
-		ret.add(queryHandler2);
-		
-		
-		InvWarehouseUpdateHandler updateHandler = new InvWarehouseUpdateHandler(this);
-		ret.add(updateHandler);
-		InvWarehouseRemoveHandler removeHandler = new InvWarehouseRemoveHandler(this);
-		ret.add(removeHandler);
-		
-		WarehouseOwnerBizUnitGetHandler warehouseOwnerBizUnitGetHandler = new WarehouseOwnerBizUnitGetHandler(this);
-		ret.add(warehouseOwnerBizUnitGetHandler);
+		InvOrgQueryHandler invOrgQueryAllHandler = new InvOrgQueryHandler(this);
+		ret.add(invOrgQueryAllHandler);
+
 
 		return ret;
 	}
