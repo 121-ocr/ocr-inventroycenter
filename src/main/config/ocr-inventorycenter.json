@@ -6,7 +6,7 @@
 			"version_id": 3,
 			"service_name": "ocr-inventorycenter",
 			"app_inst_group": "invc01",
-			"app_desc": "库存中心服务",
+			"app_desc": "┐Р┤Толл─и■╬ы",
 			"isolation_vertx_pool": false,			
 			"run_webserver": false,
 			"webserver_config": {
@@ -48,6 +48,17 @@
 				"component_common": {
 				},
 				"component_config": {
+					"suppliers-mgr": {
+			      		"options": {
+	        				"config" :  {
+	        				    "dependencies":{
+		        					"otocloud-acct": {
+		        						"service_name": "otocloud-acct"
+		        					}
+	        					}
+							}
+						 }
+				   	},
 				  	"stockonhand-mgr": {
 			      		"options": {
 	        				"config" :  {
@@ -80,8 +91,19 @@
 	        					}
 							}
 						 }
-					 },
+					 },					 
 					 "warehouse-mgr": {
+			      		"options": {
+	        				"config" :  {
+	        				    "dependencies":{
+		        					"otocloud-acct-org_service": {
+		        						"service_name": "otocloud-acct-org"
+		        					}
+	        					}
+							}
+						 }
+					 },
+					 "invorg-mgr": {
 			      		"options": {
 	        				"config" :  {
 	        				    "dependencies":{
